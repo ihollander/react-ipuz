@@ -22,8 +22,9 @@ Additional Feature 1 (Puzzle upload)
 * no additional models - file upload/parser to convert to ipuz format
 
 Additional Feature 2 (Basic user functionality)
-* User [username]
+* User [username | password]
 	* has many Puzzles [info needed for statistics: timer, completion percentage, saved game data]
+  * JWT or OAuth
 
 Additional Features 3 (Co-op play)
 * Room belongs to user1 and user2 and puzzle
