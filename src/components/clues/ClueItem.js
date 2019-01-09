@@ -1,7 +1,12 @@
-import React from 'react'
+import React from "react";
 
-const ClueItem = ({clue}) => {
-  return <li>{`${clue.label}. ${clue.text}`}</li>
-}
+const ClueItem = ({ clue, selectedClue, onClueClick }) => {
+  return (
+    <li
+      onClick={() => onClueClick(clue.label)}
+      style={{ backgroundColor: clue === selectedClue ? "pink" : "" }}
+    >{`${clue.label}. ${clue.text}`}</li>
+  );
+};
 
-export default ClueItem
+export default ClueItem;

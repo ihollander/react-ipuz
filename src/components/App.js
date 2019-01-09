@@ -36,143 +36,184 @@ class App extends React.Component {
     }
   }
 
-  moveLeft() {
-    const { cells, dimensions, setSelectedCell, selectedCellIndex } = this.props;
+  moveCursor(direction) {
+    const {
+      cells,
+      dimensions,
+      selectedCellIndex
+    } = this.props;
     const selectedCell = this.getSelectedCell(cells, selectedCellIndex);
     let currentColumn = selectedCell.column;
-    let newIndex;
-
-    while (newIndex === undefined) {
-      currentColumn -= 1;
-      if (currentColumn < 0) {
-        currentColumn = dimensions.width - 1; // wrap to end
-      }
-
-      newIndex = this.checkMovableCell(selectedCell.row, currentColumn);
-    }
-
-    setSelectedCell(newIndex);
-  }
-
-  moveRight() {
-    const { cells, dimensions, setSelectedCell, selectedCellIndex } = this.props;
-    const selectedCell = this.getSelectedCell(cells, selectedCellIndex);
-    let currentColumn = selectedCell.column;
-    let newIndex;
-
-    while (newIndex === undefined) {
-      currentColumn += 1;
-      if (currentColumn + 1 > dimensions.width) {
-        currentColumn = 0; // wrap to start
-      }
-      newIndex = this.checkMovableCell(selectedCell.row, currentColumn);
-    }
-
-    setSelectedCell(newIndex);
-  }
-
-  moveUp() {
-    const { cells, dimensions, setSelectedCell, selectedCellIndex } = this.props;
-    const selectedCell = this.getSelectedCell(cells, selectedCellIndex);
     let currentRow = selectedCell.row;
-    let newIndex;
 
+    let newIndex;
     while (newIndex === undefined) {
-      currentRow -= 1;
-      if (currentRow < 0) {
-        currentRow = dimensions.height - 1; // wrap to end
+      switch (direction) {
+        case "RIGHT":
+          currentColumn += 1;
+          if (currentColumn + 1 > dimensions.width) {
+            currentColumn = 0; // wrap to start
+          }
+          break;
+        case "LEFT":
+          currentColumn -= 1;
+          if (currentColumn < 0) {
+            currentColumn = dimensions.width - 1; // wrap to end
+          }
+          break;
+        case "DOWN":
+          currentRow += 1;
+          if (currentRow + 1 > dimensions.height) {
+            currentRow = 0; // wrap to start
+          }
+          break;
+        case "UP":
+          currentRow -= 1;
+          if (currentRow < 0) {
+            currentRow = dimensions.height - 1; // wrap to end
+          }
+          break;
+        default:
+          break;
       }
-      newIndex = this.checkMovableCell(currentRow, selectedCell.column);
+      newIndex = this.checkMovableCell(currentRow, currentColumn);
     }
 
-    setSelectedCell(newIndex);
-  }
-
-  moveDown() {
-    const { cells, dimensions, setSelectedCell, selectedCellIndex } = this.props;
-    const selectedCell = this.getSelectedCell(cells, selectedCellIndex);
-    let currentRow = selectedCell.row;
-    let newIndex;
-
-    while (newIndex === undefined) {
-      currentRow += 1;
-      if (currentRow + 1 > dimensions.height) {
-        currentRow = 0; // wrap to start
-      }
-      newIndex = this.checkMovableCell(currentRow, selectedCell.column)
-    }
-
-    setSelectedCell(newIndex);
-  }
-
-  moveNextAcross() {
-
-  }
-
-  moveNextDown() {
-
+    return newIndex
   }
 
   handleArrowPress(keyCode) {
-    const {
-      selectedDirection,
-      toggleDirection
-    } = this.props;
+    const { selectedDirection, toggleDirection, setSelectedCell } = this.props;
+    let newIndex
     switch (keyCode) {
       case 37: //left
         if (selectedDirection === "DOWN") {
           toggleDirection();
         } else {
-          this.moveLeft();
+          newIndex = this.moveCursor("LEFT");
         }
         break;
       case 38: //up
         if (selectedDirection === "ACROSS") {
           toggleDirection();
         } else {
-          this.moveUp();
+          newIndex = this.moveCursor("UP");
         }
         break;
       case 39: //right
         if (selectedDirection === "DOWN") {
           toggleDirection();
         } else {
-          this.moveRight();
+          newIndex = this.moveCursor("RIGHT");
         }
         break;
       case 40: //down
         if (selectedDirection === "ACROSS") {
           toggleDirection();
         } else {
-          this.moveDown();
+          newIndex = this.moveCursor("DOWN");
         }
         break;
       default:
         break;
     }
+    if (newIndex !== undefined) {
+      setSelectedCell(newIndex);
+    }
+  }
+
+  handleBackspace() {
+    const { cells, selectedDirection, selectedCellIndex, setSelectedCell, setCellValue } = this.props;
+    const selectedCell = this.getSelectedCell(cells, selectedCellIndex);
+    if (selectedCell.guess !== "") {
+      setCellValue(selectedCellIndex, "")
+    } else {
+      let newIndex
+      if (selectedDirection === "ACROSS") {
+        newIndex = this.moveCursor("LEFT")
+      } else {
+        newIndex = this.moveCursor("UP")
+      }
+
+      setCellValue(newIndex, "")
+      setSelectedCell(newIndex)
+    }
+  }
+
+  handleValueKeyPress(keyCode) {
+    const { clues, cells, selectedDirection, selectedCellIndex, setCellValue, setSelectedCell } = this.props;
+    const selectedCell = this.getSelectedCell(cells, selectedCellIndex);
+    const value = String.fromCharCode(keyCode).toUpperCase();
+    setCellValue(selectedCellIndex, value);
+    if (selectedDirection === "ACROSS") {
+      // check if current cell is last for current clue
+      const selectedClue = clues.across.find(
+        clue => clue.label === selectedCell.clues.across
+      );
+      const sameClueCells = cells.filter(
+        cell => cell.clues && cell.clues.across === selectedClue.label
+      );
+      const lastIndexForClue = Math.max(
+        ...sameClueCells.map(cell => cell.index)
+      );
+      if (selectedCell.index === lastIndexForClue) {
+        // const lastClueIndex = Math.max(...clues.across.map(clue => clue.index))
+        // const nextClueIndex = selectedClue.index + 1 > lastClueIndex ? -1 : selectedClue.index + 1
+        // const nextClue = clues.across.find(clue => clue.index === nextClueIndex)
+        // const nextCell = cells.find(cell => cell.clues && cell.clues.across === nextClue.label)
+        // setSelectedCell(nextCell.index)
+      } else {
+        const newIndex = this.moveCursor("RIGHT");
+        setSelectedCell(newIndex)
+      }
+    } else {
+      // check if current cell is last for current clue
+      const selectedClue = clues.down.find(
+        clue => clue.label === selectedCell.clues.down
+      );
+      const sameClueCells = cells.filter(
+        cell => cell.clues && cell.clues.down === selectedClue.label
+      );
+      const lastIndexForClue = Math.max(
+        ...sameClueCells.map(cell => cell.index)
+      );
+      if (selectedCell.index === lastIndexForClue) {
+        // const lastClueIndex = Math.max(...clues.down.map(clue => clue.index))
+        // const nextClueIndex = selectedClue.index + 1 > lastClueIndex ? -1 : selectedClue.index + 1
+        // const nextClue = clues.down.find(clue => clue.index === nextClueIndex)
+        // const nextCell = cells.find(cell => cell.clues && cell.clues.down === nextClue.label)
+        // setSelectedCell(nextCell.index)
+      } else {
+        const newIndex = this.moveCursor("DOWN");
+        setSelectedCell(newIndex)
+      }
+    }
   }
 
   onKeyDown = e => {
     const { keyCode } = e;
-
-    // arrow keys
-    if ([37, 38, 39, 40].indexOf(keyCode) > -1) {
-      // prevent scrolling
-      e.preventDefault();
+    if (37 <= keyCode && keyCode <= 40) {
+      // arrow keys
+      e.preventDefault(); // prevent scrolling
       this.handleArrowPress(keyCode);
-      // alphanumeric keys
+    } else if (keyCode === 8) {
+      // backspace
+      this.handleBackspace()
     } else if (48 <= keyCode && keyCode <= 90) {
-      const value = String.fromCharCode(keyCode).toUpperCase()
-      this.props.setSelectedCellValue(value)
-      // and move the cursor...
+      // alphanumeric keys
+      this.handleValueKeyPress(keyCode);
     }
   };
 
   render() {
     return (
-      <div tabIndex="-1" onKeyDown={this.onKeyDown} className="wrapper">
-        <GridContainer />
-        <ClueContainer />
+      <div tabIndex="-1" onKeyDown={this.onKeyDown} style={{ display: "flex" }}>
+        <div>
+          <GridContainer />
+        </div>
+        <div>
+          <ClueContainer />
+        </div>
       </div>
     );
   }
@@ -180,12 +221,10 @@ class App extends React.Component {
 
 const mapStateToProps = state => {
   const {
-    dimensions,
-    cells,
-    selectedCellIndex,
-    selectedDirection
-  } = state.grid;
-  return { dimensions, cells, selectedCellIndex, selectedDirection };
+    grid: { dimensions, cells, selectedCellIndex, selectedDirection },
+    clues
+  } = state;
+  return { dimensions, cells, selectedCellIndex, selectedDirection, clues };
 };
 
 export default connect(
@@ -194,6 +233,6 @@ export default connect(
     parseIpuz: parseActions.parseIpuz,
     toggleDirection: gridActions.toggleDirection,
     setSelectedCell: gridActions.setSelectedCell,
-    setSelectedCellValue: gridActions.setSelectedCellValue
+    setCellValue: gridActions.setCellValue
   }
 )(App);

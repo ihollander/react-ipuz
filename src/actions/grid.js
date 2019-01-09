@@ -4,24 +4,24 @@ const setSelectedCell = index => {
   return {
     type: gridTypes.CELL_SELECTED,
     payload: index
-  }
-}
+  };
+};
 
-const setSelectedCellValue = value => {
+const setCellValue = (index, value) => {
   return {
     type: gridTypes.CELL_VALUE_CHANGED,
-    payload: value
-  }
-}
+    payload: { index, value }
+  };
+};
 
 const toggleDirection = () => {
   return {
     type: gridTypes.TOGGLE_DIRECTION
-  }
-}
+  };
+};
 
 export const gridActions = {
   setSelectedCell,
   toggleDirection,
-  setSelectedCellValue
+  setCellValue
 };

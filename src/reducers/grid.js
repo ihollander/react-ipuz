@@ -21,14 +21,16 @@ export default (state = INITIAL_STATE, action) => {
         state.selectedDirection === "ACROSS" ? "DOWN" : "ACROSS";
       return { ...state, selectedDirection };
     case gridTypes.CELL_SELECTED:
+      console.log('CELL_SELECTED', action.payload)
       return { ...state, selectedCellIndex: action.payload };
     case gridTypes.CELL_VALUE_CHANGED:
-      const mappedCells = state.cells.map(cell =>
-        cell.index === state.selectedCellIndex
-          ? { ...cell, guess: action.payload }
+      console.log('CELL_VALUE_CHANGED', action.payload)
+      const newCellValues = state.cells.map(cell =>
+        cell.index === action.payload.index
+          ? { ...cell, guess: action.payload.value }
           : cell
       );
-      return { ...state, cells: mappedCells };
+      return { ...state, cells: newCellValues };
     default:
       return state;
   }
