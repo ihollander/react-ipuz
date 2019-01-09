@@ -1,16 +1,35 @@
 import React from "react";
 import { connect } from "react-redux";
 import { gridActions } from "../../actions/grid";
+import { statusActions } from "../../actions/status";
 import GridBox from "../grid/GridBox";
 
 class GridContainer extends React.Component {
+  // check for puzzle completedness
+  componentDidUpdate(prevProps) {
+    const solvableCells = this.props.cells.filter(cell => cell.solution);
+    const filledCells = solvableCells.filter(cell => cell.guess !== "");
+    const solvedCells = solvableCells.filter(cell => cell.guess === cell.solution)
+    if (filledCells.length === solvableCells.length) {
+      if (solvedCells.length === solvableCells.length) {
+        this.props.markSolved()
+      } else {
+        this.props.markCompleted();
+      }
+    } else if (
+      prevProps.completed &&
+      filledCells.length !== solvableCells.length
+    ) {
+      this.props.unmarkCompleted();
+    }
+  }
 
   // Event Handlers
   onCellClick = index => {
     if (index === this.props.selectedCellIndex) {
-      this.props.toggleDirection()
+      this.props.toggleDirection();
     } else {
-      this.props.setSelectedCell(index)
+      this.props.setSelectedCell(index);
     }
   };
 
@@ -37,7 +56,7 @@ class GridContainer extends React.Component {
       }
     });
   }
-  
+
   render() {
     const { dimensions, cells } = this.props;
     if (dimensions && cells.length) {
@@ -56,18 +75,26 @@ class GridContainer extends React.Component {
 
 const mapStateToProps = state => {
   const {
+    grid: { dimensions, cells, selectedCellIndex, selectedDirection },
+    status: { completed, solved }
+  } = state;
+  return {
+    completed,
+    solved,
     dimensions,
     cells,
     selectedCellIndex,
     selectedDirection
-  } = state.grid;
-  return { dimensions, cells, selectedCellIndex, selectedDirection };
+  };
 };
 
 export default connect(
   mapStateToProps,
   {
     setSelectedCell: gridActions.setSelectedCell,
-    toggleDirection: gridActions.toggleDirection
+    toggleDirection: gridActions.toggleDirection,
+    markCompleted: statusActions.markCompleted,
+    unmarkCompleted: statusActions.unmarkCompleted,
+    markSolved: statusActions.markSolved
   }
 )(GridContainer);

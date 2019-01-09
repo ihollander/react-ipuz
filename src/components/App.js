@@ -37,11 +37,7 @@ class App extends React.Component {
   }
 
   moveCursor(direction) {
-    const {
-      cells,
-      dimensions,
-      selectedCellIndex
-    } = this.props;
+    const { cells, dimensions, selectedCellIndex } = this.props;
     const selectedCell = this.getSelectedCell(cells, selectedCellIndex);
     let currentColumn = selectedCell.column;
     let currentRow = selectedCell.row;
@@ -79,12 +75,12 @@ class App extends React.Component {
       newIndex = this.checkMovableCell(currentRow, currentColumn);
     }
 
-    return newIndex
+    return newIndex;
   }
 
   handleArrowPress(keyCode) {
     const { selectedDirection, toggleDirection, setSelectedCell } = this.props;
-    let newIndex
+    let newIndex;
     switch (keyCode) {
       case 37: //left
         if (selectedDirection === "DOWN") {
@@ -123,70 +119,62 @@ class App extends React.Component {
   }
 
   handleBackspace() {
-    const { cells, selectedDirection, selectedCellIndex, setSelectedCell, setCellValue } = this.props;
+    const { cells, selectedDirection, selectedCellIndex } = this.props;
     const selectedCell = this.getSelectedCell(cells, selectedCellIndex);
-    if (selectedCell.guess !== "") {
-      setCellValue(selectedCellIndex, "")
-    } else {
-      let newIndex
-      if (selectedDirection === "ACROSS") {
-        newIndex = this.moveCursor("LEFT")
-      } else {
-        newIndex = this.moveCursor("UP")
-      }
 
-      setCellValue(newIndex, "")
-      setSelectedCell(newIndex)
+    if (selectedCell.guess !== "") {
+      this.props.setCellValue(selectedCellIndex, "");
+    } else {
+      const newIndex =
+        selectedDirection === "ACROSS"
+          ? this.moveCursor("LEFT")
+          : this.moveCursor("UP");
+      this.props.setCellValue(newIndex, "");
+      this.props.setSelectedCell(newIndex);
     }
   }
 
   handleValueKeyPress(keyCode) {
-    const { clues, cells, selectedDirection, selectedCellIndex, setCellValue, setSelectedCell } = this.props;
+    const {
+      clues,
+      cells,
+      selectedDirection,
+      selectedCellIndex,
+      setCellValue,
+      setSelectedCell
+    } = this.props;
+
     const selectedCell = this.getSelectedCell(cells, selectedCellIndex);
     const value = String.fromCharCode(keyCode).toUpperCase();
+
+    // set value of selected cell
     setCellValue(selectedCellIndex, value);
-    if (selectedDirection === "ACROSS") {
-      // check if current cell is last for current clue
-      const selectedClue = clues.across.find(
-        clue => clue.label === selectedCell.clues.across
+
+    // move cursor to next empty cell for current selected clue
+    const selectedClue =
+      selectedDirection === "ACROSS"
+        ? clues.across.find(clue => clue.label === selectedCell.clues.across)
+        : clues.down.find(clue => clue.label === selectedCell.clues.down);
+
+    const sameClueEmptyCells = cells.filter(
+      cell =>
+        cell.clues &&
+        cell !== selectedCell &&
+        cell.guess === "" &&
+        ((selectedDirection === "ACROSS" &&
+          cell.clues.across === selectedClue.label) ||
+          (selectedDirection === "DOWN" &&
+            cell.clues.down === selectedClue.label))
+    );
+    if (sameClueEmptyCells.length) {
+      const emptyCellsBelow = sameClueEmptyCells.filter(
+        cell => cell.index > selectedCellIndex
       );
-      const sameClueCells = cells.filter(
-        cell => cell.clues && cell.clues.across === selectedClue.label
-      );
-      const lastIndexForClue = Math.max(
-        ...sameClueCells.map(cell => cell.index)
-      );
-      if (selectedCell.index === lastIndexForClue) {
-        // const lastClueIndex = Math.max(...clues.across.map(clue => clue.index))
-        // const nextClueIndex = selectedClue.index + 1 > lastClueIndex ? -1 : selectedClue.index + 1
-        // const nextClue = clues.across.find(clue => clue.index === nextClueIndex)
-        // const nextCell = cells.find(cell => cell.clues && cell.clues.across === nextClue.label)
-        // setSelectedCell(nextCell.index)
-      } else {
-        const newIndex = this.moveCursor("RIGHT");
-        setSelectedCell(newIndex)
-      }
-    } else {
-      // check if current cell is last for current clue
-      const selectedClue = clues.down.find(
-        clue => clue.label === selectedCell.clues.down
-      );
-      const sameClueCells = cells.filter(
-        cell => cell.clues && cell.clues.down === selectedClue.label
-      );
-      const lastIndexForClue = Math.max(
-        ...sameClueCells.map(cell => cell.index)
-      );
-      if (selectedCell.index === lastIndexForClue) {
-        // const lastClueIndex = Math.max(...clues.down.map(clue => clue.index))
-        // const nextClueIndex = selectedClue.index + 1 > lastClueIndex ? -1 : selectedClue.index + 1
-        // const nextClue = clues.down.find(clue => clue.index === nextClueIndex)
-        // const nextCell = cells.find(cell => cell.clues && cell.clues.down === nextClue.label)
-        // setSelectedCell(nextCell.index)
-      } else {
-        const newIndex = this.moveCursor("DOWN");
-        setSelectedCell(newIndex)
-      }
+      const nextIndex =
+        emptyCellsBelow.length > 0
+          ? emptyCellsBelow[0].index
+          : sameClueEmptyCells[0].index;
+      setSelectedCell(nextIndex);
     }
   }
 
@@ -198,7 +186,7 @@ class App extends React.Component {
       this.handleArrowPress(keyCode);
     } else if (keyCode === 8) {
       // backspace
-      this.handleBackspace()
+      this.handleBackspace();
     } else if (48 <= keyCode && keyCode <= 90) {
       // alphanumeric keys
       this.handleValueKeyPress(keyCode);
