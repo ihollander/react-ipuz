@@ -5,6 +5,7 @@ import { statusActions } from "../../actions/status";
 import GridBox from "../grid/GridBox";
 
 class GridContainer extends React.Component {
+  
   // check for puzzle completedness
   componentDidUpdate(prevProps) {
     const solvableCells = this.props.cells.filter(cell => cell.solution);
