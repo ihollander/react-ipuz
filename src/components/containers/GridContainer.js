@@ -4,8 +4,17 @@ import { gridActions } from "../../actions/grid";
 import GridBox from "../grid/GridBox";
 
 class GridContainer extends React.Component {
-  onCellClick = index => this.props.setSelectedCell(index);
 
+  // Event Handlers
+  onCellClick = index => {
+    if (index === this.props.selectedCellIndex) {
+      this.props.toggleDirection()
+    } else {
+      this.props.setSelectedCell(index)
+    }
+  };
+
+  // Render Helpers
   get mappedCells() {
     const { cells, selectedCellIndex, selectedDirection } = this.props;
     const selectedCell = cells.find(c => c.index === selectedCellIndex);
@@ -28,6 +37,7 @@ class GridContainer extends React.Component {
       }
     });
   }
+  
   render() {
     const { dimensions, cells } = this.props;
     if (dimensions && cells.length) {
@@ -57,6 +67,7 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps,
   {
-    setSelectedCell: gridActions.setSelectedCell
+    setSelectedCell: gridActions.setSelectedCell,
+    toggleDirection: gridActions.toggleDirection
   }
 )(GridContainer);

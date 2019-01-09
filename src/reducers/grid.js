@@ -16,31 +16,19 @@ export default (state = INITIAL_STATE, action) => {
         cells: action.payload.grid.cells,
         dimensions: action.payload.grid.dimensions
       };
+    case gridTypes.TOGGLE_DIRECTION:
+      const selectedDirection =
+        state.selectedDirection === "ACROSS" ? "DOWN" : "ACROSS";
+      return { ...state, selectedDirection };
     case gridTypes.CELL_SELECTED:
-      // cell index in payload
-      // optionally toggle selected direction
-      let selectedDirection = state.selectedDirection
-      if (action.payload === state.selectedCellIndex) {
-        selectedDirection = state.selectedDirection === "ACROSS" ? "DOWN" : "ACROSS"
-      }
-    return {...state, selectedCellIndex: action.payload, selectedDirection}
-      // let selectedClue,
-      //     selectedDirection = state.selectedDirection
-      // const cell = action.payload
-      
-      // if (state.selectedDirection === "ACROSS") {
-      //   // find clue from across
-      //   selectedClue = state.across.find(clue => clue.label === cell.clues.across).label
-      // } else {
-      //   selectedClue = state.down.find(clue => clue.label === cell.clues.down).label
-      // }
-    
-      // // set the cell selected based on index value from payload
-      // const selectedCells = state.cells.map(cell =>
-      //   cell === action.payload
-      //     ? { ...cell, selected: true }
-      //     : { ...cell, selected: false }
-      // );
+      return { ...state, selectedCellIndex: action.payload };
+    case gridTypes.CELL_VALUE_CHANGED:
+      const mappedCells = state.cells.map(cell =>
+        cell.index === state.selectedCellIndex
+          ? { ...cell, guess: action.payload }
+          : cell
+      );
+      return { ...state, cells: mappedCells };
     default:
       return state;
   }

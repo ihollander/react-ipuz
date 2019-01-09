@@ -41,7 +41,7 @@ const GridCellWhite = props => {
         textAnchor="middle"
         alignmentBaseline="central"
       >
-        {props.cell.solution}
+        {props.cell.guess}
       </text>
     </g>
   );

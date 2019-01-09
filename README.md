@@ -1,68 +1,68 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Project Outline
 
-## Available Scripts
+## Domain
 
-In the project directory, you can run:
+#### Models and schema
+  
+MVP - render a playable puzzle
+* Use an implementation of the [ipuz](http://www.ipuz.org/) puzzle format 
 
-### `npm start`
+```json
+{
+  "version": "http://ipuz.org/v2",
+  "kind": [ "http://ipuz.org/crossword#1" ],
+  "dimensions": { "_Dimension_": n, ... },
+  "puzzle": [ [ LabeledCell, ... ], ... ],
+  "solution": [ [ CrosswordValue, ... ], ... ],
+  "clues": { "Across": [ Clue, ... ], "Down": [ Clue, ... ] }
+}
+```
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Additional Feature 1 (Puzzle upload)
+* no additional models - file upload/parser to convert to ipuz format
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+Additional Feature 2 (Basic user functionality)
+* User [username]
+	* has many Puzzles [info needed for statistics: timer, completion percentage, saved game data]
 
-### `npm test`
+Additional Features 3 (Co-op play)
+* Room belongs to user1 and user2 and puzzle
+	* Player creates a room which includes a puzzle and shares a link to join the room
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## User Stories
 
-### `npm run build`
+MVP:
+* As a user, I will be able to play a pre-loaded crossword puzzle
+	* User can navigate the puzzle by clicking squares, clicking clue list, or with keyboard
+	* User can check puzzle answer
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Additional Feature 1 (Puzzle upload)
+* As a user, I will be able to play a puzzle of my choice
+	* I will be able to import puzzles from other crossword platforms in .ipuz or .puz formats
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+Additional Feature 2 (Basic user functionality)
+* As a user, I will be able to login
+	* After logging in, I will be able to save puzzles to my profile
+	* I will be able to save my progress during a puzzle
+	* I will be able to view a list of my saved puzzles
+	* I will be able to resume playing saved puzzles
+	* I will be able to view my statistics for played puzzles
+	
+Additional Features 3 (Co-op play)
+* As a user, I will be able to play a puzzle in real time with another user
+	* I will be able to share a link to play a game
+	* Both users will be able to interact with the puzzle and see the other user's interactions
+	
+## Wire-Frames
+https://drive.google.com/file/d/1g_4yu6FjvJO7eAfXeuTAbP4cUo3XK_Kw/view?usp=sharing
+	
+## Outside Resources
+* A puzzle example in .ipuz format: [puzzle](http://www.ipuz.org/example)
+* Reference to .puz file format spec: [docs](https://code.google.com/archive/p/puz/wikis/FileFormat.wiki)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+## Project Schedule
+* MVP: Friday 1/11
+* Additional Feature 1: Monday 1/14
+* Additional Feature 2: Thursday 1/17
+* Additional Feature 3: Tuesday 1/22
+* Final cleanup and CSS: Thursday 1/24

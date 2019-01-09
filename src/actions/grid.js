@@ -7,6 +7,21 @@ const setSelectedCell = index => {
   }
 }
 
+const setSelectedCellValue = value => {
+  return {
+    type: gridTypes.CELL_VALUE_CHANGED,
+    payload: value
+  }
+}
+
+const toggleDirection = () => {
+  return {
+    type: gridTypes.TOGGLE_DIRECTION
+  }
+}
+
 export const gridActions = {
-  setSelectedCell
+  setSelectedCell,
+  toggleDirection,
+  setSelectedCellValue
 };
