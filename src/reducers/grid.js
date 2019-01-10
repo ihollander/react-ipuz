@@ -95,7 +95,7 @@ export default (state = INITIAL_STATE, action) => {
           ((state.selectedDirection === "ACROSS" &&
             cell.clues.across === getSelectedCell.clues.across) ||
             (state.selectedDirection === "DOWN" &&
-              cell.clues.down === getSelectedCell.clues.across));
+              cell.clues.down === getSelectedCell.clues.down));
         if (revealed) {
           return { ...cell, guess: cell.solution, revealed };
         } else {

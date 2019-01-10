@@ -2,6 +2,8 @@ import React from "react";
 import { Menu, Dropdown, Icon } from "semantic-ui-react";
 import { connect } from "react-redux";
 import * as moment from "moment";
+import { gridTypes } from "../../actionTypes/grid";
+import { gridActions } from "../../actions/grid";
 import { statusActions } from "../../actions/status";
 
 class PuzzleTools extends React.Component {
@@ -17,14 +19,19 @@ class PuzzleTools extends React.Component {
   }
 
   componentWillUpdate(prevProps) {
-    if (this.props.paused && !prevProps.paused) {
-      this.startTimer();
-    } else if (!this.props.paused && prevProps.paused) {
-      this.stopTimer();
+    if (this.props.solved) {
+      this.stopTimer()
+    } else {
+      if (this.props.paused && !prevProps.paused) {
+        this.startTimer();
+      } else if (!this.props.paused && prevProps.paused) {
+        this.stopTimer();
+      }
     }
   }
 
   componentWillUnmount() {
+    console.log('timer unmount')
     this.stopTimer();
   }
 
@@ -43,7 +50,28 @@ class PuzzleTools extends React.Component {
 
   // event handlers
   onCheckChange = type => {
-    this.props.dispatch({ type });
+    switch (type) {
+      case gridTypes.CHECK_WORD:
+        this.props.checkWord();
+        break;
+      case gridTypes.CHECK_SQUARE:
+        this.props.checkSquare();
+        break;
+      case gridTypes.CHECK_PUZZLE:
+        this.props.checkPuzzle();
+        break;
+      case gridTypes.REVEAL_WORD:
+        this.props.revealWord();
+        break;
+      case gridTypes.REVEAL_SQUARE:
+        this.props.revealSquare();
+        break;
+      case gridTypes.REVEAL_PUZZLE:
+        this.props.revealPuzzle();
+        break;
+      default:
+        break;
+    }
   };
 
   onPauseButtonClick = () => {
@@ -62,21 +90,21 @@ class PuzzleTools extends React.Component {
           <Dropdown.Menu>
             <Dropdown.Item
               onClick={() => {
-                this.onCheckChange("CHECK_SQUARE");
+                this.onCheckChange(gridTypes.CHECK_SQUARE);
               }}
             >
               Square
             </Dropdown.Item>
             <Dropdown.Item
               onClick={() => {
-                this.onCheckChange("CHECK_WORD");
+                this.onCheckChange(gridTypes.CHECK_WORD);
               }}
             >
               Word
             </Dropdown.Item>
             <Dropdown.Item
               onClick={() => {
-                this.onCheckChange("CHECK_PUZZLE");
+                this.onCheckChange(gridTypes.CHECK_PUZZLE);
               }}
             >
               Puzzle
@@ -87,21 +115,21 @@ class PuzzleTools extends React.Component {
           <Dropdown.Menu>
             <Dropdown.Item
               onClick={() => {
-                this.onCheckChange("REVEAL_SQUARE");
+                this.onCheckChange(gridTypes.REVEAL_SQUARE);
               }}
             >
               Square
             </Dropdown.Item>
             <Dropdown.Item
               onClick={() => {
-                this.onCheckChange("REVEAL_WORD");
+                this.onCheckChange(gridTypes.REVEAL_WORD);
               }}
             >
               Word
             </Dropdown.Item>
             <Dropdown.Item
               onClick={() => {
-                this.onCheckChange("REVEAL_PUZZLE");
+                this.onCheckChange(gridTypes.REVEAL_PUZZLE);
               }}
             >
               Puzzle
@@ -110,11 +138,14 @@ class PuzzleTools extends React.Component {
         </Dropdown>
         <Menu.Menu position="right">
           <Menu.Item>
-            <span style={{color:"red", margin: "0 10px"}}>{this.displayTime}</span>
-            <Icon style={{cursor: "pointer"}}
+            <span style={{ color: "red", margin: "0 10px" }}>
+              {this.displayTime}
+            </span>
+            {!this.props.solved && <Icon
+              style={{ cursor: "pointer" }}
               onClick={this.onPauseButtonClick}
               name={this.props.paused ? "play" : "pause"}
-            />
+            />}
           </Menu.Item>
         </Menu.Menu>
       </Menu>
@@ -123,14 +154,20 @@ class PuzzleTools extends React.Component {
 }
 
 const mapStateToProps = state => {
-  const { timer, paused } = state.status;
-  return { timer, paused };
+  const { timer, paused, solved } = state.status;
+  return { timer, paused, solved};
 };
 
 export default connect(
   mapStateToProps,
   {
     saveTimer: statusActions.saveTimer,
-    togglePaused: statusActions.togglePaused
+    togglePaused: statusActions.togglePaused,
+    checkSquare: gridActions.checkSquare,
+    checkWord: gridActions.checkWord,
+    checkPuzzle: gridActions.checkPuzzle,
+    revealSquare: gridActions.revealSquare,
+    revealWord: gridActions.revealWord,
+    revealPuzzle: gridActions.revealPuzzle
   }
 )(PuzzleTools);

@@ -12,6 +12,9 @@ export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case statusTypes.TOGGLE_PAUSED:
       return { ...state, paused: !state.paused };
+    case parseTypes.PUZZLE_PARSING: {
+      return INITIAL_STATE
+    }
     case parseTypes.PUZZLE_PARSED:
       return { ...state, paused: false };
     case statusTypes.MARK_COMPLETED:

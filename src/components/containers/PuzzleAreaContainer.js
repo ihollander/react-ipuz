@@ -7,15 +7,11 @@ import { gridActions } from "../../actions/grid";
 import PuzzleHeader from "../grid/PuzzleHeader";
 import PuzzleAreaGrid from "../grid/PuzzleAreaGrid";
 
-// temp import until file loading/parsing feature is ready
-import puzzleJSON from "../../puzzleFiles/Jan0719.json";
-
 class PuzzleAreaContainer extends React.Component {
   divRef = React.createRef();
 
   // Lifecycle methods
   componentDidMount() {
-    this.props.parseIpuz(puzzleJSON);
     this.divRef.current && this.divRef.current.focus();
   }
 
@@ -30,6 +26,7 @@ class PuzzleAreaContainer extends React.Component {
 
   // move to helper function
   getCellIndex(row, column, width) {
+    debugger
     return row * width + column;
   }
 
@@ -40,6 +37,7 @@ class PuzzleAreaContainer extends React.Component {
     } = this.props;
     let indexToCheck = this.getCellIndex(row, column, width);
     let cellToCheck = this.getSelectedCell(cells, indexToCheck);
+    debugger
     if (cellToCheck.type !== "BLACK") {
       return indexToCheck;
     }
@@ -196,7 +194,7 @@ class PuzzleAreaContainer extends React.Component {
   onKeyDown = e => {
     const { keyCode } = e;
 
-    if (!e.ctrlKey && !e.altKey && !e.metaKey) {
+    if (!this.props.paused && !e.ctrlKey && !e.altKey && !e.metaKey) {
       if (37 <= keyCode && keyCode <= 40) {
         // arrow keys
         e.preventDefault(); // prevent scrolling
@@ -212,7 +210,7 @@ class PuzzleAreaContainer extends React.Component {
   };
 
   render() {
-    const { dimensions, cells, meta, paused } = this.props;
+    const { dimensions, cells, meta, paused, completed, solved } = this.props;
     if (dimensions && cells.length) {
       return (
         <div
@@ -222,7 +220,11 @@ class PuzzleAreaContainer extends React.Component {
           style={{ outline: "none" }}
         >
           <PuzzleHeader meta={meta} />
-          <PuzzleAreaGrid paused={paused} />
+          <PuzzleAreaGrid
+            paused={paused}
+            completed={completed}
+            solved={solved}
+          />
         </div>
       );
     } else {
@@ -236,7 +238,7 @@ const mapStateToProps = state => {
     grid: { dimensions, cells, selectedCellIndex, selectedDirection },
     clues,
     meta,
-    status: { paused }
+    status: { paused, completed, solved }
   } = state;
   return {
     dimensions,
@@ -245,7 +247,9 @@ const mapStateToProps = state => {
     selectedDirection,
     clues,
     meta,
-    paused
+    paused,
+    completed,
+    solved
   };
 };
 

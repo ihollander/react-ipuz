@@ -20,8 +20,46 @@ const toggleDirection = () => {
   };
 };
 
+const checkSquare = () => {
+  return {
+    type: gridTypes.CHECK_SQUARE
+  }
+}
+const checkWord = () => {
+  return {
+    type: gridTypes.CHECK_WORD
+  }
+}
+const checkPuzzle = () => {
+  return {
+    type: gridTypes.CHECK_PUZZLE
+  }
+}
+
+const revealSquare = () => {
+  return {
+    type: gridTypes.REVEAL_SQUARE
+  }
+}
+const revealWord = () => {
+  return {
+    type: gridTypes.REVEAL_WORD
+  }
+}
+const revealPuzzle = () => {
+  return {
+    type: gridTypes.REVEAL_PUZZLE
+  }
+}
+
 export const gridActions = {
   setSelectedCell,
   toggleDirection,
-  setCellValue
+  setCellValue,
+  checkSquare,
+  checkWord,
+  checkPuzzle,
+  revealSquare,
+  revealWord,
+  revealPuzzle
 };
