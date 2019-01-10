@@ -4,14 +4,15 @@ import GridCellWhite from "./GridCellWhite";
 
 const GridBox = ({ dimensions, cells, onCellClick }) => {
   const puzzWidth = 600;
+  const borderOffset = 4
 
   const renderCells = () => {
-    const cellHeight = puzzWidth / dimensions.height;
-    const cellWidth = puzzWidth / dimensions.width;
+    const cellHeight = (puzzWidth - borderOffset)/ dimensions.height;
+    const cellWidth = (puzzWidth - borderOffset) / dimensions.width;
 
     const gridCells = cells.map(cell => {
-      const xOffset = cellWidth * cell.column;
-      const yOffset = cellHeight * cell.row;
+      const xOffset = (cellWidth * cell.column) + (borderOffset / 2);
+      const yOffset = (cellHeight * cell.row) + (borderOffset / 2);
 
       const display = {
         x: xOffset,
@@ -39,12 +40,21 @@ const GridBox = ({ dimensions, cells, onCellClick }) => {
 
   return (
     <svg
-      width={puzzWidth}
-      height={puzzWidth}
+      viewBox={`0 0 ${puzzWidth} ${puzzWidth}`}
       overflow="visible"
       xmlns="http://www.w3.org/2000/svg"
+      style={{cursor: "pointer"}}
     >
       <g>{renderCells()}</g>
+      <rect
+        x="0"
+        y="0"
+        width={puzzWidth}
+        height={puzzWidth}
+        fill="none"
+        stroke="black"
+        strokeWidth="4"
+      />
     </svg>
   );
 };

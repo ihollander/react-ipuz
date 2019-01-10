@@ -29,6 +29,51 @@ export default (state = INITIAL_STATE, action) => {
           : cell
       );
       return { ...state, cells: newCellValues };
+    case gridTypes.CHECK_SQUARE:
+      const checkSquareCells = state.cells.map(cell => {
+        const checked =
+          cell.guess !== "" && cell.index === state.selectedCellIndex;
+        const confirmed = checked && cell.guess === cell.solution;
+        if (checked) {
+          return { ...cell, checked, confirmed };
+        } else {
+          return cell
+        }
+      });
+      return { ...state, cells: checkSquareCells };
+    case gridTypes.CHECK_WORD:
+      const selectedCell = state.cells.find(
+        cell => cell.index === state.selectedCellIndex
+      );
+      const checkWordCells = state.cells.map(cell => {
+        const checked =
+          cell.clues &&
+          cell.guess !== "" &&
+          ((state.selectedDirection === "ACROSS" &&
+            cell.clues.across === selectedCell.clues.across) ||
+            (state.selectedDirection === "DOWN" &&
+              cell.clues.down === selectedCell.clues.across));
+        const confirmed = checked && cell.guess === cell.solution;
+        if (checked) {
+          return { ...cell, checked, confirmed };
+        } else {
+          return cell
+        }
+      });
+      return { ...state, cells: checkWordCells };
+    case gridTypes.CHECK_PUZZLE:
+      const checkPuzzleCells = state.cells.map(cell => {
+        const checked =
+          cell.type !== "BLACK" &&
+          cell.guess !== "";
+        const confirmed = checked && cell.guess === cell.solution;
+        if (checked) {
+          return { ...cell, checked, confirmed };
+        } else {
+          return cell
+        }
+      });
+      return { ...state, cells: checkPuzzleCells };
     default:
       return state;
   }

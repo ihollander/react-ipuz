@@ -1,11 +1,17 @@
 import React from "react";
+import { List } from "semantic-ui-react";
 
 const ClueItem = ({ clue, selectedClue, onClueClick }) => {
   return (
-    <li
+    <List.Item
       onClick={() => onClueClick(clue.label)}
       style={{ backgroundColor: clue === selectedClue ? "pink" : "" }}
-    >{`${clue.label}. ${clue.text}`}</li>
+    >
+      <List.Content>
+        <span className="clue-number">{`${clue.label}`}</span>
+        {clue.text}
+      </List.Content>
+    </List.Item>
   );
 };
 

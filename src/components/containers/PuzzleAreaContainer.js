@@ -1,19 +1,26 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Grid } from "semantic-ui-react";
 
 import { parseActions } from "../../actions/parse";
 import { gridActions } from "../../actions/grid";
 
-import ClueContainer from "./ClueContainer";
-import GridContainer from "./GridContainer";
+import PuzzleHeader from '../grid/PuzzleHeader'
+import PuzzleAreaGrid from "../grid/PuzzleAreaGrid";
 
 // temp import until file loading/parsing feature is ready
 import puzzleJSON from "../../puzzleFiles/Jan0719.json";
 
 class PuzzleAreaContainer extends React.Component {
+  divRef = React.createRef();
+
+  // Lifecycle methods
   componentDidMount() {
     this.props.parseIpuz(puzzleJSON);
+    this.divRef.current && this.divRef.current.focus();
+  }
+
+  componentDidUpdate() {
+    this.divRef.current && this.divRef.current.focus();
   }
 
   // move to helper function
@@ -177,48 +184,67 @@ class PuzzleAreaContainer extends React.Component {
           ? emptyCellsBelow[0].index
           : sameClueEmptyCells[0].index;
       setSelectedCell(nextIndex);
+    } else {
+      // const nextIndex =
+      //   selectedDirection === "ACROSS"
+      //     ? this.moveCursor("RIGHT")
+      //     : this.moveCursor("DOWN");
+      // setSelectedCell(nextIndex);
     }
   }
 
   onKeyDown = e => {
     const { keyCode } = e;
-    if (37 <= keyCode && keyCode <= 40) {
-      // arrow keys
-      e.preventDefault(); // prevent scrolling
-      this.handleArrowPress(keyCode);
-    } else if (keyCode === 8) {
-      // backspace
-      this.handleBackspace();
-    } else if (48 <= keyCode && keyCode <= 90) {
-      // alphanumeric keys
-      this.handleValueKeyPress(keyCode);
+
+    if (!e.ctrlKey && !e.altKey && !e.metaKey) {
+      if (37 <= keyCode && keyCode <= 40) {
+        // arrow keys
+        e.preventDefault(); // prevent scrolling
+        this.handleArrowPress(keyCode);
+      } else if (keyCode === 8) {
+        // backspace
+        this.handleBackspace();
+      } else if (48 <= keyCode && keyCode <= 90) {
+        // alphanumeric keys
+        this.handleValueKeyPress(keyCode);
+      }
     }
   };
 
   render() {
-    return (
-      <div tabIndex="-1" onKeyDown={this.onKeyDown} style={{ display: "flex" }}>
-        <Grid>
-          <Grid.Row columns={2}>
-            <Grid.Column>
-              <GridContainer />
-            </Grid.Column>
-            <Grid.Column>
-              <ClueContainer />
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </div>
-    );
+    const { dimensions, cells, meta } = this.props;
+    if (dimensions && cells.length) {
+      return (
+        <div
+          ref={this.divRef}
+          tabIndex="-1"
+          onKeyDown={this.onKeyDown}
+          style={{ outline: "none" }}
+        >
+          <PuzzleHeader meta={meta} />
+          <PuzzleAreaGrid />
+        </div>
+      );
+    } else {
+      return <div>Loading...</div>;
+    }
   }
 }
 
 const mapStateToProps = state => {
   const {
     grid: { dimensions, cells, selectedCellIndex, selectedDirection },
-    clues
+    clues,
+    meta
   } = state;
-  return { dimensions, cells, selectedCellIndex, selectedDirection, clues };
+  return {
+    dimensions,
+    cells,
+    selectedCellIndex,
+    selectedDirection,
+    clues,
+    meta
+  };
 };
 
 export default connect(

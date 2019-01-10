@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import { Grid } from "semantic-ui-react";
 import { gridActions } from "../../actions/grid";
 import ClueList from "../clues/ClueList";
 
@@ -48,26 +49,26 @@ class ClueContainer extends React.Component {
   render() {
     const { clues } = this.props;
 
-    if (clues.across.length && clues.across.length) {
-      return (
-        <div style={{ display: "flex", height: "600px" }}>
+    return (
+      <Grid columns={2} style={{maxHeight: "680px", marginBottom: "2rem"}}>
+        <Grid.Column>
           <ClueList
             clues={clues.across}
             selectedClue={this.selectedClue}
             onClueClick={this.onAcrossClueClick}
             heading="Across"
           />
+        </Grid.Column>
+        <Grid.Column>
           <ClueList
             clues={clues.down}
             selectedClue={this.selectedClue}
             onClueClick={this.onDownClueClick}
             heading="Down"
           />
-        </div>
-      );
-    } else {
-      return <div>Clues loading...</div>;
-    }
+        </Grid.Column>
+      </Grid>
+    );
   }
 }
 

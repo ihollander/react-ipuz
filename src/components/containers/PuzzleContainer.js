@@ -2,18 +2,21 @@ import React from "react";
 import { connect } from "react-redux";
 import { gridActions } from "../../actions/grid";
 import { statusActions } from "../../actions/status";
+
+import ActiveClue from "../clues/ActiveClue";
 import GridBox from "../grid/GridBox";
 
-class GridContainer extends React.Component {
-  
+class PuzzleContainer extends React.Component {
   // check for puzzle completedness
   componentDidUpdate(prevProps) {
     const solvableCells = this.props.cells.filter(cell => cell.solution);
     const filledCells = solvableCells.filter(cell => cell.guess !== "");
-    const solvedCells = solvableCells.filter(cell => cell.guess === cell.solution)
+    const solvedCells = solvableCells.filter(
+      cell => cell.guess === cell.solution
+    );
     if (filledCells.length === solvableCells.length) {
       if (solvedCells.length === solvableCells.length) {
-        this.props.markSolved()
+        this.props.markSolved();
       } else {
         this.props.markCompleted();
       }
@@ -58,28 +61,40 @@ class GridContainer extends React.Component {
     });
   }
 
+  // Render helpers
+  get selectedClue() {
+    const { clues, cells, selectedCellIndex, selectedDirection } = this.props;
+    const selectedCell = cells.find(c => c.index === selectedCellIndex);
+    if (selectedDirection === "ACROSS") {
+      return clues.across.find(c => c.label === selectedCell.clues.across);
+    } else {
+      return clues.down.find(c => c.label === selectedCell.clues.down);
+    }
+  }
+
   render() {
-    const { dimensions, cells } = this.props;
-    if (dimensions && cells.length) {
-      return (
+    const { dimensions, selectedDirection } = this.props;
+    return (
+      <>
+        <ActiveClue clue={this.selectedClue} direction={selectedDirection} />
         <GridBox
           dimensions={dimensions}
           cells={this.mappedCells}
           onCellClick={this.onCellClick}
         />
-      );
-    } else {
-      return <div>Loading grid...</div>;
-    }
+      </>
+    );
   }
 }
 
 const mapStateToProps = state => {
   const {
+    clues,
     grid: { dimensions, cells, selectedCellIndex, selectedDirection },
     status: { completed, solved }
   } = state;
   return {
+    clues,
     completed,
     solved,
     dimensions,
@@ -98,4 +113,4 @@ export default connect(
     unmarkCompleted: statusActions.unmarkCompleted,
     markSolved: statusActions.markSolved
   }
-)(GridContainer);
+)(PuzzleContainer);

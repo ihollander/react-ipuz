@@ -1,6 +1,8 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 
+import './App.css'
+
 import AuthenticatedLayoutRoute from "./routes/AuthenticatedLayoutRoute";
 import PuzzleAreaContainer from "./containers/PuzzleAreaContainer";
 

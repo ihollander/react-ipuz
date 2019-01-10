@@ -22,7 +22,13 @@ const GridCellWhite = props => {
         width={props.display.width}
         height={props.display.height}
         stroke="black"
-        fill={props.cell.selected ? "red" : (props.cell.clueSelected ? "pink" : "white")}
+        fill={
+          props.cell.selected
+            ? "red"
+            : props.cell.clueSelected
+            ? "pink"
+            : "white"
+        }
       />
       <text
         fill="black"
@@ -34,7 +40,7 @@ const GridCellWhite = props => {
         {props.cell.label}
       </text>
       <text
-        fill="black"
+        fill={props.cell.checked ? "blue" : "black"}
         x={solutionPosition.x}
         y={solutionPosition.y}
         fontSize="22"
@@ -43,6 +49,16 @@ const GridCellWhite = props => {
       >
         {props.cell.guess}
       </text>
+      {props.cell.checked && !props.cell.confirmed && (
+        <line
+          x1={props.display.x}
+          y1={props.display.y + props.display.height}
+          x2={props.display.x + props.display.width}
+          y2={props.display.y}
+          stroke="orange"
+          strokeWidth="3"
+        />
+      )}
     </g>
   );
 };
