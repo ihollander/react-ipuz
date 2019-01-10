@@ -1,31 +1,38 @@
 import React from "react";
 
-const GridCellWhite = props => {
-  const onCellClick = () => props.onCellClick(props.cell.index);
+const GridCellWhite = ({ display, cell, onCellClick }) => {
+  const onClick = () => onCellClick(cell.index);
 
   const labelPosition = {
-    x: props.display.x + 2,
-    y: props.display.y + 2
+    x: display.x + 2,
+    y: display.y + 2
   };
 
   const solutionPosition = {
-    x: props.display.x + props.display.width / 2,
-    y: props.display.y + 4 + props.display.height / 2
+    x: display.x + display.width / 2,
+    y: display.y + 4 + display.height / 2
+  };
+
+  const checkmarkPoints = () => {
+    const start = `${display.x + display.width - 9} ${display.y + display.height - 6}`;
+    const bottom = `${display.x + display.width - 5} ${display.y + display.height - 3}`;
+    const top = `${display.x + display.width - 1} ${display.y + display.height - 11}`;
+    return [start, bottom, top].join(", ");
   };
 
   return (
-    <g onClick={onCellClick}>
+    <g onClick={onClick}>
       <rect
         className="rect-svg"
-        x={props.display.x}
-        y={props.display.y}
-        width={props.display.width}
-        height={props.display.height}
+        x={display.x}
+        y={display.y}
+        width={display.width}
+        height={display.height}
         stroke="black"
         fill={
-          props.cell.selected
+          cell.selected
             ? "red"
-            : props.cell.clueSelected
+            : cell.clueSelected
             ? "pink"
             : "white"
         }
@@ -37,27 +44,30 @@ const GridCellWhite = props => {
         fontSize="12"
         alignmentBaseline="hanging"
       >
-        {props.cell.label}
+        {cell.label}
       </text>
       <text
-        fill={props.cell.checked ? "blue" : "black"}
+        fill={cell.checked ? "blue" : "black"}
         x={solutionPosition.x}
         y={solutionPosition.y}
         fontSize="22"
         textAnchor="middle"
         alignmentBaseline="central"
       >
-        {props.cell.guess}
+        {cell.guess}
       </text>
-      {props.cell.checked && !props.cell.confirmed && (
+      {cell.checked && !cell.confirmed && (
         <line
-          x1={props.display.x}
-          y1={props.display.y + props.display.height}
-          x2={props.display.x + props.display.width}
-          y2={props.display.y}
+          x1={display.x}
+          y1={display.y + display.height}
+          x2={display.x + display.width}
+          y2={display.y}
           stroke="orange"
-          strokeWidth="3"
+          strokeWidth="2"
         />
+      )}
+      {cell.revealed && (
+        <polyline points={checkmarkPoints()} fill="transparent" stroke="orange" strokeWidth="2" />
       )}
     </g>
   );

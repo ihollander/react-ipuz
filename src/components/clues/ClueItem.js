@@ -1,18 +1,61 @@
 import React from "react";
-import { List } from "semantic-ui-react";
+import { List, Ref } from "semantic-ui-react";
 
-const ClueItem = ({ clue, selectedClue, onClueClick }) => {
-  return (
-    <List.Item
-      onClick={() => onClueClick(clue.label)}
-      style={{ backgroundColor: clue === selectedClue ? "pink" : "" }}
-    >
-      <List.Content>
-        <span className="clue-number">{`${clue.label}`}</span>
-        {clue.text}
-      </List.Content>
-    </List.Item>
-  );
-};
+class ClueItem extends React.Component {
+  liRef = React.createRef();
+
+  componentDidUpdate() {
+    const { clue, selectedClue } = this.props;
+    const target = this.liRef.current;
+    if (clue === selectedClue && target) {
+      // clearInterval(this.scrollInterval) // clear existing animations...
+      // this.animateScroll(target, 1000);
+      // target.scrollIntoView({
+      //   behavior: "smooth"
+      // });
+      target.parentNode.scrollTop =
+        target.offsetTop - target.parentNode.offsetTop;
+    }
+  }
+
+  // animateScroll(target, duration) {
+  //   const positionStart = target.parentNode.scrollTop;
+  //   const positionEnd = target.offsetTop - target.parentNode.offsetTop;
+  //   const scrollStep = ((positionStart - positionEnd) / duration) * 15;
+
+  //   console.log(positionStart, positionEnd);
+  //   console.log(scrollStep);
+  //   this.scrollInterval = setInterval(() => {
+  //     if (target.parentNode.scrollTop !== positionEnd) {
+  //       if (scrollStep < 0) {
+  //         target.parentNode.scrollTop -= scrollStep;
+  //       } else {
+  //         target.parentNode.scrollTop += scrollStep;
+  //       }
+  //     }
+  //   }, 15);
+  //   // target.parentNode.scrollTop = positionEnd
+  // }
+
+  render() {
+    const { clue, onClueClick } = this.props;
+    return (
+      <Ref innerRef={this.liRef}>
+        <List.Item
+          onClick={() => onClueClick(clue.label)}
+          style={{
+            backgroundColor: clue.selected ? "pink" : "",
+            color: clue.answered ? "grey" : "black"
+          }}
+        >
+          <List.Content>
+            <span className="clue-number">{`${clue.label}`}</span>
+            {clue.text}
+          </List.Content>
+        </List.Item>
+      </Ref>
+    );
+  }
+}
 
 export default ClueItem;

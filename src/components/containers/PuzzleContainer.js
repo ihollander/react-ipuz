@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+
 import { gridActions } from "../../actions/grid";
 import { statusActions } from "../../actions/status";
 
@@ -76,12 +77,12 @@ class PuzzleContainer extends React.Component {
     const { dimensions, selectedDirection } = this.props;
     return (
       <>
-        <ActiveClue clue={this.selectedClue} direction={selectedDirection} />
-        <GridBox
-          dimensions={dimensions}
-          cells={this.mappedCells}
-          onCellClick={this.onCellClick}
-        />
+          <ActiveClue clue={this.selectedClue} direction={selectedDirection} />
+          <GridBox
+            dimensions={dimensions}
+            cells={this.mappedCells}
+            onCellClick={this.onCellClick}
+          />
       </>
     );
   }
@@ -95,12 +96,12 @@ const mapStateToProps = state => {
   } = state;
   return {
     clues,
-    completed,
-    solved,
     dimensions,
     cells,
     selectedCellIndex,
-    selectedDirection
+    selectedDirection,
+    completed,
+    solved
   };
 };
 

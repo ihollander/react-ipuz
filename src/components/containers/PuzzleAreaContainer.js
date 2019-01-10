@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { parseActions } from "../../actions/parse";
 import { gridActions } from "../../actions/grid";
 
-import PuzzleHeader from '../grid/PuzzleHeader'
+import PuzzleHeader from "../grid/PuzzleHeader";
 import PuzzleAreaGrid from "../grid/PuzzleAreaGrid";
 
 // temp import until file loading/parsing feature is ready
@@ -212,7 +212,7 @@ class PuzzleAreaContainer extends React.Component {
   };
 
   render() {
-    const { dimensions, cells, meta } = this.props;
+    const { dimensions, cells, meta, paused } = this.props;
     if (dimensions && cells.length) {
       return (
         <div
@@ -222,7 +222,7 @@ class PuzzleAreaContainer extends React.Component {
           style={{ outline: "none" }}
         >
           <PuzzleHeader meta={meta} />
-          <PuzzleAreaGrid />
+          <PuzzleAreaGrid paused={paused} />
         </div>
       );
     } else {
@@ -235,7 +235,8 @@ const mapStateToProps = state => {
   const {
     grid: { dimensions, cells, selectedCellIndex, selectedDirection },
     clues,
-    meta
+    meta,
+    status: { paused }
   } = state;
   return {
     dimensions,
@@ -243,7 +244,8 @@ const mapStateToProps = state => {
     selectedCellIndex,
     selectedDirection,
     clues,
-    meta
+    meta,
+    paused
   };
 };
 

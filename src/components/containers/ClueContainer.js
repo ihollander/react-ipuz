@@ -46,28 +46,67 @@ class ClueContainer extends React.Component {
     }
   }
 
-  render() {
-    const { clues } = this.props;
+  get mappedAcrossClues() {
+    const { clues, cells, selectedCellIndex, selectedDirection } = this.props;
+    const selectedCell = cells.find(c => c.index === selectedCellIndex);
+    const mappedClues = clues.across.map(clue => {
+      const selectedClue =
+        selectedDirection === "ACROSS" &&
+        clue.label === selectedCell.clues.across;
+      const cellsWithClue = cells.filter(
+        cell => cell.clues && cell.clues.across === clue.label
+      );
+      const clueAnswered = cellsWithClue.every(cell => cell.guess !== "");
+      if (selectedClue || clueAnswered) {
+        return { ...clue, selected: selectedClue, answered: clueAnswered };
+      } else {
+        return clue;
+      }
+    });
+    return mappedClues;
+  }
 
+  get mappedDownClues() {
+    const { clues, cells, selectedCellIndex, selectedDirection } = this.props;
+    const selectedCell = cells.find(c => c.index === selectedCellIndex);
+    const mappedClues = clues.down.map(clue => {
+      const selectedClue =
+        selectedDirection === "DOWN" && clue.label === selectedCell.clues.down;
+      const cellsWithClue = cells.filter(
+        cell => cell.clues && cell.clues.down === clue.label
+      );
+      const clueAnswered = cellsWithClue.every(cell => cell.guess !== "");
+      if (selectedClue || clueAnswered) {
+        return { ...clue, selected: selectedClue, answered: clueAnswered };
+      } else {
+        return clue;
+      }
+    });
+    return mappedClues;
+  }
+
+  render() {
     return (
-      <Grid columns={2} style={{maxHeight: "680px", marginBottom: "2rem"}}>
-        <Grid.Column>
-          <ClueList
-            clues={clues.across}
-            selectedClue={this.selectedClue}
-            onClueClick={this.onAcrossClueClick}
-            heading="Across"
-          />
-        </Grid.Column>
-        <Grid.Column>
-          <ClueList
-            clues={clues.down}
-            selectedClue={this.selectedClue}
-            onClueClick={this.onDownClueClick}
-            heading="Down"
-          />
-        </Grid.Column>
-      </Grid>
+      <>
+        <Grid columns={2} style={{ maxHeight: "680px", marginBottom: "2rem" }}>
+          <Grid.Column>
+            <ClueList
+              clues={this.mappedAcrossClues}
+              selectedClue={this.selectedClue}
+              onClueClick={this.onAcrossClueClick}
+              heading="Across"
+            />
+          </Grid.Column>
+          <Grid.Column>
+            <ClueList
+              clues={this.mappedDownClues}
+              selectedClue={this.selectedClue}
+              onClueClick={this.onDownClueClick}
+              heading="Down"
+            />
+          </Grid.Column>
+        </Grid>
+      </>
     );
   }
 }

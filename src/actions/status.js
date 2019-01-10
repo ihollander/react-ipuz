@@ -1,5 +1,18 @@
 import { statusTypes } from "../actionTypes/status";
 
+const togglePaused = () => {
+  return {
+    type: statusTypes.TOGGLE_PAUSED
+  }
+}
+
+const saveTimer = timer => {
+  return {
+    type: statusTypes.SAVE_TIMER,
+    payload: timer
+  }
+}
+
 const markCompleted = () => {
   return {
     type: statusTypes.MARK_COMPLETED
@@ -21,5 +34,7 @@ const markSolved = () => {
 export const statusActions = {
   markCompleted,
   unmarkCompleted,
-  markSolved
+  markSolved,
+  saveTimer,
+  togglePaused
 };
