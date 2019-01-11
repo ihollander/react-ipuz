@@ -309,7 +309,6 @@ class PuzParse {
     return returnValue;
   }
 
-  // TODO: refactor helpers
   toByte(arrayBuffer) {
     return new Uint8Array(arrayBuffer)[0];
   }
@@ -321,8 +320,6 @@ class PuzParse {
   toInt8String(arrayBuffer) {
     return String.fromCharCode.apply(null, new Uint8Array(arrayBuffer));
   }
-
-  toHexString() {}
 
   getArrayBuffer(data, start, offset) {
     return data.slice(start, start + offset);

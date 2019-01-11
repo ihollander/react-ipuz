@@ -7,6 +7,9 @@ const NavBar = () => {
   return (
     <Menu inverted className="fixed">
       <Container>
+        <NavLink exact to="/" className="item">
+          Current Puzzle
+        </NavLink>
         <NavLink exact to="/puzzles" className="item">
           Puzzles
         </NavLink>
