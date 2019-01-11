@@ -20,7 +20,7 @@ class PuzzleTools extends React.Component {
 
   componentWillUpdate(prevProps) {
     if (this.props.solved) {
-      this.stopTimer()
+      this.stopTimer();
     } else {
       if (this.props.paused && !prevProps.paused) {
         this.startTimer();
@@ -31,7 +31,7 @@ class PuzzleTools extends React.Component {
   }
 
   componentWillUnmount() {
-    console.log('timer unmount')
+    console.log("timer unmount");
     this.stopTimer();
   }
 
@@ -50,24 +50,47 @@ class PuzzleTools extends React.Component {
 
   // event handlers
   onCheckChange = type => {
+    const { cells, selectedCellIndex, selectedDirection } = this.props;
+    const selectedCells = [];
+
     switch (type) {
-      case gridTypes.CHECK_WORD:
-        this.props.checkWord();
-        break;
       case gridTypes.CHECK_SQUARE:
-        this.props.checkSquare();
+      case gridTypes.REVEAL_SQUARE:
+        selectedCells.push(selectedCellIndex);
+        break;
+      case gridTypes.CHECK_WORD:
+      case gridTypes.REVEAL_WORD:
+        const selectedCell = cells.find(c => c.index === selectedCellIndex);
+        cells.forEach(c => {
+          const selectedClue =
+            c.clues &&
+            ((selectedDirection === "ACROSS" &&
+              c.clues.across === selectedCell.clues.across) ||
+              (selectedDirection === "DOWN" &&
+                c.clues.down === selectedCell.clues.down));
+          if (selectedClue) selectedCells.push(c.index);
+        });
         break;
       case gridTypes.CHECK_PUZZLE:
-        this.props.checkPuzzle();
+      case gridTypes.REVEAL_PUZZLE:
+        cells.forEach(c => {
+          if (c.type !== "BLACK") selectedCells.push(c.index)
+        })
+        break;
+      default:
+        break;
+    }
+
+    switch (type) {
+      case gridTypes.CHECK_SQUARE:
+      case gridTypes.CHECK_WORD:
+      case gridTypes.CHECK_PUZZLE:
+        this.props.checkAnswer(selectedCells);
         break;
       case gridTypes.REVEAL_WORD:
-        this.props.revealWord();
-        break;
       case gridTypes.REVEAL_SQUARE:
-        this.props.revealSquare();
-        break;
       case gridTypes.REVEAL_PUZZLE:
-        this.props.revealPuzzle();
+        this.props.revealAnswer(selectedCells);
         break;
       default:
         break;
@@ -141,11 +164,13 @@ class PuzzleTools extends React.Component {
             <span style={{ color: "red", margin: "0 10px" }}>
               {this.displayTime}
             </span>
-            {!this.props.solved && <Icon
-              style={{ cursor: "pointer" }}
-              onClick={this.onPauseButtonClick}
-              name={this.props.paused ? "play" : "pause"}
-            />}
+            {!this.props.solved && (
+              <Icon
+                style={{ cursor: "pointer" }}
+                onClick={this.onPauseButtonClick}
+                name={this.props.paused ? "play" : "pause"}
+              />
+            )}
           </Menu.Item>
         </Menu.Menu>
       </Menu>
@@ -153,9 +178,11 @@ class PuzzleTools extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
-  const { timer, paused, solved } = state.status;
-  return { timer, paused, solved};
+const mapStateToProps = ({
+  status: { timer, paused, solved },
+  grid: { cells, selectedCellIndex, selectedDirection }
+}) => {
+  return { timer, paused, solved, cells, selectedCellIndex, selectedDirection };
 };
 
 export default connect(
@@ -163,11 +190,7 @@ export default connect(
   {
     saveTimer: statusActions.saveTimer,
     togglePaused: statusActions.togglePaused,
-    checkSquare: gridActions.checkSquare,
-    checkWord: gridActions.checkWord,
-    checkPuzzle: gridActions.checkPuzzle,
-    revealSquare: gridActions.revealSquare,
-    revealWord: gridActions.revealWord,
-    revealPuzzle: gridActions.revealPuzzle
+    checkAnswer: gridActions.checkAnswer,
+    revealAnswer: gridActions.revealAnswer
   }
 )(PuzzleTools);
