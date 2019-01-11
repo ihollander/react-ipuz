@@ -67,9 +67,9 @@ class PuzzleContainer extends React.Component {
     const { clues, cells, selectedCellIndex, selectedDirection } = this.props;
     const selectedCell = cells.find(c => c.index === selectedCellIndex);
     if (selectedDirection === "ACROSS") {
-      return clues.across.find(c => c.label === selectedCell.clues.across);
+      return clues.across[selectedCell.clues.across];
     } else {
-      return clues.down.find(c => c.label === selectedCell.clues.down);
+      return clues.down[selectedCell.clues.down];
     }
   }
 

@@ -26,7 +26,6 @@ class PuzzleAreaContainer extends React.Component {
 
   // move to helper function
   getCellIndex(row, column, width) {
-    debugger
     return row * width + column;
   }
 
@@ -37,7 +36,6 @@ class PuzzleAreaContainer extends React.Component {
     } = this.props;
     let indexToCheck = this.getCellIndex(row, column, width);
     let cellToCheck = this.getSelectedCell(cells, indexToCheck);
-    debugger
     if (cellToCheck.type !== "BLACK") {
       return indexToCheck;
     }
@@ -160,8 +158,8 @@ class PuzzleAreaContainer extends React.Component {
     // move cursor to next empty cell for current selected clue
     const selectedClue =
       selectedDirection === "ACROSS"
-        ? clues.across.find(clue => clue.label === selectedCell.clues.across)
-        : clues.down.find(clue => clue.label === selectedCell.clues.down);
+        ? clues.across[selectedCell.clues.across]
+        : clues.down[selectedCell.clues.down];
 
     const sameClueEmptyCells = cells.filter(
       cell =>

@@ -17,14 +17,14 @@ class ClueContainer extends React.Component {
     if (selectedDirection !== direction) {
       toggleDirection();
     }
-    const sameClueCells = cells.filter(cell => {
+    const clueCell = cells.find(cell => {
       if (direction === "ACROSS") {
         return cell.clues && cell.clues.across === label;
       } else {
         return cell.clues && cell.clues.down === label;
       }
     });
-    setSelectedCell(sameClueCells[0].index);
+    setSelectedCell(clueCell.index);
   }
 
   onDownClueClick = label => {
@@ -40,48 +40,53 @@ class ClueContainer extends React.Component {
     const { clues, cells, selectedCellIndex, selectedDirection } = this.props;
     const selectedCell = cells.find(c => c.index === selectedCellIndex);
     if (selectedDirection === "ACROSS") {
-      return clues.across.find(c => c.label === selectedCell.clues.across);
+      return clues.across[selectedCell.clues.across];
     } else {
-      return clues.down.find(c => c.label === selectedCell.clues.down);
+      return clues.down[selectedCell.clues.down];
     }
   }
 
   get mappedAcrossClues() {
     const { clues, cells, selectedCellIndex, selectedDirection } = this.props;
     const selectedCell = cells.find(c => c.index === selectedCellIndex);
-    const mappedClues = clues.across.map(clue => {
-      const selectedClue =
-        selectedDirection === "ACROSS" &&
-        clue.label === selectedCell.clues.across;
+    const mappedClues = { ...clues.across };
+    // mark as answered
+    Object.keys(mappedClues).forEach(id => {
       const cellsWithClue = cells.filter(
-        cell => cell.clues && cell.clues.across === clue.label
+        cell => cell.clues && cell.clues.across === mappedClues[id].label
       );
-      const clueAnswered = cellsWithClue.every(cell => cell.guess !== "");
-      if (selectedClue || clueAnswered) {
-        return { ...clue, selected: selectedClue, answered: clueAnswered };
-      } else {
-        return clue;
-      }
+      const answered = cellsWithClue.every(cell => cell.guess !== "");
+      mappedClues[id] = { ...mappedClues[id], answered };
     });
+    // mark as selected
+    if (selectedDirection === "ACROSS") {
+      mappedClues[selectedCell.clues.across] = {
+        ...mappedClues[selectedCell.clues.across],
+        selected: true
+      };
+    }
     return mappedClues;
   }
 
   get mappedDownClues() {
     const { clues, cells, selectedCellIndex, selectedDirection } = this.props;
     const selectedCell = cells.find(c => c.index === selectedCellIndex);
-    const mappedClues = clues.down.map(clue => {
-      const selectedClue =
-        selectedDirection === "DOWN" && clue.label === selectedCell.clues.down;
+    const mappedClues = { ...clues.down };
+    // mark as answered
+    Object.keys(mappedClues).forEach(id => {
       const cellsWithClue = cells.filter(
-        cell => cell.clues && cell.clues.down === clue.label
+        cell => cell.clues && cell.clues.down === mappedClues[id].label
       );
-      const clueAnswered = cellsWithClue.every(cell => cell.guess !== "");
-      if (selectedClue || clueAnswered) {
-        return { ...clue, selected: selectedClue, answered: clueAnswered };
-      } else {
-        return clue;
-      }
+      const answered = cellsWithClue.every(cell => cell.guess !== "");
+      mappedClues[id] = { ...mappedClues[id], answered };
     });
+    // mark as selected
+    if (selectedDirection === "DOWN") {
+      mappedClues[selectedCell.clues.down] = {
+        ...mappedClues[selectedCell.clues.down],
+        selected: true
+      };
+    }
     return mappedClues;
   }
 

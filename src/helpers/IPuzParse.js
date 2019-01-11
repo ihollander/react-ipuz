@@ -1,17 +1,27 @@
 export default ipuz => {
   // parse clues and solution together for cells
+  const across = ipuz.clues["Across"].reduce((obj, clue) => {
+    obj[clue[0]] = {
+      label: clue[0],
+      text: clue[1],
+      answered: false,
+      selected: false
+    };
+    return obj;
+  }, {});
+  const down = ipuz.clues["Down"].reduce((obj, clue) => {
+    obj[clue[0]] = {
+      label: clue[0],
+      text: clue[1],
+      answered: false,
+      selected: false
+    };
+    return obj;
+  }, {});
   const cells = [];
   const clues = {
-    across: ipuz.clues["Across"].map((clue, index) => ({
-      label: clue[0],
-      text: clue[1],
-      index
-    })),
-    down: ipuz.clues["Down"].map((clue, index) => ({
-      label: clue[0],
-      text: clue[1],
-      index
-    }))
+    across,
+    down
   };
 
   for (let i = 0; i < ipuz.solution.length; i++) {
@@ -40,7 +50,7 @@ export default ipuz => {
           }
         }
 
-        // add a reference to clues that apply to this cell
+        // add a reference (label) to clues that apply to this cell
         cell.clues = {
           across: acrossClue,
           down: downClue
@@ -69,4 +79,4 @@ export default ipuz => {
     },
     clues
   };
-}
+};

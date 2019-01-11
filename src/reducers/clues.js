@@ -1,8 +1,8 @@
 import { parseTypes } from "../actionTypes/parse";
 
 const INITIAL_STATE = {
-  across: [],
-  down: []
+  across: null,
+  down: null
 };
 
 export default (state = INITIAL_STATE, action) => {
