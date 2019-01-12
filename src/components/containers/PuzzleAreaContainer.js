@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 
 import { parseActions } from "../../actions/parse";
 import { gridActions } from "../../actions/grid";
+import { getSelectedCell, getSelectedClue } from "../../selectors";
 
 import PuzzleHeader from "../grid/PuzzleHeader";
 import PuzzleAreaGrid from "../grid/PuzzleAreaGrid";
@@ -19,31 +20,8 @@ class PuzzleAreaContainer extends React.Component {
     this.divRef.current && this.divRef.current.focus();
   }
 
-  // move to helper function
-  getSelectedCell(cells, index) {
-    return cells.find(cell => cell.index === index);
-  }
-
-  // move to helper function
-  getCellIndex(row, column, width) {
-    return row * width + column;
-  }
-
-  checkMovableCell(row, column) {
-    const {
-      cells,
-      dimensions: { width }
-    } = this.props;
-    let indexToCheck = this.getCellIndex(row, column, width);
-    let cellToCheck = this.getSelectedCell(cells, indexToCheck);
-    if (cellToCheck.type !== "BLACK") {
-      return indexToCheck;
-    }
-  }
-
   moveCursor(direction) {
-    const { cells, dimensions, selectedCellIndex } = this.props;
-    const selectedCell = this.getSelectedCell(cells, selectedCellIndex);
+    const { cells, dimensions, selectedCell } = this.props;
     let currentColumn = selectedCell.column;
     let currentRow = selectedCell.row;
 
@@ -53,31 +31,37 @@ class PuzzleAreaContainer extends React.Component {
         case "RIGHT":
           currentColumn += 1;
           if (currentColumn + 1 > dimensions.width) {
-            currentColumn = 0; // wrap to start
+            currentColumn = 0; // wrap to left
           }
           break;
         case "LEFT":
           currentColumn -= 1;
           if (currentColumn < 0) {
-            currentColumn = dimensions.width - 1; // wrap to end
+            currentColumn = dimensions.width - 1; // wrap to right
           }
           break;
         case "DOWN":
           currentRow += 1;
           if (currentRow + 1 > dimensions.height) {
-            currentRow = 0; // wrap to start
+            currentRow = 0; // wrap to top
           }
           break;
         case "UP":
           currentRow -= 1;
           if (currentRow < 0) {
-            currentRow = dimensions.height - 1; // wrap to end
+            currentRow = dimensions.height - 1; // wrap to bottom
           }
           break;
         default:
           break;
       }
-      newIndex = this.checkMovableCell(currentRow, currentColumn);
+
+      // check movable cell
+      let indexToCheck = currentRow * dimensions.width + currentColumn;
+      let cellToCheck = cells.find(cell => cell.index === indexToCheck);
+      if (cellToCheck.type !== "BLACK") {
+        newIndex = indexToCheck;
+      }
     }
 
     return newIndex;
@@ -124,11 +108,10 @@ class PuzzleAreaContainer extends React.Component {
   }
 
   handleBackspace() {
-    const { cells, selectedDirection, selectedCellIndex } = this.props;
-    const selectedCell = this.getSelectedCell(cells, selectedCellIndex);
+    const { selectedDirection, selectedCell } = this.props;
 
     if (selectedCell.guess !== "") {
-      this.props.setCellValue(selectedCellIndex, "");
+      this.props.setCellValue(selectedCell.index, "");
     } else {
       const newIndex =
         selectedDirection === "ACROSS"
@@ -141,26 +124,20 @@ class PuzzleAreaContainer extends React.Component {
 
   handleValueKeyPress(keyCode) {
     const {
-      clues,
       cells,
       selectedDirection,
-      selectedCellIndex,
       setCellValue,
-      setSelectedCell
+      setSelectedCell,
+      selectedCell,
+      selectedClue
     } = this.props;
 
-    const selectedCell = this.getSelectedCell(cells, selectedCellIndex);
     const value = String.fromCharCode(keyCode).toUpperCase();
 
     // set value of selected cell
-    setCellValue(selectedCellIndex, value);
+    setCellValue(selectedCell.index, value);
 
     // move cursor to next empty cell for current selected clue
-    const selectedClue =
-      selectedDirection === "ACROSS"
-        ? clues.across[selectedCell.clues.across]
-        : clues.down[selectedCell.clues.down];
-
     const sameClueEmptyCells = cells.filter(
       cell =>
         cell.clues &&
@@ -173,20 +150,14 @@ class PuzzleAreaContainer extends React.Component {
     );
     if (sameClueEmptyCells.length) {
       const emptyCellsBelow = sameClueEmptyCells.filter(
-        cell => cell.index > selectedCellIndex
+        cell => cell.index > selectedCell.index
       );
       const nextIndex =
         emptyCellsBelow.length > 0
           ? emptyCellsBelow[0].index
           : sameClueEmptyCells[0].index;
       setSelectedCell(nextIndex);
-    } else {
-      // const nextIndex =
-      //   selectedDirection === "ACROSS"
-      //     ? this.moveCursor("RIGHT")
-      //     : this.moveCursor("DOWN");
-      // setSelectedCell(nextIndex);
-    }
+    } 
   }
 
   onKeyDown = e => {
@@ -233,17 +204,18 @@ class PuzzleAreaContainer extends React.Component {
 
 const mapStateToProps = state => {
   const {
-    grid: { dimensions, cells, selectedCellIndex, selectedDirection },
-    clues,
+    grid: { dimensions, cells, selectedDirection },
     meta,
     status: { paused, completed, solved }
   } = state;
+  const selectedCell = getSelectedCell(state);
+  const selectedClue = getSelectedClue(state);
   return {
+    selectedCell,
+    selectedClue,
     dimensions,
     cells,
-    selectedCellIndex,
     selectedDirection,
-    clues,
     meta,
     paused,
     completed,

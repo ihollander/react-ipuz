@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Grid } from "semantic-ui-react";
 import { gridActions } from "../../actions/grid";
+import { getSelectedCell, getSelectedClue } from "../../selectors";
 import ClueList from "../clues/ClueList";
 
 class ClueContainer extends React.Component {
@@ -35,20 +36,8 @@ class ClueContainer extends React.Component {
     this.handleClueClick("ACROSS", label);
   };
 
-  // Render helpers
-  get selectedClue() {
-    const { clues, cells, selectedCellIndex, selectedDirection } = this.props;
-    const selectedCell = cells.find(c => c.index === selectedCellIndex);
-    if (selectedDirection === "ACROSS") {
-      return clues.across[selectedCell.clues.across];
-    } else {
-      return clues.down[selectedCell.clues.down];
-    }
-  }
-
   get mappedAcrossClues() {
-    const { clues, cells, selectedCellIndex, selectedDirection } = this.props;
-    const selectedCell = cells.find(c => c.index === selectedCellIndex);
+    const { selectedCell, clues, cells, selectedDirection } = this.props;
     const mappedClues = { ...clues.across };
     // mark as answered
     Object.keys(mappedClues).forEach(id => {
@@ -69,8 +58,7 @@ class ClueContainer extends React.Component {
   }
 
   get mappedDownClues() {
-    const { clues, cells, selectedCellIndex, selectedDirection } = this.props;
-    const selectedCell = cells.find(c => c.index === selectedCellIndex);
+    const { selectedCell, clues, cells, selectedDirection } = this.props;
     const mappedClues = { ...clues.down };
     // mark as answered
     Object.keys(mappedClues).forEach(id => {
@@ -91,13 +79,13 @@ class ClueContainer extends React.Component {
   }
 
   render() {
+    console.log(this.props.selectedClue);
     return (
       <>
         <Grid columns={2} style={{ maxHeight: "680px", marginBottom: "2rem" }}>
           <Grid.Column>
             <ClueList
               clues={this.mappedAcrossClues}
-              selectedClue={this.selectedClue}
               onClueClick={this.onAcrossClueClick}
               heading="Across"
             />
@@ -105,7 +93,6 @@ class ClueContainer extends React.Component {
           <Grid.Column>
             <ClueList
               clues={this.mappedDownClues}
-              selectedClue={this.selectedClue}
               onClueClick={this.onDownClueClick}
               heading="Down"
             />
@@ -119,9 +106,11 @@ class ClueContainer extends React.Component {
 const mapStateToProps = state => {
   const {
     clues,
-    grid: { cells, selectedCellIndex, selectedDirection }
+    grid: { cells, selectedDirection }
   } = state;
-  return { clues, cells, selectedCellIndex, selectedDirection };
+  const selectedCell = getSelectedCell(state);
+  const selectedClue = getSelectedClue(state);
+  return { selectedCell, selectedClue, clues, cells, selectedDirection };
 };
 
 export default connect(

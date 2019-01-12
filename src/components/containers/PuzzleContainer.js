@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 
+import { getSelectedCell, getSelectedClue } from "../../selectors";
 import { gridActions } from "../../actions/grid";
 import { statusActions } from "../../actions/status";
 
@@ -31,7 +32,7 @@ class PuzzleContainer extends React.Component {
 
   // Event Handlers
   onCellClick = index => {
-    if (index === this.props.selectedCellIndex) {
+    if (index === this.props.selectedCell.index) {
       this.props.toggleDirection();
     } else {
       this.props.setSelectedCell(index);
@@ -40,8 +41,7 @@ class PuzzleContainer extends React.Component {
 
   // Render Helpers
   get mappedCells() {
-    const { cells, selectedCellIndex, selectedDirection } = this.props;
-    const selectedCell = cells.find(c => c.index === selectedCellIndex);
+    const { cells, selectedCell, selectedDirection } = this.props;
     const selectedClueIndex =
       selectedDirection === "ACROSS"
         ? selectedCell.clues.across
@@ -49,7 +49,7 @@ class PuzzleContainer extends React.Component {
 
     return cells.map(cell => {
       if (cell.clues) {
-        const selected = cell.index === selectedCellIndex;
+        const selected = cell.index === selectedCell.index;
         const clueSelected =
           (selectedDirection === "ACROSS" &&
             selectedClueIndex === cell.clues.across) ||
@@ -62,27 +62,16 @@ class PuzzleContainer extends React.Component {
     });
   }
 
-  // Render helpers
-  get selectedClue() {
-    const { clues, cells, selectedCellIndex, selectedDirection } = this.props;
-    const selectedCell = cells.find(c => c.index === selectedCellIndex);
-    if (selectedDirection === "ACROSS") {
-      return clues.across[selectedCell.clues.across];
-    } else {
-      return clues.down[selectedCell.clues.down];
-    }
-  }
-
   render() {
-    const { dimensions, selectedDirection } = this.props;
+    const { dimensions, selectedDirection, selectedClue } = this.props;
     return (
       <>
-          <ActiveClue clue={this.selectedClue} direction={selectedDirection} />
-          <GridBox
-            dimensions={dimensions}
-            cells={this.mappedCells}
-            onCellClick={this.onCellClick}
-          />
+        <ActiveClue clue={selectedClue} direction={selectedDirection} />
+        <GridBox
+          dimensions={dimensions}
+          cells={this.mappedCells}
+          onCellClick={this.onCellClick}
+        />
       </>
     );
   }
@@ -90,15 +79,16 @@ class PuzzleContainer extends React.Component {
 
 const mapStateToProps = state => {
   const {
-    clues,
-    grid: { dimensions, cells, selectedCellIndex, selectedDirection },
+    grid: { dimensions, cells, selectedDirection },
     status: { completed, solved }
   } = state;
+  const selectedCell = getSelectedCell(state);
+  const selectedClue = getSelectedClue(state);
   return {
-    clues,
+    selectedCell,
+    selectedClue,
     dimensions,
     cells,
-    selectedCellIndex,
     selectedDirection,
     completed,
     solved

@@ -51,7 +51,12 @@ export default (state = INITIAL_STATE, action) => {
     case gridTypes.REVEAL_ANSWER:
       const revealSquareCells = state.cells.map(cell => {
         if (action.payload.includes(cell.index)) {
-          return { ...cell, guess: cell.solution, revealed: true };
+          return {
+            ...cell,
+            guess: cell.solution,
+            revealed: true,
+            confirmed: true
+          };
         } else {
           return cell;
         }
