@@ -151,6 +151,8 @@ class PuzParse {
     // length 0x2
     // checksum 0x2
     // data [length]
+
+    debugger;
     while (puzzleBuffer.data.length > puzzleBuffer.position) {
       let extraSection = {};
       buffer = puzzleBuffer.readTo(0x4);
@@ -158,9 +160,17 @@ class PuzParse {
       extraSection.length = puzzleBuffer.readShort();
       extraSection.checksum = puzzleBuffer.readShort();
       extraSection.data = puzzleBuffer.readTo(extraSection.length);
-      // extra section has a trailing null?
-      puzzleBuffer.position += 1;
+      // extra section has a null terminator...
+      // puzzleBuffer.position += 1;
       this.data.extraSections[title] = extraSection;
+
+      // move to next null terminator
+      let nextPosition = puzzleBuffer.data
+        .slice(puzzleBuffer.position)
+        .findIndex(c => c !== 0x00);
+      if (nextPosition > 0) {
+        puzzleBuffer.position += nextPosition;
+      }
     }
 
     // solution grid
@@ -170,7 +180,7 @@ class PuzParse {
     this.puzzleGrid = this.getPuzzleGrid();
 
     // clue list
-    this.clueList = this.getClueList()
+    this.clueList = this.getClueList();
   }
 
   toIPuz() {
@@ -189,6 +199,7 @@ class PuzParse {
       clues: this.clueList,
       solution: this.solutionGrid
     };
+    debugger;
     return JSON.stringify(result);
   }
 
@@ -197,34 +208,40 @@ class PuzParse {
   }
 
   getPuzzleGrid() {
-    const solutionGrid = this.solutionGrid;
-    const { width, height } = this.data;
-    // loop through each cell
+    const grid = this.solutionGrid;
+    const { width, height, extraSections } = this.data;
 
+    debugger;
     let puzzleGrid = [],
       clueNumber = 1; // starting clue number
 
     // The clues are arranged numerically. When two clues have the same number, the Across clue comes before the Down clue.
-    for (let i = 0; i < solutionGrid.length; i++) {
+    for (let i = 0; i < grid.length; i++) {
       puzzleGrid[i] = [];
-      for (let j = 0; j < solutionGrid[i].length; j++) {
-        // if blank, return "#"
-        if (solutionGrid[i][j] === "#") {
+      for (let j = 0; j < grid[i].length; j++) {
+        // for black squares, return "#"
+        if (grid[i][j] === "#") {
           puzzleGrid[i][j] = "#";
         } else {
-          // check if clue labeled
-          let needsAcross = this.cellNeedsAcrossNumber(
-            solutionGrid,
-            i,
-            j,
-            width
-          );
-          let needsDown = this.cellNeedsDownNumber(solutionGrid, i, j, height);
+          const index = i * width + j;
+          const needsAcross = this.cellNeedsAcrossNumber(grid, i, j, width);
+          const needsDown = this.cellNeedsDownNumber(grid, i, j, height);
+          let cellValue = 0;
           if (needsAcross || needsDown) {
-            puzzleGrid[i][j] = clueNumber;
+            cellValue = clueNumber;
             clueNumber++;
+          }
+          // check if shape
+          if (
+            extraSections["GEXT"] &&
+            extraSections["GEXT"].data[index] === 0x80
+          ) {
+            puzzleGrid[i][j] = {
+              cell: cellValue,
+              style: { shapebg: "circle" }
+            };
           } else {
-            puzzleGrid[i][j] = 0;
+            puzzleGrid[i][j] = cellValue;
           }
         }
       }
@@ -260,8 +277,8 @@ class PuzParse {
           grid[i].push("#");
         } else {
           if (rebusAnswers && extraSections["GRBS"].data[index] > 0x00) {
-            let rebusKey =
-              new Uint8Array(extraSections["GRBS"].data[index])[0] + 1;
+            let buffer = extraSections["GRBS"].data.slice(index, index + 0x01);
+            let rebusKey = new Uint8Array(buffer)[0] - 1;
             grid[i].push(rebusAnswers[rebusKey]);
           } else {
             grid[i].push(solutionArr[index]);
@@ -274,7 +291,7 @@ class PuzParse {
   }
 
   getClueList() {
-    const {width, height } = this.data
+    const { width, height } = this.data;
     const stringArray = this.data.clues;
     const solutionGrid = this.getSolutionGrid();
 
@@ -340,15 +357,19 @@ class PuzParse {
   }
 
   toByte(arrayBuffer) {
-    return new Uint8Array(arrayBuffer)[0];
+    return arrayBuffer[0];
   }
 
   toShort(arrayBuffer) {
-    return new Uint16Array(arrayBuffer)[0];
+    let value = 0;
+    for (let i = arrayBuffer.length - 1; i >= 0; i--) {
+      value = value * 256 + arrayBuffer[i];
+    }
+    return value;
   }
 
   toInt8String(arrayBuffer) {
-    return String.fromCharCode.apply(null, new Uint8Array(arrayBuffer));
+    return String.fromCharCode.apply(null, arrayBuffer);
   }
 }
 
@@ -373,20 +394,24 @@ class PuzzleBuffer {
   readByte() {
     const offset = 0x1;
     const buffer = this.readTo(offset);
-    return new Uint8Array(buffer)[0];
+    return buffer[0];
   }
 
   readShort() {
     const offset = 0x2;
     const buffer = this.readTo(offset);
-    return new Uint8Array(buffer)[0];
+    let value = 0;
+    for (let i = buffer.length - 1; i >= 0; i--) {
+      value = value * 256 + buffer[i];
+    }
+    return value;
   }
 
   // read from current position to next NUL
   readString() {
     const offset = this.data.slice(this.position).indexOf(0x00) + 1;
     const buffer = this.readTo(offset);
-    return String.fromCharCode.apply(null, new Uint8Array(buffer));
+    return String.fromCharCode.apply(null, buffer);
   }
 }
 

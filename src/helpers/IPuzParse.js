@@ -30,7 +30,12 @@ export default ipuz => {
       if (ipuz.solution[i][j] === "#") {
         cell.type = "BLACK";
       } else {
-        cell.label = ipuz.puzzle[i][j] === 0 ? "" : ipuz.puzzle[i][j];
+        if (typeof ipuz.puzzle[i][j] === "object") {
+          cell.label = ipuz.puzzle[i][j].cell === 0 ? "" : ipuz.puzzle[i][j].cell;
+          cell.style = ipuz.puzzle[i][j].style
+        } else {
+          cell.label = ipuz.puzzle[i][j] === 0 ? "" : ipuz.puzzle[i][j];
+        }
         cell.solution = ipuz.solution[i][j];
         cell.guess = "";
 
@@ -38,7 +43,7 @@ export default ipuz => {
         let acrossClue = "";
         for (let col = j; col > -1 && acrossClue === ""; col--) {
           if (col - 1 < 0 || ipuz.solution[i][col - 1] === "#") {
-            acrossClue = ipuz.puzzle[i][col];
+            acrossClue = typeof ipuz.puzzle[i][col] == "object" ? ipuz.puzzle[i][col].cell : ipuz.puzzle[i][col];
           }
         }
 
@@ -46,7 +51,7 @@ export default ipuz => {
         let downClue = "";
         for (let row = i; row > -1 && downClue === ""; row--) {
           if (row - 1 < 0 || ipuz.solution[row - 1][j] === "#") {
-            downClue = ipuz.puzzle[row][j];
+            downClue = typeof ipuz.puzzle[row][j] == "object" ? ipuz.puzzle[row][j].cell : ipuz.puzzle[row][j];
           }
         }
 

@@ -8,9 +8,14 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
     y: display.y + 2
   };
 
-  const solutionPosition = {
+  const centerPosition = {
     x: display.x + display.width / 2,
-    y: display.y + 4 + display.height / 2
+    y: display.y + display.height / 2
+  };
+
+  const solutionPosition = {
+    x: centerPosition.x,
+    y: centerPosition.y + 2
   };
 
   const checkmarkPoints = () => {
@@ -29,13 +34,7 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
         width={display.width}
         height={display.height}
         stroke="black"
-        fill={
-          cell.selected
-            ? "red"
-            : cell.clueSelected
-            ? "pink"
-            : "white"
-        }
+        fill={cell.selected ? "red" : cell.clueSelected ? "pink" : "white"}
       />
       <text
         fill="black"
@@ -56,6 +55,16 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
       >
         {cell.guess}
       </text>
+      {cell.style && (
+        <circle
+          cx={centerPosition.x}
+          cy={centerPosition.y}
+          r={display.height / 2}
+          stroke="gray"
+          strokeWidth="1"
+          fill="transparent"
+        />
+      )}
       {cell.checked && !cell.confirmed && (
         <line
           x1={display.x}
@@ -67,7 +76,12 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
         />
       )}
       {cell.revealed && (
-        <polyline points={checkmarkPoints()} fill="transparent" stroke="orange" strokeWidth="2" />
+        <polyline
+          points={checkmarkPoints()}
+          fill="transparent"
+          stroke="orange"
+          strokeWidth="2"
+        />
       )}
     </g>
   );
