@@ -203,6 +203,7 @@ export default connect(
     togglePaused: statusActions.togglePaused,
     toggleRebus: statusActions.toggleRebus,
     checkAnswer: gridActions.checkAnswer,
-    revealAnswer: gridActions.revealAnswer
+    revealAnswer: gridActions.revealAnswer,
+    setCellValue: gridActions.setCellValue
   }
 )(PuzzleTools);

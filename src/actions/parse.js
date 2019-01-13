@@ -1,6 +1,7 @@
 import { parseTypes } from "../actionTypes/parse";
 import history from '../history'
-import IPuzParse from '../helpers/IPuzParse'
+import PuzParser from '../helpers/puzFile/PuzParser'
+import PuzReader from "../helpers/puzFile/PuzReader";
 
 const parsing = () => {
   return {
@@ -8,17 +9,21 @@ const parsing = () => {
   }
 }
 
-const parseIpuz = ipuz => {
-  const puzzleObj = IPuzParse(ipuz)
-
+const parseFile = buffer => {
+  // send data to puzparser
+  const puzFile = new PuzReader(buffer)
+  const parser = new PuzParser(puzFile)
+  const puzzle = parser.parse()
+  debugger
   history.push('/')
+
   return {
     type: parseTypes.PUZZLE_PARSED,
-    payload: puzzleObj
-  };
-};
+    payload: puzzle
+  }
+}
 
 export const parseActions = {
-  parseIpuz,
+  parseFile,
   parsing
 };

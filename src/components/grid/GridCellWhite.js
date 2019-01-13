@@ -26,7 +26,7 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
     }
   }
 
-  const checkmarkPoints = () => {
+  const drawCheckmarkPoints = () => {
     const start = `${display.x + display.width - 9} ${display.y +
       display.height -
       6}`;
@@ -91,7 +91,7 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
       )}
       {cell.revealed && (
         <polyline
-          points={checkmarkPoints()}
+          points={drawCheckmarkPoints()}
           fill="transparent"
           stroke="orange"
           strokeWidth="2"

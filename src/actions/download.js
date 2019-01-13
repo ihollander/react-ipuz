@@ -1,7 +1,8 @@
 import { downloadTypes } from "../actionTypes/download";
 import { parseTypes } from "../actionTypes/parse";
-import PuzParse from "../helpers/PuzParse";
-import IPuzParse from "../helpers/IPuzParse";
+import PuzReader from "../helpers/puzFile/PuzReader";
+import PuzParser from "../helpers/puzFile/PuzParser";
+import IPuzParse from "../helpers/ipuzFile/IPuzParser";
 import history from '../history'
 
 const downloadWSJ = date => {
@@ -20,12 +21,11 @@ const downloadWSJ = date => {
         }
       })
       .then(buffer => {
-        const xword = new PuzParse(buffer);
-        const ipuz = xword.toIPuz();
-        const ipuzObj = JSON.parse(ipuz);
-        console.log(ipuzObj)
+        const puzFile = new PuzReader(buffer)
+        const parser = new PuzParser(puzFile)
+        const ipuz = parser.toIPuz()
+        const ipuzObj = JSON.parse(ipuz)
         const puz = IPuzParse(ipuzObj);
-        console.log(puz)
         dispatch(success(puz));
         history.push("/")
       })
@@ -49,12 +49,11 @@ const downloadPuzzle = url => {
         }
       })
       .then(buffer => {
-        const xword = new PuzParse(buffer);
-        const ipuz = xword.toIPuz();
-        const ipuzObj = JSON.parse(ipuz);
-        console.log(ipuzObj)
+        const puzFile = new PuzReader(buffer)
+        const parser = new PuzParser(puzFile)
+        const ipuz = parser.toIPuz()
+        const ipuzObj = JSON.parse(ipuz)
         const puz = IPuzParse(ipuzObj);
-        console.log(puz)
         dispatch(success(puz));
         history.push("/")
       })
