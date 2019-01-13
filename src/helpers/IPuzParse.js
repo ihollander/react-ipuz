@@ -1,17 +1,27 @@
 export default ipuz => {
   // parse clues and solution together for cells
+  const across = ipuz.clues["Across"].reduce((obj, clue) => {
+    obj[clue[0]] = {
+      label: clue[0],
+      text: clue[1],
+      answered: false,
+      selected: false
+    };
+    return obj;
+  }, {});
+  const down = ipuz.clues["Down"].reduce((obj, clue) => {
+    obj[clue[0]] = {
+      label: clue[0],
+      text: clue[1],
+      answered: false,
+      selected: false
+    };
+    return obj;
+  }, {});
   const cells = [];
   const clues = {
-    across: ipuz.clues["Across"].map((clue, index) => ({
-      label: clue[0],
-      text: clue[1],
-      index
-    })),
-    down: ipuz.clues["Down"].map((clue, index) => ({
-      label: clue[0],
-      text: clue[1],
-      index
-    }))
+    across,
+    down
   };
 
   for (let i = 0; i < ipuz.solution.length; i++) {
@@ -20,7 +30,12 @@ export default ipuz => {
       if (ipuz.solution[i][j] === "#") {
         cell.type = "BLACK";
       } else {
-        cell.label = ipuz.puzzle[i][j] === 0 ? "" : ipuz.puzzle[i][j];
+        if (typeof ipuz.puzzle[i][j] === "object") {
+          cell.label = ipuz.puzzle[i][j].cell === 0 ? "" : ipuz.puzzle[i][j].cell;
+          cell.style = ipuz.puzzle[i][j].style
+        } else {
+          cell.label = ipuz.puzzle[i][j] === 0 ? "" : ipuz.puzzle[i][j];
+        }
         cell.solution = ipuz.solution[i][j];
         cell.guess = "";
 
@@ -28,7 +43,7 @@ export default ipuz => {
         let acrossClue = "";
         for (let col = j; col > -1 && acrossClue === ""; col--) {
           if (col - 1 < 0 || ipuz.solution[i][col - 1] === "#") {
-            acrossClue = ipuz.puzzle[i][col];
+            acrossClue = typeof ipuz.puzzle[i][col] == "object" ? ipuz.puzzle[i][col].cell : ipuz.puzzle[i][col];
           }
         }
 
@@ -36,11 +51,11 @@ export default ipuz => {
         let downClue = "";
         for (let row = i; row > -1 && downClue === ""; row--) {
           if (row - 1 < 0 || ipuz.solution[row - 1][j] === "#") {
-            downClue = ipuz.puzzle[row][j];
+            downClue = typeof ipuz.puzzle[row][j] == "object" ? ipuz.puzzle[row][j].cell : ipuz.puzzle[row][j];
           }
         }
 
-        // add a reference to clues that apply to this cell
+        // add a reference (label) to clues that apply to this cell
         cell.clues = {
           across: acrossClue,
           down: downClue
@@ -58,7 +73,8 @@ export default ipuz => {
     meta: {
       copyright: ipuz.copyright,
       author: ipuz.author,
-      title: ipuz.title
+      title: ipuz.title,
+      notes: ipuz.intro
     },
     grid: {
       dimensions: {
@@ -69,4 +85,4 @@ export default ipuz => {
     },
     clues
   };
-}
+};

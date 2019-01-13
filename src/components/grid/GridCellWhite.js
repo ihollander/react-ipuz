@@ -8,15 +8,34 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
     y: display.y + 2
   };
 
-  const solutionPosition = {
+  const centerPosition = {
     x: display.x + display.width / 2,
-    y: display.y + 4 + display.height / 2
+    y: display.y + display.height / 2
   };
 
+  const solutionPosition = {
+    x: centerPosition.x,
+    y: centerPosition.y + 2
+  };
+
+  const calcFontSize = () => {
+    if (cell.guess.length) { 
+      return 22 * (1 - (cell.guess.length / 10))
+    } else {
+      return 22
+    }
+  }
+
   const checkmarkPoints = () => {
-    const start = `${display.x + display.width - 9} ${display.y + display.height - 6}`;
-    const bottom = `${display.x + display.width - 5} ${display.y + display.height - 3}`;
-    const top = `${display.x + display.width - 1} ${display.y + display.height - 11}`;
+    const start = `${display.x + display.width - 9} ${display.y +
+      display.height -
+      6}`;
+    const bottom = `${display.x + display.width - 5} ${display.y +
+      display.height -
+      3}`;
+    const top = `${display.x + display.width - 1} ${display.y +
+      display.height -
+      11}`;
     return [start, bottom, top].join(", ");
   };
 
@@ -29,13 +48,7 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
         width={display.width}
         height={display.height}
         stroke="black"
-        fill={
-          cell.selected
-            ? "red"
-            : cell.clueSelected
-            ? "pink"
-            : "white"
-        }
+        fill={cell.selected ? "red" : cell.clueSelected ? "pink" : "white"}
       />
       <text
         fill="black"
@@ -50,12 +63,22 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
         fill={cell.checked ? "blue" : "black"}
         x={solutionPosition.x}
         y={solutionPosition.y}
-        fontSize="22"
+        fontSize={calcFontSize()}
         textAnchor="middle"
         alignmentBaseline="central"
       >
         {cell.guess}
       </text>
+      {cell.style && (
+        <circle
+          cx={centerPosition.x}
+          cy={centerPosition.y}
+          r={display.height / 2}
+          stroke="gray"
+          strokeWidth="1"
+          fill="transparent"
+        />
+      )}
       {cell.checked && !cell.confirmed && (
         <line
           x1={display.x}
@@ -67,7 +90,12 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
         />
       )}
       {cell.revealed && (
-        <polyline points={checkmarkPoints()} fill="transparent" stroke="orange" strokeWidth="2" />
+        <polyline
+          points={checkmarkPoints()}
+          fill="transparent"
+          stroke="orange"
+          strokeWidth="2"
+        />
       )}
     </g>
   );

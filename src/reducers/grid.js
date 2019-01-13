@@ -33,86 +33,35 @@ export default (state = INITIAL_STATE, action) => {
           : cell
       );
       return { ...state, cells: newCellValues };
-    case gridTypes.CHECK_SQUARE:
-      const checkSquareCells = state.cells.map(cell => {
-        const checked =
-          cell.guess !== "" && cell.index === state.selectedCellIndex;
-        const confirmed = checked && cell.guess === cell.solution;
-        if (checked) {
-          return { ...cell, checked, confirmed };
+    case gridTypes.CHECK_ANSWER:
+      const checkAnswerCells = state.cells.map(cell => {
+        if (action.payload.includes(cell.index)) {
+          const checked = cell.guess !== "";
+          const confirmed = checked && cell.guess === cell.solution;
+          if (checked) {
+            return { ...cell, checked, confirmed };
+          } else {
+            return cell;
+          }
         } else {
           return cell;
         }
       });
-      return { ...state, cells: checkSquareCells };
-    case gridTypes.CHECK_WORD:
-      const selectedCell = state.cells.find(
-        cell => cell.index === state.selectedCellIndex
-      );
-      const checkWordCells = state.cells.map(cell => {
-        const checked =
-          cell.clues &&
-          cell.guess !== "" &&
-          ((state.selectedDirection === "ACROSS" &&
-            cell.clues.across === selectedCell.clues.across) ||
-            (state.selectedDirection === "DOWN" &&
-              cell.clues.down === selectedCell.clues.down));
-        const confirmed = checked && cell.guess === cell.solution;
-        if (checked) {
-          return { ...cell, checked, confirmed };
-        } else {
-          return cell;
-        }
-      });
-      return { ...state, cells: checkWordCells };
-    case gridTypes.CHECK_PUZZLE:
-      const checkPuzzleCells = state.cells.map(cell => {
-        const checked = cell.type !== "BLACK" && cell.guess !== "";
-        const confirmed = checked && cell.guess === cell.solution;
-        if (checked) {
-          return { ...cell, checked, confirmed };
-        } else {
-          return cell;
-        }
-      });
-      return { ...state, cells: checkPuzzleCells };
-    case gridTypes.REVEAL_SQUARE:
+      return { ...state, cells: checkAnswerCells };
+    case gridTypes.REVEAL_ANSWER:
       const revealSquareCells = state.cells.map(cell => {
-        if (cell.index === state.selectedCellIndex) {
-          return { ...cell, guess: cell.solution, revealed: true };
+        if (action.payload.includes(cell.index)) {
+          return {
+            ...cell,
+            guess: cell.solution,
+            revealed: true,
+            confirmed: true
+          };
         } else {
           return cell;
         }
       });
       return { ...state, cells: revealSquareCells };
-    case gridTypes.REVEAL_WORD:
-      const getSelectedCell = state.cells.find(
-        cell => cell.index === state.selectedCellIndex
-      );
-      const revealWordCells = state.cells.map(cell => {
-        const revealed =
-          cell.clues &&
-          ((state.selectedDirection === "ACROSS" &&
-            cell.clues.across === getSelectedCell.clues.across) ||
-            (state.selectedDirection === "DOWN" &&
-              cell.clues.down === getSelectedCell.clues.down));
-        if (revealed) {
-          return { ...cell, guess: cell.solution, revealed };
-        } else {
-          return cell;
-        }
-      });
-      return { ...state, cells: revealWordCells };
-    case gridTypes.REVEAL_PUZZLE:
-      const revealPuzzleCells = state.cells.map(cell => {
-        const revealed = cell.type !== "BLACK";
-        if (revealed) {
-          return { ...cell, guess: cell.solution, revealed };
-        } else {
-          return cell;
-        }
-      });
-      return { ...state, cells: revealPuzzleCells };
     default:
       return state;
   }

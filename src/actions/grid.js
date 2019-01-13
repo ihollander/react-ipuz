@@ -20,35 +20,17 @@ const toggleDirection = () => {
   };
 };
 
-const checkSquare = () => {
+const checkAnswer = (cellIndexArray) => {
   return {
-    type: gridTypes.CHECK_SQUARE
-  }
-}
-const checkWord = () => {
-  return {
-    type: gridTypes.CHECK_WORD
-  }
-}
-const checkPuzzle = () => {
-  return {
-    type: gridTypes.CHECK_PUZZLE
+    type: gridTypes.CHECK_ANSWER,
+    payload: cellIndexArray
   }
 }
 
-const revealSquare = () => {
+const revealAnswer = cellIndexArray => {
   return {
-    type: gridTypes.REVEAL_SQUARE
-  }
-}
-const revealWord = () => {
-  return {
-    type: gridTypes.REVEAL_WORD
-  }
-}
-const revealPuzzle = () => {
-  return {
-    type: gridTypes.REVEAL_PUZZLE
+    type: gridTypes.REVEAL_ANSWER,
+    payload: cellIndexArray
   }
 }
 
@@ -56,10 +38,6 @@ export const gridActions = {
   setSelectedCell,
   toggleDirection,
   setCellValue,
-  checkSquare,
-  checkWord,
-  checkPuzzle,
-  revealSquare,
-  revealWord,
-  revealPuzzle
+  checkAnswer,
+  revealAnswer
 };
