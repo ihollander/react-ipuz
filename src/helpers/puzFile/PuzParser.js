@@ -20,7 +20,6 @@ class PuzParser {
     }
 
     const cells = this.getCells()
-    debugger
 
     return {
       meta: {
@@ -104,7 +103,7 @@ class PuzParser {
             }
           }
 
-          // for down clue number, look left till first black box or border
+          // for down clue number, look up till first black box or border
           let downClue = "";
           for (let row = i; row > -1 && downClue === ""; row--) {
             if (row - 1 < 0 || this.solutionGrid[row - 1][j] === "#") {

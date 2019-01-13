@@ -13,6 +13,7 @@ export const getSelectedCell = createSelector(
 export const getSelectedClue = createSelector(
   [getClues, getSelectedDirection, getSelectedCell],
   (clues, selectedDirection, selectedCell) => {
+    debugger
     if (clues && clues.across && clues.down) {
       if (selectedDirection === "ACROSS") {
         return clues.across[selectedCell.clues.across];
