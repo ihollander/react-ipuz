@@ -6,6 +6,12 @@ const togglePaused = () => {
   }
 }
 
+const toggleRebus = () => {
+  return {
+    type: statusTypes.TOGGLE_REBUS
+  }
+}
+
 const saveTimer = timer => {
   return {
     type: statusTypes.SAVE_TIMER,
@@ -36,5 +42,6 @@ export const statusActions = {
   unmarkCompleted,
   markSolved,
   saveTimer,
-  togglePaused
+  togglePaused,
+  toggleRebus
 };

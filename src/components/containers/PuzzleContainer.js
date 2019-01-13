@@ -39,6 +39,12 @@ class PuzzleContainer extends React.Component {
     }
   };
 
+  onRebusSubmit = rebusText => {
+    const { setCellValue, selectedCell, toggleRebus } = this.props;
+    setCellValue(selectedCell.index, rebusText);
+    toggleRebus();
+  };
+
   // Render Helpers
   get mappedCells() {
     const { cells, selectedCell, selectedDirection } = this.props;
@@ -63,14 +69,23 @@ class PuzzleContainer extends React.Component {
   }
 
   render() {
-    const { dimensions, selectedDirection, selectedClue } = this.props;
+    const {
+      dimensions,
+      selectedDirection,
+      selectedClue,
+      selectedCell,
+      rebus
+    } = this.props;
     return (
       <>
         <ActiveClue clue={selectedClue} direction={selectedDirection} />
         <GridBox
           dimensions={dimensions}
           cells={this.mappedCells}
+          selectedCell={selectedCell}
+          rebus={rebus}
           onCellClick={this.onCellClick}
+          onRebusSubmit={this.onRebusSubmit}
         />
       </>
     );
@@ -80,7 +95,7 @@ class PuzzleContainer extends React.Component {
 const mapStateToProps = state => {
   const {
     grid: { dimensions, cells, selectedDirection },
-    status: { completed, solved }
+    status: { completed, solved, rebus }
   } = state;
   const selectedCell = getSelectedCell(state);
   const selectedClue = getSelectedClue(state);
@@ -91,7 +106,8 @@ const mapStateToProps = state => {
     cells,
     selectedDirection,
     completed,
-    solved
+    solved,
+    rebus
   };
 };
 
@@ -100,8 +116,10 @@ export default connect(
   {
     setSelectedCell: gridActions.setSelectedCell,
     toggleDirection: gridActions.toggleDirection,
+    setCellValue: gridActions.setCellValue,
     markCompleted: statusActions.markCompleted,
     unmarkCompleted: statusActions.unmarkCompleted,
-    markSolved: statusActions.markSolved
+    markSolved: statusActions.markSolved,
+    toggleRebus: statusActions.toggleRebus
   }
 )(PuzzleContainer);

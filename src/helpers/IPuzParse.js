@@ -73,7 +73,8 @@ export default ipuz => {
     meta: {
       copyright: ipuz.copyright,
       author: ipuz.author,
-      title: ipuz.title
+      title: ipuz.title,
+      notes: ipuz.intro
     },
     grid: {
       dimensions: {

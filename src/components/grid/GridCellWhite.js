@@ -18,10 +18,24 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
     y: centerPosition.y + 2
   };
 
+  const calcFontSize = () => {
+    if (cell.guess.length) { 
+      return 22 * (1 - (cell.guess.length / 10))
+    } else {
+      return 22
+    }
+  }
+
   const checkmarkPoints = () => {
-    const start = `${display.x + display.width - 9} ${display.y + display.height - 6}`;
-    const bottom = `${display.x + display.width - 5} ${display.y + display.height - 3}`;
-    const top = `${display.x + display.width - 1} ${display.y + display.height - 11}`;
+    const start = `${display.x + display.width - 9} ${display.y +
+      display.height -
+      6}`;
+    const bottom = `${display.x + display.width - 5} ${display.y +
+      display.height -
+      3}`;
+    const top = `${display.x + display.width - 1} ${display.y +
+      display.height -
+      11}`;
     return [start, bottom, top].join(", ");
   };
 
@@ -49,7 +63,7 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
         fill={cell.checked ? "blue" : "black"}
         x={solutionPosition.x}
         y={solutionPosition.y}
-        fontSize="22"
+        fontSize={calcFontSize()}
         textAnchor="middle"
         alignmentBaseline="central"
       >

@@ -1,26 +1,43 @@
 import React from "react";
 import GridCellBlack from "./GridCellBlack";
 import GridCellWhite from "./GridCellWhite";
+import RebusInput from "./RebusInput";
 
-const GridBox = ({ dimensions, cells, onCellClick }) => {
-  const puzzWidth = 600;
-  const puzzleHeight = (dimensions.height / dimensions.width) * puzzWidth
-  const borderOffset = 4
+class GridBox extends React.Component {
+  gridBoxRef = React.createRef()
 
-  const renderCells = () => {
-    const cellHeight = (puzzWidth - borderOffset) / dimensions.width;
-    const cellWidth = (puzzWidth - borderOffset) / dimensions.width;
+  calcDisplayDimensions() {
+    const { dimensions } = this.props;
+    const puzzleWidth = this.gridBoxRef.current ? this.gridBoxRef.current.offsetWidth : 600;
+    const puzzleHeight = (dimensions.height / dimensions.width) * puzzleWidth;
+    return {
+      width: puzzleWidth,
+      height: puzzleHeight
+    };
+  }
 
+  calcCellDisplay(row, column) {
+    const { dimensions } = this.props;
+    const displayDimensions = this.calcDisplayDimensions();
+    const borderOffset = 4;
+    const cellHeight =
+      (displayDimensions.width - borderOffset) / dimensions.width;
+    const cellWidth =
+      (displayDimensions.width - borderOffset) / dimensions.width;
+    const xOffset = cellWidth * column + borderOffset / 2;
+    const yOffset = cellHeight * row + borderOffset / 2;
+    return {
+      x: xOffset,
+      y: yOffset,
+      width: cellWidth,
+      height: cellWidth
+    };
+  }
+
+  renderCells() {
+    const { cells, onCellClick } = this.props;
     const gridCells = cells.map(cell => {
-      const xOffset = (cellWidth * cell.column) + (borderOffset / 2);
-      const yOffset = (cellHeight * cell.row) + (borderOffset / 2);
-
-      const display = {
-        x: xOffset,
-        y: yOffset,
-        width: cellWidth,
-        height: cellWidth
-      };
+      const display = this.calcCellDisplay(cell.row, cell.column);
 
       if (cell.type === "BLACK") {
         return <GridCellBlack key={cell.index} display={display} />;
@@ -36,27 +53,44 @@ const GridBox = ({ dimensions, cells, onCellClick }) => {
       }
     });
     return gridCells;
-  };
+  }
 
-  return (
-    <svg
-      viewBox={`0 0 ${puzzWidth} ${puzzleHeight}`}
-      overflow="visible"
-      xmlns="http://www.w3.org/2000/svg"
-      style={{cursor: "pointer"}}
-    >
-      <g>{renderCells()}</g>
-      <rect
-        x="0"
-        y="0"
-        width={puzzWidth}
-        height={puzzleHeight}
-        fill="none"
-        stroke="black"
-        strokeWidth="4"
-      />
-    </svg>
-  );
-};
+  render() {
+    const { rebus, selectedCell, onRebusSubmit } = this.props;
+    const displayDimensions = this.calcDisplayDimensions();
+
+    return (
+      <div ref={this.gridBoxRef} className="grid-box">
+        <svg
+          viewBox={`0 0 ${displayDimensions.width} ${displayDimensions.height}`}
+          overflow="visible"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{ cursor: "pointer" }}
+        >
+          <g>{this.renderCells()}</g>
+          <rect
+            x="0"
+            y="0"
+            width={displayDimensions.width}
+            height={displayDimensions.height}
+            fill="none"
+            stroke="black"
+            strokeWidth="4"
+          />
+        </svg>
+        {rebus && (
+          <RebusInput
+            cell={selectedCell}
+            display={this.calcCellDisplay(
+              selectedCell.row,
+              selectedCell.column
+            )}
+            onRebusSubmit={onRebusSubmit}
+          />
+        )}
+      </div>
+    );
+  }
+}
 
 export default GridBox;

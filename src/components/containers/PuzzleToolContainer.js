@@ -97,6 +97,10 @@ class PuzzleTools extends React.Component {
     }
   };
 
+  onRebusClick = () => {
+    this.props.toggleRebus()
+  }
+
   onPauseButtonClick = () => {
     this.props.togglePaused();
   };
@@ -159,6 +163,13 @@ class PuzzleTools extends React.Component {
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
+        <Menu.Item
+          name='rebus'
+          active={this.props.rebus}
+          onClick={this.onRebusClick}
+        >
+          Rebus
+        </Menu.Item>
         <Menu.Menu position="right">
           <Menu.Item>
             <span style={{ color: "red", margin: "0 10px" }}>
@@ -179,10 +190,10 @@ class PuzzleTools extends React.Component {
 }
 
 const mapStateToProps = ({
-  status: { timer, paused, solved },
+  status: { timer, paused, solved, rebus },
   grid: { cells, selectedCellIndex, selectedDirection }
 }) => {
-  return { timer, paused, solved, cells, selectedCellIndex, selectedDirection };
+  return { timer, paused, solved, rebus, cells, selectedCellIndex, selectedDirection };
 };
 
 export default connect(
@@ -190,6 +201,7 @@ export default connect(
   {
     saveTimer: statusActions.saveTimer,
     togglePaused: statusActions.togglePaused,
+    toggleRebus: statusActions.toggleRebus,
     checkAnswer: gridActions.checkAnswer,
     revealAnswer: gridActions.revealAnswer
   }

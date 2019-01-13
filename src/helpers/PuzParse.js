@@ -152,7 +152,6 @@ class PuzParse {
     // checksum 0x2
     // data [length]
 
-    debugger;
     while (puzzleBuffer.data.length > puzzleBuffer.position) {
       let extraSection = {};
       buffer = puzzleBuffer.readTo(0x4);
@@ -191,6 +190,7 @@ class PuzParse {
       copyright: this.copyright,
       author: this.author,
       title: this.title,
+      intro: this.data.notes,
       dimensions: {
         width: this.data.width,
         height: this.data.height
@@ -199,7 +199,6 @@ class PuzParse {
       clues: this.clueList,
       solution: this.solutionGrid
     };
-    debugger;
     return JSON.stringify(result);
   }
 
@@ -211,7 +210,6 @@ class PuzParse {
     const grid = this.solutionGrid;
     const { width, height, extraSections } = this.data;
 
-    debugger;
     let puzzleGrid = [],
       clueNumber = 1; // starting clue number
 

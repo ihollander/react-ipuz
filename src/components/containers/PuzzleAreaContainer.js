@@ -157,13 +157,12 @@ class PuzzleAreaContainer extends React.Component {
           ? emptyCellsBelow[0].index
           : sameClueEmptyCells[0].index;
       setSelectedCell(nextIndex);
-    } 
+    }
   }
 
   onKeyDown = e => {
     const { keyCode } = e;
-
-    if (!this.props.paused && !e.ctrlKey && !e.altKey && !e.metaKey) {
+    if (!this.props.rebus && !this.props.paused && !e.ctrlKey && !e.altKey && !e.metaKey) {
       if (37 <= keyCode && keyCode <= 40) {
         // arrow keys
         e.preventDefault(); // prevent scrolling
@@ -206,7 +205,7 @@ const mapStateToProps = state => {
   const {
     grid: { dimensions, cells, selectedDirection },
     meta,
-    status: { paused, completed, solved }
+    status: { paused, completed, solved, rebus }
   } = state;
   const selectedCell = getSelectedCell(state);
   const selectedClue = getSelectedClue(state);
@@ -219,7 +218,8 @@ const mapStateToProps = state => {
     meta,
     paused,
     completed,
-    solved
+    solved,
+    rebus
   };
 };
 
