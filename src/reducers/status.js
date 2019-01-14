@@ -15,9 +15,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, rebus: !state.rebus };
     case statusTypes.TOGGLE_PAUSED:
       return { ...state, paused: !state.paused };
-    case parseTypes.PUZZLE_PARSING: {
+    case parseTypes.PUZZLE_PARSING:
       return INITIAL_STATE;
-    }
     case parseTypes.PUZZLE_PARSED:
       return { ...state, paused: false };
     case statusTypes.MARK_COMPLETED:

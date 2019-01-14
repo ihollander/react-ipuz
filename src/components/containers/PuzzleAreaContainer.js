@@ -20,7 +20,7 @@ class PuzzleAreaContainer extends React.Component {
     this.divRef.current && this.divRef.current.focus();
   }
 
-  moveCursor(direction) {
+  getNextCellIndexFor(direction) {
     const { cells, dimensions, selectedCell } = this.props;
     let currentColumn = selectedCell.column;
     let currentRow = selectedCell.row;
@@ -75,28 +75,28 @@ class PuzzleAreaContainer extends React.Component {
         if (selectedDirection === "DOWN") {
           toggleDirection();
         } else {
-          newIndex = this.moveCursor("LEFT");
+          newIndex = this.getNextCellIndexFor("LEFT");
         }
         break;
       case 38: //up
         if (selectedDirection === "ACROSS") {
           toggleDirection();
         } else {
-          newIndex = this.moveCursor("UP");
+          newIndex = this.getNextCellIndexFor("UP");
         }
         break;
       case 39: //right
         if (selectedDirection === "DOWN") {
           toggleDirection();
         } else {
-          newIndex = this.moveCursor("RIGHT");
+          newIndex = this.getNextCellIndexFor("RIGHT");
         }
         break;
       case 40: //down
         if (selectedDirection === "ACROSS") {
           toggleDirection();
         } else {
-          newIndex = this.moveCursor("DOWN");
+          newIndex = this.getNextCellIndexFor("DOWN");
         }
         break;
       default:
@@ -115,8 +115,8 @@ class PuzzleAreaContainer extends React.Component {
     } else {
       const newIndex =
         selectedDirection === "ACROSS"
-          ? this.moveCursor("LEFT")
-          : this.moveCursor("UP");
+          ? this.getNextCellIndexFor("LEFT")
+          : this.getNextCellIndexFor("UP");
       this.props.setCellValue(newIndex, "");
       this.props.setSelectedCell(newIndex);
     }
@@ -162,7 +162,13 @@ class PuzzleAreaContainer extends React.Component {
 
   onKeyDown = e => {
     const { keyCode } = e;
-    if (!this.props.rebus && !this.props.paused && !e.ctrlKey && !e.altKey && !e.metaKey) {
+    if (
+      !this.props.rebus &&
+      !this.props.paused &&
+      !e.ctrlKey &&
+      !e.altKey &&
+      !e.metaKey
+    ) {
       if (37 <= keyCode && keyCode <= 40) {
         // arrow keys
         e.preventDefault(); // prevent scrolling
@@ -173,6 +179,9 @@ class PuzzleAreaContainer extends React.Component {
       } else if (48 <= keyCode && keyCode <= 90) {
         // alphanumeric keys
         this.handleValueKeyPress(keyCode);
+      } else if (keyCode === 13) {
+        // tab key
+        // TODO: move to next clue
       }
     }
   };

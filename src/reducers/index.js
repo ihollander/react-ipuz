@@ -4,11 +4,13 @@ import gridReducer from "../reducers/grid";
 import statusReducer from "../reducers/status";
 import metaReducer from '../reducers/meta'
 import authReducer from '../reducers/auth'
+import userReducer from '../reducers/user'
 
 export default combineReducers({
   clues: cluesReducer,
   grid: gridReducer,
   status: statusReducer,
   meta: metaReducer,
-  auth: authReducer
+  auth: authReducer,
+  user: userReducer
 });

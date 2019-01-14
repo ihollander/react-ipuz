@@ -35,6 +35,6 @@ class AuthAdaptor extends BaseApiAdaptor {
     localStorage.removeItem("user");
   }
 }
-const adaptor = new AuthAdaptor();
 
+const adaptor = new AuthAdaptor();
 export default adaptor;

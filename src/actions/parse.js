@@ -23,7 +23,23 @@ const parseFile = buffer => {
   };
 };
 
+const parseIpuz = json => {
+  const parser = new PuzzleParser();
+  parser.parseIpuz(json);
+  const puzzle = parser.data;
+
+  const iPuzTest = parser.convertToIpuz()
+  console.log(iPuzTest)
+  history.push("/");
+
+  return {
+    type: parseTypes.PUZZLE_PARSED,
+    payload: puzzle
+  };
+};
+
 export const parseActions = {
   parseFile,
+  parseIpuz,
   parsing
 };

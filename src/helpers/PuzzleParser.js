@@ -33,6 +33,111 @@ class PuzzleParser {
     this.data.clues = this.getCluesFromPuz(puzFile);
   }
 
+  parseIpuz(ipuz) {
+    // const ipuz = JSON.parse(ipuzFile);
+    this.data.meta.copyright = ipuz.copyright;
+    this.data.meta.author = ipuz.author;
+    this.data.meta.title = ipuz.title;
+    this.data.meta.notes = ipuz.intro;
+    this.data.grid.dimensions.width = ipuz.dimensions.width;
+    this.data.grid.dimensions.height = ipuz.dimensions.height;
+    this.data.grid.cells = this.getCellsFromIpuz(ipuz);
+    this.data.clues.across = this.getCluesFromIpuz(ipuz.clues["Across"]);
+    this.data.clues.down = this.getCluesFromIpuz(ipuz.clues["Down"]);
+  }
+
+  convertToIpuz() {
+    const result = {
+      origin: "Converted from .puz",
+      version: "http://ipuz.org/v2",
+      kind: ["http://ipuz.org/crossword#1"],
+      copyright: this.data.meta.copyright,
+      author: this.data.meta.author,
+      title: this.data.meta.title,
+      intro: this.data.meta.notes,
+      dimensions: {
+        width: this.data.grid.dimensions.width,
+        height: this.data.grid.dimensions.height
+      },
+      puzzle: this.toIpuzPuzzle(),
+      clues: this.toIpuzClues(),
+      solution: this.toIpuzSolution()
+    };
+    debugger;
+    return JSON.stringify(result);
+  }
+
+  toIpuzClues() {
+    const across = Object.keys(this.data.clues.across).map(key => [
+      parseInt(key),
+      this.data.clues.across[key].text
+    ]);
+    const down = Object.keys(this.data.clues.down).map(key => [
+      parseInt(key),
+      this.data.clues.down[key].text
+    ]);
+    return {
+      Across: across,
+      Down: down
+    };
+  }
+
+  toIpuzSolution() {
+    // convert cell values to 2D grid
+    const grid = [];
+    const { width, height } = this.data.grid.dimensions;
+
+    debugger;
+    for (let row = 0; row < height; row++) {
+      grid[row] = [];
+      for (let column = 0; column < width; column++) {
+        const cell = this.data.grid.cells.find(
+          c => c.row === row && c.column === column
+        );
+        if (cell.type === "BLACK") {
+          grid[row].push("#");
+        } else {
+          grid[row].push(cell.solution);
+        }
+      }
+    }
+
+    return grid
+  }
+
+  toIpuzPuzzle() {
+    // convert cell values to 2D grid
+    const grid = [];
+    const { width, height } = this.data.grid.dimensions;
+
+    for (let row = 0; row < height; row++) {
+      grid[row] = [];
+      for (let column = 0; column < width; column++) {
+        const cell = this.data.grid.cells.find(
+          c => c.row === row && c.column === column
+        );
+        if (cell.type === "BLACK") {
+          grid[row].push("#");
+        } else {
+          const cellLabel = cell.label === "" ? 0 : cell.label;
+          if (typeof cell.style === "object") {
+            const cellValue = {
+              cell: cellLabel,
+              style: {
+                shapebg: "circle"
+              }
+            };
+            grid[row].push(cellValue);
+          } else {
+            grid[row].push(cellLabel);
+          }
+        }
+      }
+    }
+
+    return grid
+  }
+
   // puz file helpers
   getCellsFromPuz(puzFile) {
     const {
@@ -211,8 +316,7 @@ class PuzzleParser {
 
   needsAcrossNumber(array, index, column, width) {
     let returnValue = false;
-    // check if it needs an across clue
-    // if in first position, or preceded by black square...
+    // if in first position, or preceded by black square
     if (array[index] !== "." && (column === 0 || array[index - 1] === ".")) {
       // Check that there is space (at least two cells) for a word here
       if (column + 1 < width && array[index + 1] !== ".") {
@@ -225,12 +329,79 @@ class PuzzleParser {
   needsDownNumber(array, index, row, width, height) {
     let returnValue = false;
     if (array[index] !== "." && (row === 0 || array[index - width] === ".")) {
-      // Check that there is space (at least two cells) for a word here
       if (row + 1 < height && array[index + width] !== ".") {
         returnValue = true;
       }
     }
     return returnValue;
+  }
+
+  // ipuz file helpers
+  getCluesFromIpuz(clueArray) {
+    return clueArray.reduce((obj, clue) => {
+      obj[clue[0]] = {
+        label: clue[0],
+        text: clue[1],
+        answered: false,
+        selected: false
+      };
+      return obj;
+    }, {});
+  }
+
+  getCellsFromIpuz(ipuz) {
+    const cells = [];
+    for (let i = 0; i < ipuz.solution.length; i++) {
+      for (let j = 0; j < ipuz.solution[i].length; j++) {
+        let cell = {};
+        const puzzleCell = ipuz.puzzle[i][j];
+        const solutionCell = ipuz.solution[i][j];
+        if (solutionCell === "#") {
+          cell.type = "BLACK";
+        } else {
+          cell.label = this.getIpuzCellLabel(puzzleCell);
+          if (typeof puzzleCell === "object") cell.style = puzzleCell.style;
+          cell.solution = solutionCell;
+          cell.guess = "";
+
+          // for across clue number, look left till first black box or border
+          let acrossClue = "";
+          for (let col = j; col > -1 && acrossClue === ""; col--) {
+            if (col - 1 < 0 || ipuz.solution[i][col - 1] === "#") {
+              acrossClue = this.getIpuzCellLabel(ipuz.puzzle[i][col]);
+            }
+          }
+
+          // for down clue number, look left till first black box or border
+          let downClue = "";
+          for (let row = i; row > -1 && downClue === ""; row--) {
+            if (row - 1 < 0 || ipuz.solution[row - 1][j] === "#") {
+              downClue = this.getIpuzCellLabel(ipuz.puzzle[row][j]);
+            }
+          }
+
+          // add a reference (label) to clues that apply to this cell
+          cell.clues = {
+            across: acrossClue,
+            down: downClue
+          };
+        }
+
+        cell.index = i * ipuz.dimensions.width + j;
+        cell.row = Math.floor(cell.index / ipuz.dimensions.width);
+        cell.column = cell.index % ipuz.dimensions.width;
+        cells.push(cell);
+      }
+    }
+    return cells;
+  }
+
+  getIpuzCellLabel(puzzleCell) {
+    if (typeof puzzleCell === "object") {
+      return puzzleCell.cell === 0 ? "" : puzzleCell.cell;
+    } else {
+      return puzzleCell === 0 ? "" : puzzleCell;
+    }
   }
 }
 

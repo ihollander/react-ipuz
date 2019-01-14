@@ -28,7 +28,7 @@ const signIn = formData => {
   const success = user => ({ type: authTypes.LOGIN_SUCCESS, payload: user });
   const failure = error => ({ type: authTypes.LOGIN_ERROR, payload: error });
 
-  return async dispatch => {
+  return dispatch => {
     dispatch(request());
 
     authAdaptor.login({user: formData}).then(
