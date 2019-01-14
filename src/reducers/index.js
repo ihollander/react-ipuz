@@ -1,16 +1,14 @@
 import { combineReducers } from "redux";
-import cluesReducer from "../reducers/clues";
-import gridReducer from "../reducers/grid";
-import statusReducer from "../reducers/status";
-import metaReducer from '../reducers/meta'
-import authReducer from '../reducers/auth'
-import userReducer from '../reducers/user'
+import status from "../reducers/status";
+import auth from "../reducers/auth";
+import user from "../reducers/user";
+import puzzle from "../reducers/puzzle";
+import modals from "../reducers/modals";
 
 export default combineReducers({
-  clues: cluesReducer,
-  grid: gridReducer,
-  status: statusReducer,
-  meta: metaReducer,
-  auth: authReducer,
-  user: userReducer
+  status,
+  auth,
+  user,
+  puzzle,
+  modals
 });

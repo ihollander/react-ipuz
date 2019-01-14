@@ -14,7 +14,7 @@ const signUp = formData => {
       .then(
         user => {
           dispatch(success(user))
-          history.push("/")
+          history.push("/saved")
         },
         error => {
           dispatch(failure(error))

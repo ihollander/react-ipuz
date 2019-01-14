@@ -1,14 +1,15 @@
 import BaseApiAdaptor from "./BaseApiAdaptor";
 
 class PuzzleAdaptor extends BaseApiAdaptor {
+
   create(data) {
     return fetch(`${this.baseUrl}/puzzles`, {
       method: "POST",
       headers: {
         ...this.authHeader,
-        ...this.defaultHeaders,
-        body: JSON.stringify(data)
-      }
+        ...this.defaultHeaders
+      },
+      body: JSON.stringify(data)
     }).then(this.handleResponse);
   }
 
@@ -31,9 +32,9 @@ class PuzzleAdaptor extends BaseApiAdaptor {
       method: "PATCH",
       headers: {
         ...this.authHeader,
-        ...this.defaultHeaders,
-        body: JSON.stringify(data)
-      }
+        ...this.defaultHeaders
+      },
+      body: JSON.stringify(data)
     }).then(this.handleResponse);
   }
 }

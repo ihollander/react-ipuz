@@ -1,14 +1,12 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import { parseActions } from "../../actions/parse";
-import { gridActions } from "../../actions/grid";
+import { puzzleActions } from "../../actions/puzzle";
+import { statusActions } from "../../actions/status";
+
 import { getSelectedCell, getSelectedClue } from "../../selectors";
 
-import PuzzleHeader from "../grid/PuzzleHeader";
-import PuzzleAreaGrid from "../grid/PuzzleAreaGrid";
-
-class PuzzleAreaContainer extends React.Component {
+class PuzzleKeyEventContainer extends React.Component {
   divRef = React.createRef();
 
   // Lifecycle methods
@@ -21,7 +19,12 @@ class PuzzleAreaContainer extends React.Component {
   }
 
   getNextCellIndexFor(direction) {
-    const { cells, dimensions, selectedCell } = this.props;
+    const {
+      puzzle: {
+        grid: { cells, dimensions }
+      },
+      selectedCell
+    } = this.props;
     let currentColumn = selectedCell.column;
     let currentRow = selectedCell.row;
 
@@ -68,7 +71,11 @@ class PuzzleAreaContainer extends React.Component {
   }
 
   handleArrowPress(keyCode) {
-    const { selectedDirection, toggleDirection, setSelectedCell } = this.props;
+    const {
+      status: { selectedDirection },
+      toggleDirection,
+      setSelectedCell
+    } = this.props;
     let newIndex;
     switch (keyCode) {
       case 37: //left
@@ -124,8 +131,10 @@ class PuzzleAreaContainer extends React.Component {
 
   handleValueKeyPress(keyCode) {
     const {
-      cells,
-      selectedDirection,
+      puzzle: {
+        grid: { cells }
+      },
+      status: { selectedDirection },
       setCellValue,
       setSelectedCell,
       selectedCell,
@@ -162,13 +171,8 @@ class PuzzleAreaContainer extends React.Component {
 
   onKeyDown = e => {
     const { keyCode } = e;
-    if (
-      !this.props.rebus &&
-      !this.props.paused &&
-      !e.ctrlKey &&
-      !e.altKey &&
-      !e.metaKey
-    ) {
+    const { rebus, paused } = this.props.status;
+    if (!rebus && !paused && !e.ctrlKey && !e.altKey && !e.metaKey) {
       if (37 <= keyCode && keyCode <= 40) {
         // arrow keys
         e.preventDefault(); // prevent scrolling
@@ -187,57 +191,36 @@ class PuzzleAreaContainer extends React.Component {
   };
 
   render() {
-    const { dimensions, cells, meta, paused, completed, solved } = this.props;
-    if (dimensions && cells.length) {
-      return (
-        <div
-          ref={this.divRef}
-          tabIndex="-1"
-          onKeyDown={this.onKeyDown}
-          style={{ outline: "none" }}
-        >
-          <PuzzleHeader meta={meta} />
-          <PuzzleAreaGrid
-            paused={paused}
-            completed={completed}
-            solved={solved}
-          />
-        </div>
-      );
-    } else {
-      return <div>Loading...</div>;
-    }
+    return (
+      <div
+        ref={this.divRef}
+        tabIndex="-1"
+        onKeyDown={this.onKeyDown}
+        style={{ outline: "none" }}
+      >
+        {this.props.children}
+      </div>
+    );
   }
 }
 
 const mapStateToProps = state => {
-  const {
-    grid: { dimensions, cells, selectedDirection },
-    meta,
-    status: { paused, completed, solved, rebus }
-  } = state;
+  const { puzzle, status } = state;
   const selectedCell = getSelectedCell(state);
   const selectedClue = getSelectedClue(state);
   return {
     selectedCell,
     selectedClue,
-    dimensions,
-    cells,
-    selectedDirection,
-    meta,
-    paused,
-    completed,
-    solved,
-    rebus
+    puzzle,
+    status
   };
 };
 
 export default connect(
   mapStateToProps,
   {
-    parseIpuz: parseActions.parseIpuz,
-    toggleDirection: gridActions.toggleDirection,
-    setSelectedCell: gridActions.setSelectedCell,
-    setCellValue: gridActions.setCellValue
+    toggleDirection: statusActions.toggleDirection,
+    setSelectedCell: statusActions.setSelectedCell,
+    setCellValue: puzzleActions.setCellValue
   }
-)(PuzzleAreaContainer);
+)(PuzzleKeyEventContainer);

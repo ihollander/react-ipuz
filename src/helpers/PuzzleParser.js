@@ -22,6 +22,12 @@ class PuzzleParser {
     };
   }
 
+  parseState(state) {
+    this.data.meta = state.meta;
+    this.data.grid = state.grid;
+    this.data.clues = state.clues;
+  }
+
   parsePuz(puzFile) {
     this.data.meta.copyright = puzFile.copyright;
     this.data.meta.author = puzFile.author;
@@ -63,7 +69,7 @@ class PuzzleParser {
       clues: this.toIpuzClues(),
       solution: this.toIpuzSolution()
     };
-    debugger;
+    
     return JSON.stringify(result);
   }
 
@@ -87,7 +93,6 @@ class PuzzleParser {
     const grid = [];
     const { width, height } = this.data.grid.dimensions;
 
-    debugger;
     for (let row = 0; row < height; row++) {
       grid[row] = [];
       for (let column = 0; column < width; column++) {
@@ -102,7 +107,7 @@ class PuzzleParser {
       }
     }
 
-    return grid
+    return grid;
   }
 
   toIpuzPuzzle() {
@@ -135,7 +140,7 @@ class PuzzleParser {
       }
     }
 
-    return grid
+    return grid;
   }
 
   // puz file helpers

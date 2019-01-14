@@ -2,20 +2,19 @@ import React from "react";
 import { connect } from "react-redux";
 
 import { getSelectedCell, getSelectedClue } from "../../selectors";
-import { gridActions } from "../../actions/grid";
+import { puzzleActions } from "../../actions/puzzle";
 import { statusActions } from "../../actions/status";
 
 import ActiveClue from "../clues/ActiveClue";
 import GridBox from "../grid/GridBox";
 
 class PuzzleContainer extends React.Component {
+
   // check for puzzle completedness
   componentDidUpdate(prevProps) {
-    const solvableCells = this.props.cells.filter(cell => cell.solution);
-    const filledCells = solvableCells.filter(cell => cell.guess !== "");
-    const solvedCells = solvableCells.filter(
-      cell => cell.guess === cell.solution
-    );
+    const solvableCells = this.props.cells.filter(c => c.solution);
+    const filledCells = solvableCells.filter(c => c.guess !== "");
+    const solvedCells = solvableCells.filter(c => c.guess === c.solution);
     if (filledCells.length === solvableCells.length) {
       if (solvedCells.length === solvableCells.length) {
         this.props.markSolved();
@@ -94,8 +93,10 @@ class PuzzleContainer extends React.Component {
 
 const mapStateToProps = state => {
   const {
-    grid: { dimensions, cells, selectedDirection },
-    status: { completed, solved, rebus }
+    puzzle: {
+      grid: { dimensions, cells }
+    },
+    status: { completed, solved, rebus, selectedDirection }
   } = state;
   const selectedCell = getSelectedCell(state);
   const selectedClue = getSelectedClue(state);
@@ -114,9 +115,9 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps,
   {
-    setSelectedCell: gridActions.setSelectedCell,
-    toggleDirection: gridActions.toggleDirection,
-    setCellValue: gridActions.setCellValue,
+    setCellValue: puzzleActions.setCellValue,
+    setSelectedCell: statusActions.setSelectedCell,
+    toggleDirection: statusActions.toggleDirection,
     markCompleted: statusActions.markCompleted,
     unmarkCompleted: statusActions.unmarkCompleted,
     markSolved: statusActions.markSolved,

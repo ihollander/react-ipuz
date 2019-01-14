@@ -4,8 +4,8 @@ import { Menu } from "semantic-ui-react";
 
 import { authActions } from "../../actions/auth";
 
-import LoginModal from "../auth/LoginModal";
-import SignUpModal from "../auth/SignUpModal";
+import LoginModal from "../modals/LoginModal";
+import SignUpModal from "../modals/SignUpModal";
 
 class LoginContainer extends React.Component {
   state = {

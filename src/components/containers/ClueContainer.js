@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Grid } from "semantic-ui-react";
-import { gridActions } from "../../actions/grid";
+import { statusActions } from "../../actions/status";
 import { getSelectedCell, getSelectedClue } from "../../selectors";
 import ClueList from "../clues/ClueList";
 
@@ -105,8 +105,11 @@ class ClueContainer extends React.Component {
 
 const mapStateToProps = state => {
   const {
-    clues,
-    grid: { cells, selectedDirection }
+    puzzle: {
+      clues,
+      grid: { cells }
+    },
+    status: { selectedDirection }
   } = state;
   const selectedCell = getSelectedCell(state);
   const selectedClue = getSelectedClue(state);
@@ -116,7 +119,7 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps,
   {
-    toggleDirection: gridActions.toggleDirection,
-    setSelectedCell: gridActions.setSelectedCell
+    toggleDirection: statusActions.toggleDirection,
+    setSelectedCell: statusActions.setSelectedCell
   }
 )(ClueContainer);

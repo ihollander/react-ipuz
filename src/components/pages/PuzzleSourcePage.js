@@ -5,9 +5,9 @@ import { DateInput } from "semantic-ui-calendar-react";
 import * as moment from "moment";
 import { downloadActions } from "../../actions/download";
 
-import FileUploadController from "./FileUploadContainer";
+import FileUploadController from "../containers/FileUploadContainer";
 
-class PuzzleSourceController extends React.Component {
+class PuzzleSourcePage extends React.Component {
   onWsjDatePicked = (e, { name, value }) => {
     const formattedDate = moment(value, "DD-MM-YYYY").format("YYMMDD");
     this.props.downloadWSJ(formattedDate);
@@ -81,4 +81,4 @@ export default connect(
     downloadWaPo: downloadActions.downloadWaPo,
     downloadPs: downloadActions.downloadPs
   }
-)(PuzzleSourceController);
+)(PuzzleSourcePage);

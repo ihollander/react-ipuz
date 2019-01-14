@@ -2,8 +2,8 @@ import React from "react";
 import { Menu, Dropdown, Icon } from "semantic-ui-react";
 import { connect } from "react-redux";
 import * as moment from "moment";
-import { gridTypes } from "../../actionTypes/grid";
-import { gridActions } from "../../actions/grid";
+
+import { puzzleActions } from "../../actions/puzzle";
 import { statusActions } from "../../actions/status";
 
 class PuzzleTools extends React.Component {
@@ -54,12 +54,12 @@ class PuzzleTools extends React.Component {
     const selectedCells = [];
 
     switch (type) {
-      case gridTypes.CHECK_SQUARE:
-      case gridTypes.REVEAL_SQUARE:
+      case "CHECK_SQUARE":
+      case "REVEAL_SQUARE":
         selectedCells.push(selectedCellIndex);
         break;
-      case gridTypes.CHECK_WORD:
-      case gridTypes.REVEAL_WORD:
+      case "CHECK_WORD":
+      case "REVEAL_WORD":
         const selectedCell = cells.find(c => c.index === selectedCellIndex);
         cells.forEach(c => {
           const selectedClue =
@@ -71,25 +71,25 @@ class PuzzleTools extends React.Component {
           if (selectedClue) selectedCells.push(c.index);
         });
         break;
-      case gridTypes.CHECK_PUZZLE:
-      case gridTypes.REVEAL_PUZZLE:
+      case "CHECK_PUZZLE":
+      case "REVEAL_PUZZLE":
         cells.forEach(c => {
-          if (c.type !== "BLACK") selectedCells.push(c.index)
-        })
+          if (c.type !== "BLACK") selectedCells.push(c.index);
+        });
         break;
       default:
         break;
     }
 
     switch (type) {
-      case gridTypes.CHECK_SQUARE:
-      case gridTypes.CHECK_WORD:
-      case gridTypes.CHECK_PUZZLE:
+      case "CHECK_SQUARE":
+      case "CHECK_WORD":
+      case "CHECK_PUZZLE":
         this.props.checkAnswer(selectedCells);
         break;
-      case gridTypes.REVEAL_WORD:
-      case gridTypes.REVEAL_SQUARE:
-      case gridTypes.REVEAL_PUZZLE:
+      case "REVEAL_WORD":
+      case "REVEAL_SQUARE":
+      case "REVEAL_PUZZLE":
         this.props.revealAnswer(selectedCells);
         break;
       default:
@@ -98,8 +98,8 @@ class PuzzleTools extends React.Component {
   };
 
   onRebusClick = () => {
-    this.props.toggleRebus()
-  }
+    this.props.toggleRebus();
+  };
 
   onPauseButtonClick = () => {
     this.props.togglePaused();
@@ -117,21 +117,21 @@ class PuzzleTools extends React.Component {
           <Dropdown.Menu>
             <Dropdown.Item
               onClick={() => {
-                this.onCheckChange(gridTypes.CHECK_SQUARE);
+                this.onCheckChange("CHECK_SQUARE");
               }}
             >
               Square
             </Dropdown.Item>
             <Dropdown.Item
               onClick={() => {
-                this.onCheckChange(gridTypes.CHECK_WORD);
+                this.onCheckChange("CHECK_WORD");
               }}
             >
               Word
             </Dropdown.Item>
             <Dropdown.Item
               onClick={() => {
-                this.onCheckChange(gridTypes.CHECK_PUZZLE);
+                this.onCheckChange("CHECK_PUZZLE");
               }}
             >
               Puzzle
@@ -142,21 +142,21 @@ class PuzzleTools extends React.Component {
           <Dropdown.Menu>
             <Dropdown.Item
               onClick={() => {
-                this.onCheckChange(gridTypes.REVEAL_SQUARE);
+                this.onCheckChange("REVEAL_SQUARE");
               }}
             >
               Square
             </Dropdown.Item>
             <Dropdown.Item
               onClick={() => {
-                this.onCheckChange(gridTypes.REVEAL_WORD);
+                this.onCheckChange("REVEAL_WORD");
               }}
             >
               Word
             </Dropdown.Item>
             <Dropdown.Item
               onClick={() => {
-                this.onCheckChange(gridTypes.REVEAL_PUZZLE);
+                this.onCheckChange("REVEAL_PUZZLE");
               }}
             >
               Puzzle
@@ -164,7 +164,7 @@ class PuzzleTools extends React.Component {
           </Dropdown.Menu>
         </Dropdown>
         <Menu.Item
-          name='rebus'
+          name="rebus"
           active={this.props.rebus}
           onClick={this.onRebusClick}
         >
@@ -190,10 +190,27 @@ class PuzzleTools extends React.Component {
 }
 
 const mapStateToProps = ({
-  status: { timer, paused, solved, rebus },
-  grid: { cells, selectedCellIndex, selectedDirection }
+  status: {
+    timer,
+    paused,
+    solved,
+    rebus,
+    selectedDirection,
+    selectedCellIndex
+  },
+  puzzle: {
+    grid: { cells }
+  }
 }) => {
-  return { timer, paused, solved, rebus, cells, selectedCellIndex, selectedDirection };
+  return {
+    timer,
+    paused,
+    solved,
+    rebus,
+    cells,
+    selectedCellIndex,
+    selectedDirection
+  };
 };
 
 export default connect(
@@ -202,8 +219,8 @@ export default connect(
     saveTimer: statusActions.saveTimer,
     togglePaused: statusActions.togglePaused,
     toggleRebus: statusActions.toggleRebus,
-    checkAnswer: gridActions.checkAnswer,
-    revealAnswer: gridActions.revealAnswer,
-    setCellValue: gridActions.setCellValue
+    checkAnswer: puzzleActions.checkAnswer,
+    revealAnswer: puzzleActions.revealAnswer,
+    setCellValue: puzzleActions.setCellValue
   }
 )(PuzzleTools);

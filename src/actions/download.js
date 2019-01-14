@@ -1,5 +1,5 @@
 import { downloadTypes } from "../actionTypes/download";
-import { parseActions } from "./parse";
+import { puzzleActions } from "./puzzle";
 import puzzleAdaptor from "../apis/PuzzleProxyAdaptor";
 
 const downloadWSJ = date => {
@@ -9,7 +9,7 @@ const downloadWSJ = date => {
     puzzleAdaptor
       .getWsj(date)
       .then(buffer => {
-        dispatch(parseActions.parseFile(buffer));
+        dispatch(puzzleActions.parseFile(buffer));
       })
       .catch(console.error);
   };
@@ -22,7 +22,7 @@ const downloadWaPo = date => {
     puzzleAdaptor
       .getWaPo(date)
       .then(buffer => {
-        dispatch(parseActions.parseFile(buffer));
+        dispatch(puzzleActions.parseFile(buffer));
       })
       .catch(console.error);
   };
@@ -35,7 +35,7 @@ const downloadPs = date => {
     puzzleAdaptor
       .getPs(date)
       .then(buffer => {
-        dispatch(parseActions.parseFile(buffer));
+        dispatch(puzzleActions.parseFile(buffer));
       })
       .catch(console.error);
   };
