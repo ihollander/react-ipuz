@@ -2,6 +2,8 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { Menu, Container } from "semantic-ui-react";
 
+import LoginContainer from '../containers/LoginContainer'
+
 const NavBar = () => {
 
   return (
@@ -14,7 +16,7 @@ const NavBar = () => {
           Puzzles
         </NavLink>
         <Menu.Menu position="right">
-          <Menu.Item>Login/Logout</Menu.Item>
+          <LoginContainer />
         </Menu.Menu>
       </Container>
     </Menu>

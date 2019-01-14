@@ -1,67 +1,48 @@
 import { downloadTypes } from "../actionTypes/download";
-import { parseTypes } from "../actionTypes/parse";
-import PuzReader from "../helpers/puzFile/PuzReader";
-import PuzParser from "../helpers/puzFile/PuzParser";
-import IPuzParse from "../helpers/ipuzFile/IPuzParser";
-import history from '../history'
+import { parseActions } from "./parse";
+import puzzleAdaptor from "../apis/PuzzleProxyAdaptor";
 
 const downloadWSJ = date => {
-  const request = () => ({ type: downloadTypes.PUZZLE_DOWNLOADING });
-  const success = puz => ({ type: parseTypes.PUZZLE_PARSED, payload: puz });
-
   return dispatch => {
-    dispatch(request);
+    dispatch({ type: downloadTypes.DOWNLOAD_REQUEST });
 
-    fetch(`http://localhost:4000/api/v1/puzzle_proxy/wsj/${date}`)
-      .then(response => {
-        if (response.ok) {
-          return response.arrayBuffer();
-        } else {
-          throw response;
-        }
-      })
+    puzzleAdaptor
+      .getWsj(date)
       .then(buffer => {
-        const puzFile = new PuzReader(buffer)
-        const parser = new PuzParser(puzFile)
-        const ipuz = parser.toIPuz()
-        const ipuzObj = JSON.parse(ipuz)
-        const puz = IPuzParse(ipuzObj);
-        dispatch(success(puz));
-        history.push("/")
+        dispatch(parseActions.parseFile(buffer));
       })
       .catch(console.error);
   };
-}
+};
 
-const downloadPuzzle = url => {
-  const request = () => ({ type: downloadTypes.PUZZLE_DOWNLOADING });
-  const success = puz => ({ type: parseTypes.PUZZLE_PARSED, payload: puz });
-
+const downloadWaPo = date => {
   return dispatch => {
-    dispatch(request);
+    dispatch({ type: downloadTypes.DOWNLOAD_REQUEST });
 
-    fetch(url)
-      .then(response => {
-        if (response.ok) {
-          return response.arrayBuffer();
-        } else {
-          throw response;
-        }
-      })
+    puzzleAdaptor
+      .getWaPo(date)
       .then(buffer => {
-        const puzFile = new PuzReader(buffer)
-        const parser = new PuzParser(puzFile)
-        const ipuz = parser.toIPuz()
-        const ipuzObj = JSON.parse(ipuz)
-        const puz = IPuzParse(ipuzObj);
-        dispatch(success(puz));
-        history.push("/")
+        dispatch(parseActions.parseFile(buffer));
+      })
+      .catch(console.error);
+  };
+};
+
+const downloadPs = date => {
+  return dispatch => {
+    dispatch({ type: downloadTypes.DOWNLOAD_REQUEST });
+
+    puzzleAdaptor
+      .getPs(date)
+      .then(buffer => {
+        dispatch(parseActions.parseFile(buffer));
       })
       .catch(console.error);
   };
 };
 
 export const downloadActions = {
-  downloadPuzzle,
-  downloadWSJ
+  downloadWaPo,
+  downloadWSJ,
+  downloadPs
 };

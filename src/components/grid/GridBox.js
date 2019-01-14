@@ -6,9 +6,38 @@ import RebusInput from "./RebusInput";
 class GridBox extends React.Component {
   gridBoxRef = React.createRef()
 
-  calcDisplayDimensions() {
+  // need a separate system for rebus display since it's not SVG based
+  calcRebusDisplayDimensions() {
     const { dimensions } = this.props;
     const puzzleWidth = this.gridBoxRef.current ? this.gridBoxRef.current.offsetWidth : 600;
+    const puzzleHeight = (dimensions.height / dimensions.width) * puzzleWidth;
+    return {
+      width: puzzleWidth,
+      height: puzzleHeight
+    };
+  }
+
+  calcRebusDisplay(row, column) {
+    const { dimensions } = this.props;
+    const displayDimensions = this.calcRebusDisplayDimensions();
+    const borderOffset = 4;
+    const cellHeight =
+      (displayDimensions.width - borderOffset) / dimensions.width;
+    const cellWidth =
+      (displayDimensions.width - borderOffset) / dimensions.width;
+    const xOffset = cellWidth * column + borderOffset / 2;
+    const yOffset = cellHeight * row + borderOffset / 2;
+    return {
+      x: xOffset,
+      y: yOffset,
+      width: cellWidth,
+      height: cellWidth
+    };
+  }
+
+  calcDisplayDimensions() {
+    const { dimensions } = this.props;
+    const puzzleWidth = 600;
     const puzzleHeight = (dimensions.height / dimensions.width) * puzzleWidth;
     return {
       width: puzzleWidth,
@@ -81,7 +110,7 @@ class GridBox extends React.Component {
         {rebus && (
           <RebusInput
             cell={selectedCell}
-            display={this.calcCellDisplay(
+            display={this.calcRebusDisplay(
               selectedCell.row,
               selectedCell.column
             )}

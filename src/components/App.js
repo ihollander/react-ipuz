@@ -3,7 +3,7 @@ import "./App.css";
 import React from "react";
 import {connect} from 'react-redux'
 import { Router, Switch } from "react-router-dom";
-import * as moment from 'moment'
+// import * as moment from 'moment'
 
 import history from "../history";
 
@@ -18,8 +18,8 @@ class App extends React.Component {
 
   componentDidMount() {
     // current day puzzzzz
-    const formatDate = moment().format("YYMMDD")
-    this.props.downloadPuzzle(`http://localhost:4000/api/v1/puzzle_proxy/wsj/${formatDate}`)
+    // const formatDate = moment().format("YYMMDD")
+    this.props.downloadWSJ(`190109`)
   }
 
   render() {
@@ -47,5 +47,5 @@ class App extends React.Component {
 }
 
 export default connect(null, {
-  downloadPuzzle: downloadActions.downloadPuzzle
+  downloadWSJ: downloadActions.downloadWSJ
 })(App);
