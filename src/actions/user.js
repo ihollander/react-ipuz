@@ -7,11 +7,19 @@ const parsePuzzleFromState = puzzleFromState => {
   const parser = new PuzzleParser();
     parser.parseState(puzzleFromState);
     const ipuz = parser.convertToIpuz();
+    const cells = puzzleFromState.grid.cells.map(cell => {
+      if (cell.revealed || cell.confirmed || cell.guess !== "") {
+        return {...cell.revealed, ...cell.confirmed, ...cell.guess}
+      } else {
+        return {}
+      }
+    })
+    debugger
     return {
       puzzle: {
         ipuz,
         title: puzzleFromState.meta.title,
-        cells: JSON.stringify(puzzleFromState.grid.cells),
+        cells: JSON.stringify(cells),
         timer: 0
       }
     };

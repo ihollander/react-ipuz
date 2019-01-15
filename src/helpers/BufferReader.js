@@ -34,10 +34,11 @@ class BufferReader {
     return this.toNum(buffer)
   }
 
-  // read from current position to next NUL
+  // read from current position to next null terminator
   readString() {
-    const offset = this.data.slice(this.position).indexOf(0x00) + 1;
+    const offset = this.data.slice(this.position).indexOf(0x00);
     const buffer = this.readTo(offset);
+    this.position += 1 // skip null terminator
     return this.toString(buffer);
   }
 

@@ -10,7 +10,7 @@ import {
 
 import PuzzleContainer from "../containers/PuzzleContainer";
 import ClueContainer from "../containers/ClueContainer";
-import PuzzleToolContainer from "../containers/PuzzleToolContainer";
+import PuzzleToolContainer from "../puzzleTools/PuzzleToolContainer";
 
 class PuzzleAreaGrid extends React.Component {
   state = {

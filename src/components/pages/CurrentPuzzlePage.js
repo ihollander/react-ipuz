@@ -10,17 +10,25 @@ import renderWhenLoaded from "../hocs/renderWhenLoaded";
 import PuzzleModalContainer from "../containers/PuzzleModalContainer";
 import PuzzleKeyEventContainer from "../containers/PuzzleKeyEventContainer";
 import PuzzleContainer from "../containers/PuzzleContainer";
-import PuzzleToolContainer from "../containers/PuzzleToolContainer";
+import PuzzleToolContainer from "../puzzleTools/PuzzleToolContainer";
 import ClueContainer from "../containers/ClueContainer";
 import PuzzleHeader from "../grid/PuzzleHeader";
 
 class CurrentPuzzlePage extends React.Component {
   // Lifecycle methods
-  componentDidMount() {
-    const { isSignedIn, currentPuzzleId, puzzle, createPuzzle } = this.props;
-    if (isSignedIn && !currentPuzzleId) {
-      createPuzzle(puzzle);
-    } else {
+  componentWillUnmount() {
+    const {
+      isSignedIn,
+      currentPuzzleId,
+      puzzle,
+      savePuzzle,
+      createPuzzle
+    } = this.props;
+
+    if (isSignedIn) {
+      currentPuzzleId
+        ? savePuzzle(puzzle, currentPuzzleId)
+        : createPuzzle(puzzle);
     }
   }
 
@@ -28,6 +36,7 @@ class CurrentPuzzlePage extends React.Component {
     const {
       puzzle: { meta }
     } = this.props;
+
     return (
       <>
         <PuzzleModalContainer />
@@ -73,6 +82,7 @@ const mapStateToProps = ({
 export default connect(
   mapStateToProps,
   {
+    savePuzzle: userActions.savePuzzle,
     createPuzzle: userActions.createPuzzle
   }
 )(renderWhenLoaded(CurrentPuzzlePage));

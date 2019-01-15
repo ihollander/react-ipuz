@@ -3,8 +3,10 @@ import "./App.css";
 import React from "react";
 import { connect } from "react-redux";
 import { Router, Switch } from "react-router-dom";
+import * as moment from 'moment'
 
 import history from "../history";
+import { downloadActions } from "../actions/download"
 
 import ScrollToTop from "./layout/ScrollToTop";
 import AuthenticatedLayoutRoute from "./routes/AuthenticatedLayoutRoute";
@@ -15,7 +17,8 @@ import DefaultLayoutRoute from "./routes/DefaultLayoutRoute";
 
 class App extends React.Component {
   componentDidMount() {
-    // load a default puzzle?
+    const formattedDate = moment().format("YYMMDD");
+    this.props.downloadWSJ(formattedDate);
   }
 
   render() {
@@ -45,4 +48,6 @@ class App extends React.Component {
 
 const mapStateToProps = ({ auth: { isSignedIn } }) => ({ isSignedIn });
 
-export default connect(mapStateToProps)(App);
+export default connect(mapStateToProps, {
+  downloadWSJ: downloadActions.downloadWSJ
+})(App);

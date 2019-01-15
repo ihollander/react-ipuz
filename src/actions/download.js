@@ -1,43 +1,62 @@
 import { downloadTypes } from "../actionTypes/download";
+
 import { puzzleActions } from "./puzzle";
 import puzzleAdaptor from "../apis/PuzzleProxyAdaptor";
 
 const downloadWSJ = date => {
+  const request = () => puzzleActions.parsing();
+  const success = buffer => puzzleActions.parseFile(buffer);
+  const failure = () => ({ type: downloadTypes.DOWNLOAD_FAILURE });
+
   return dispatch => {
-    dispatch({ type: downloadTypes.DOWNLOAD_REQUEST });
+    dispatch(request());
 
     puzzleAdaptor
       .getWsj(date)
       .then(buffer => {
-        dispatch(puzzleActions.parseFile(buffer));
+        dispatch(success(buffer));
       })
-      .catch(console.error);
+      .catch(error => {
+        dispatch(failure());
+      });
   };
 };
 
 const downloadWaPo = date => {
+  const request = () => puzzleActions.parsing();
+  const success = buffer => puzzleActions.parseFile(buffer);
+  const failure = () => ({ type: downloadTypes.DOWNLOAD_FAILURE });
+
   return dispatch => {
-    dispatch({ type: downloadTypes.DOWNLOAD_REQUEST });
+    dispatch(request());
 
     puzzleAdaptor
       .getWaPo(date)
       .then(buffer => {
-        dispatch(puzzleActions.parseFile(buffer));
+        dispatch(success(buffer));
       })
-      .catch(console.error);
+      .catch(error => {
+        dispatch(failure());
+      });
   };
 };
 
 const downloadPs = date => {
+  const request = () => puzzleActions.parsing();
+  const success = buffer => puzzleActions.parseFile(buffer);
+  const failure = () => ({ type: downloadTypes.DOWNLOAD_FAILURE });
+
   return dispatch => {
-    dispatch({ type: downloadTypes.DOWNLOAD_REQUEST });
+    dispatch(request());
 
     puzzleAdaptor
       .getPs(date)
       .then(buffer => {
-        dispatch(puzzleActions.parseFile(buffer));
+        dispatch(success(buffer));
       })
-      .catch(console.error);
+      .catch(error => {
+        dispatch(failure());
+      });
   };
 };
 
