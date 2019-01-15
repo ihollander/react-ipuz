@@ -4,9 +4,7 @@ import { Segment, Header, Grid, Divider } from "semantic-ui-react";
 import { DateInput } from "semantic-ui-calendar-react";
 import * as moment from "moment";
 import { downloadActions } from "../../actions/download";
-import { statusActions } from "../../actions/status";
 
-import DownloadErrorModal from "../modals/DownloadErrorModal";
 import FileUploadController from "../containers/FileUploadContainer";
 
 class PuzzleSourcePage extends React.Component {
@@ -26,7 +24,6 @@ class PuzzleSourcePage extends React.Component {
   render() {
     return (
       <>
-        <DownloadErrorModal modalOpen={this.props.downloadErrorModal} onModalClose={() => this.props.dismissAllModals()} />
         <Segment>
           <Header as="h1">Puzzle Sources</Header>
           <p>
@@ -78,16 +75,11 @@ class PuzzleSourcePage extends React.Component {
   }
 }
 
-const mapStateToProps = ({ modals: { downloadErrorModal } }) => ({
-  downloadErrorModal
-});
-
 export default connect(
-  mapStateToProps,
+  null,
   {
     downloadWSJ: downloadActions.downloadWSJ,
     downloadWaPo: downloadActions.downloadWaPo,
-    downloadPs: downloadActions.downloadPs,
-    dismissAllModals: statusActions.dismissAllModals
+    downloadPs: downloadActions.downloadPs
   }
 )(PuzzleSourcePage);

@@ -3,8 +3,6 @@ import { connect } from "react-redux";
 
 import { Segment, Grid } from "semantic-ui-react";
 
-import { userActions } from "../../actions/user";
-
 import renderWhenLoaded from "../hocs/renderWhenLoaded";
 
 import PuzzleKeyEventContainer from "../containers/PuzzleKeyEventContainer";
@@ -14,27 +12,12 @@ import ClueContainer from "../clues/ClueContainer";
 import PuzzleHeader from "../grid/PuzzleHeader";
 
 class CurrentPuzzlePage extends React.Component {
-  // Lifecycle methods
-  componentWillUnmount() {
-    const {
-      isSignedIn,
-      currentPuzzleId,
-      puzzle,
-      savePuzzle,
-      createPuzzle
-    } = this.props;
-
-    if (isSignedIn) {
-      currentPuzzleId
-        ? savePuzzle(puzzle, currentPuzzleId)
-        : createPuzzle(puzzle);
-    }
+  componentDidMount() {
+    
   }
 
   render() {
-    const {
-      puzzle: { meta }
-    } = this.props;
+    const { meta } = this.props;
 
     return (
       <>
@@ -65,22 +48,9 @@ class CurrentPuzzlePage extends React.Component {
   }
 }
 
-const mapStateToProps = ({
-  auth: { isSignedIn },
-  user: { currentPuzzleId },
-  status: { loaded },
-  puzzle
-}) => ({
+const mapStateToProps = ({ status: { loaded }, puzzle: { meta } }) => ({
   loaded,
-  isSignedIn,
-  currentPuzzleId,
-  puzzle
+  meta
 });
 
-export default connect(
-  mapStateToProps,
-  {
-    savePuzzle: userActions.savePuzzle,
-    createPuzzle: userActions.createPuzzle
-  }
-)(renderWhenLoaded(CurrentPuzzlePage));
+export default connect(mapStateToProps)(renderWhenLoaded(CurrentPuzzlePage));

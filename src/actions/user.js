@@ -64,8 +64,26 @@ const savePuzzle = (puzzleFromState, id) => {
   };
 };
 
+const getSavedPuzzles = () => {
+  const request = () => ({ type: userTypes.PUZZLE_REQUEST });
+  const success = puzzles => ({ type: userTypes.PUZZLES_FETCHED, payload: puzzles });
+  const failure = error => ({ type: userTypes.PUZZLE_FAILURE, payload: error });
+
+  return dispatch => {
+    dispatch(request())
+
+    puzzleAdaptor.getAll().then(
+      puzzles => {
+        dispatch(success(puzzles))
+      }, error => {
+        dispatch(failure(error))
+      }
+    )
+  }
+}
 
 export const userActions = {
   createPuzzle,
-  savePuzzle
+  savePuzzle,
+  getSavedPuzzles
 };

@@ -23,6 +23,7 @@ class PuzzleToolContainer extends React.Component {
       createPuzzle
     } = this.props;
 
+    debugger
     if (isSignedIn) {
       currentPuzzleId
         ? savePuzzle(puzzle, currentPuzzleId)
