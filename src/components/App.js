@@ -3,10 +3,10 @@ import "./App.css";
 import React from "react";
 import { connect } from "react-redux";
 import { Router, Switch } from "react-router-dom";
-import * as moment from 'moment'
+import * as moment from "moment";
 
 import history from "../history";
-import { downloadActions } from "../actions/download"
+import { downloadActions } from "../actions/download";
 
 import ScrollToTop from "./layout/ScrollToTop";
 import AuthenticatedLayoutRoute from "./routes/AuthenticatedLayoutRoute";
@@ -14,6 +14,8 @@ import CurrentPuzzlePage from "./pages/CurrentPuzzlePage";
 import PuzzleSourcePage from "./pages/PuzzleSourcePage";
 import SavedPuzzlesPage from "./pages/SavedPuzzlesPage";
 import DefaultLayoutRoute from "./routes/DefaultLayoutRoute";
+
+import ModalContainer from "./modals/ModalContainer";
 
 class App extends React.Component {
   componentDidMount() {
@@ -24,30 +26,40 @@ class App extends React.Component {
   render() {
     const { isSignedIn } = this.props;
     return (
-      <Router history={history}>
-        <ScrollToTop>
-          <Switch>
-            <DefaultLayoutRoute path="/" exact component={CurrentPuzzlePage} />
-            <DefaultLayoutRoute
-              path="/puzzles"
-              exact
-              component={PuzzleSourcePage}
-            />
-            <AuthenticatedLayoutRoute
-              isAuthenticated={isSignedIn}
-              path="/saved"
-              exact
-              component={SavedPuzzlesPage}
-            />
-          </Switch>
-        </ScrollToTop>
-      </Router>
+      <>
+        <ModalContainer />
+        <Router history={history}>
+          <ScrollToTop>
+            <Switch>
+              <DefaultLayoutRoute
+                path="/"
+                exact
+                component={CurrentPuzzlePage}
+              />
+              <DefaultLayoutRoute
+                path="/puzzles"
+                exact
+                component={PuzzleSourcePage}
+              />
+              <AuthenticatedLayoutRoute
+                isAuthenticated={isSignedIn}
+                path="/saved"
+                exact
+                component={SavedPuzzlesPage}
+              />
+            </Switch>
+          </ScrollToTop>
+        </Router>
+      </>
     );
   }
 }
 
 const mapStateToProps = ({ auth: { isSignedIn } }) => ({ isSignedIn });
 
-export default connect(mapStateToProps, {
-  downloadWSJ: downloadActions.downloadWSJ
-})(App);
+export default connect(
+  mapStateToProps,
+  {
+    downloadWSJ: downloadActions.downloadWSJ
+  }
+)(App);

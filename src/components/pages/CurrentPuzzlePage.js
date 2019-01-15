@@ -7,11 +7,10 @@ import { userActions } from "../../actions/user";
 
 import renderWhenLoaded from "../hocs/renderWhenLoaded";
 
-import PuzzleModalContainer from "../containers/PuzzleModalContainer";
 import PuzzleKeyEventContainer from "../containers/PuzzleKeyEventContainer";
 import PuzzleContainer from "../containers/PuzzleContainer";
 import PuzzleToolContainer from "../puzzleTools/PuzzleToolContainer";
-import ClueContainer from "../containers/ClueContainer";
+import ClueContainer from "../clues/ClueContainer";
 import PuzzleHeader from "../grid/PuzzleHeader";
 
 class CurrentPuzzlePage extends React.Component {
@@ -39,7 +38,6 @@ class CurrentPuzzlePage extends React.Component {
 
     return (
       <>
-        <PuzzleModalContainer />
         <PuzzleKeyEventContainer>
           <Segment>
             <PuzzleHeader meta={meta} />

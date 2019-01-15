@@ -14,7 +14,6 @@ const parsePuzzleFromState = puzzleFromState => {
         return {}
       }
     })
-    debugger
     return {
       puzzle: {
         ipuz,
