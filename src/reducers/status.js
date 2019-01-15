@@ -9,7 +9,9 @@ const INITIAL_STATE = {
   paused: true,
   rebus: false,
   selectedCellIndex: null,
-  selectedDirection: "ACROSS"
+  selectedDirection: "ACROSS",
+  selectedCell2Index: null,
+  selectedCell2Direction: "DOWN"
 };
 
 export default (state = INITIAL_STATE, action) => {

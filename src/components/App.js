@@ -19,6 +19,7 @@ import DefaultLayoutRoute from "./routes/DefaultLayoutRoute";
 import ModalContainer from "./modals/ModalContainer";
 
 class App extends React.Component {
+  
   componentDidMount() {
     if (this.props.isSignedIn) {
       this.props.getSavedPuzzles();
@@ -27,6 +28,7 @@ class App extends React.Component {
     const formattedDate = moment().format("YYMMDD");
     this.props.downloadWSJ(formattedDate);
   }
+
   render() {
     const { isSignedIn } = this.props;
     return (

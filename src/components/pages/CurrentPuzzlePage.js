@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 
 import { Segment, Grid } from "semantic-ui-react";
 
+import { userActions } from "../../actions/user";
 import renderWhenLoaded from "../hocs/renderWhenLoaded";
 
 import PuzzleKeyEventContainer from "../containers/PuzzleKeyEventContainer";
@@ -12,12 +13,11 @@ import ClueContainer from "../clues/ClueContainer";
 import PuzzleHeader from "../grid/PuzzleHeader";
 
 class CurrentPuzzlePage extends React.Component {
-  componentDidMount() {
-    
-  }
 
   render() {
-    const { meta } = this.props;
+    const {
+      puzzle: { meta }
+    } = this.props;
 
     return (
       <>
@@ -48,9 +48,22 @@ class CurrentPuzzlePage extends React.Component {
   }
 }
 
-const mapStateToProps = ({ status: { loaded }, puzzle: { meta } }) => ({
+const mapStateToProps = ({
+  status: { loaded },
+  puzzle,
+  auth: { isSignedIn },
+  user: { currentPuzzleId }
+}) => ({
   loaded,
-  meta
+  puzzle,
+  isSignedIn,
+  currentPuzzleId
 });
 
-export default connect(mapStateToProps)(renderWhenLoaded(CurrentPuzzlePage));
+export default connect(
+  mapStateToProps,
+  {
+    createPuzzle: userActions.createPuzzle,
+    loadPuzzle: userActions.loadPuzzle
+  }
+)(renderWhenLoaded(CurrentPuzzlePage));

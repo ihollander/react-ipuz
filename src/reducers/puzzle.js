@@ -1,6 +1,9 @@
 import { puzzleTypes } from "../actionTypes/puzzle";
+import { userTypes } from "../actionTypes/user";
 
 const INITIAL_STATE = {
+  id: null,
+  loaded: false,
   meta: {
     copyright: "",
     author: "",
@@ -22,9 +25,19 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case userTypes.PUZZLE_FETCHED:
+      return {
+        ...state,
+        id: action.payload.id,
+        grid: {
+          ...state.grid,
+          cells: action.payload.grid.cells
+        }
+      };
     case puzzleTypes.PUZZLE_PARSED:
       return {
         ...state,
+        id: action.payload.id,
         loaded: true,
         meta: {
           ...state.meta,

@@ -13,20 +13,18 @@ import CheckAnswer from "./CheckAnswer";
 
 class PuzzleToolContainer extends React.Component {
   
-  savePuzzle = () => {
+  savePuzzle = (timer) => {
     
     const {
       isSignedIn,
-      currentPuzzleId,
       puzzle,
       savePuzzle,
       createPuzzle
     } = this.props;
 
-    debugger
     if (isSignedIn) {
-      currentPuzzleId
-        ? savePuzzle(puzzle, currentPuzzleId)
+      puzzle.id
+        ? savePuzzle(puzzle, puzzle.id, timer)
         : createPuzzle(puzzle);
     }
   };
@@ -92,6 +90,7 @@ class PuzzleToolContainer extends React.Component {
         />
         <Menu.Menu position="right">
           <PuzzleTimer
+            timer={this.props.timer}
             paused={this.props.paused}
             solved={this.props.solved}
             togglePaused={this.props.togglePaused}

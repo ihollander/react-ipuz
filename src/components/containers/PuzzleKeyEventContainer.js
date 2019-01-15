@@ -115,7 +115,10 @@ class PuzzleKeyEventContainer extends React.Component {
   }
 
   handleBackspace() {
-    const { selectedDirection, selectedCell } = this.props;
+    const {
+      status: { selectedDirection },
+      selectedCell
+    } = this.props;
 
     if (selectedCell.guess !== "") {
       this.props.setCellValue(selectedCell.index, "");

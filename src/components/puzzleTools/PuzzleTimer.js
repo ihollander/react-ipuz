@@ -9,6 +9,11 @@ class PuzzleTimer extends React.Component {
 
   // Lifecycle methods
   componentDidMount() {
+    if (this.props.timer) {
+      this.setState({
+        timer: this.props.timer
+      });
+    }
     if (!this.props.paused) {
       this.startTimer();
     }
@@ -18,7 +23,11 @@ class PuzzleTimer extends React.Component {
     if (this.props.solved) {
       this.stopTimer();
     } else {
-      if (this.props.paused && !prevProps.paused) {
+      if (this.props.timer !== prevProps.timer) {
+        this.setState({
+          timer: prevProps.timer
+        });
+      } else if (this.props.paused && !prevProps.paused) {
         this.startTimer();
       } else if (!this.props.paused && prevProps.paused) {
         this.stopTimer();
@@ -41,7 +50,7 @@ class PuzzleTimer extends React.Component {
   stopTimer() {
     clearInterval(this.interval);
     this.props.saveTimer(this.state.timer);
-    this.props.savePuzzle();
+    this.props.savePuzzle(this.state.timer);
   }
 
   onPauseButtonClick = () => {
@@ -67,7 +76,7 @@ class PuzzleTimer extends React.Component {
           />
         )}
       </Menu.Item>
-    )
+    );
   }
 }
 
