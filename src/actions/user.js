@@ -10,10 +10,10 @@ const parsePuzzleFromState = (puzzleFromState, timer) => {
   parser.parseState(puzzleFromState);
   const ipuz = parser.convertToIpuz();
   const cells = puzzleFromState.grid.cells.map(cell => {
-    if (cell.revealed || cell.confirmed || cell.guess !== "") {
+    if (cell.revealed || cell.checked || cell.guess !== "") {
       return {
         revealed: cell.revealed,
-        confirmed: cell.confirmed,
+        checked: cell.checked,
         guess: cell.guess
       };
     } else {
@@ -41,10 +41,9 @@ const parsePuzzleResponse = puzzle => {
     if (guessedCell.guess) {
       cell.guess = guessedCell.guess;
       cell.revealed = guessedCell.revealed;
-      cell.confirmed = guessedCell.confirmed;
+      cell.checked = guessedCell.checked;
     }
   });
-  debugger;
   return { ...parsedPuzzle, id: puzzle.id };
 };
 
@@ -79,6 +78,7 @@ const savePuzzle = (puzzleFromState, id, timer) => {
     dispatch(request());
     const createPuzzleObj = parsePuzzleFromState(puzzleFromState, timer);
 
+    debugger
     puzzleAdaptor.update(createPuzzleObj, id).then(
       puzzle => {
         dispatch(success(puzzle));
@@ -110,7 +110,7 @@ const loadPuzzle = id => {
           payload: parsedResponse
         });
         dispatch(success(parsedResponse));
-        history.push("/");
+        history.push("/puzzle");
       },
       error => {
         dispatch(failure(error));

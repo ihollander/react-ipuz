@@ -19,7 +19,6 @@ import DefaultLayoutRoute from "./routes/DefaultLayoutRoute";
 import ModalContainer from "./modals/ModalContainer";
 
 class App extends React.Component {
-  
   componentDidMount() {
     if (this.props.isSignedIn) {
       this.props.getSavedPuzzles();
@@ -27,6 +26,12 @@ class App extends React.Component {
 
     const formattedDate = moment().format("YYMMDD");
     this.props.downloadWSJ(formattedDate);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.isSignedIn && !prevProps.isSignedIn) {
+      this.props.getSavedPuzzles();
+    }
   }
 
   render() {
@@ -37,15 +42,10 @@ class App extends React.Component {
         <Router history={history}>
           <ScrollToTop>
             <Switch>
+              <DefaultLayoutRoute path="/" exact component={PuzzleSourcePage} />
               <DefaultLayoutRoute
-                path="/"
-                exact
+                path="/puzzle"
                 component={CurrentPuzzlePage}
-              />
-              <DefaultLayoutRoute
-                path="/puzzles"
-                exact
-                component={PuzzleSourcePage}
               />
               <AuthenticatedLayoutRoute
                 isAuthenticated={isSignedIn}

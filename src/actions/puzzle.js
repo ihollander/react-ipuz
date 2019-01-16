@@ -16,10 +16,10 @@ const parsePuzzleFromState = puzzleFromState => {
   parser.parseState(puzzleFromState);
   const ipuz = parser.convertToIpuz();
   const cells = puzzleFromState.grid.cells.map(cell => {
-    if (cell.revealed || cell.confirmed || cell.guess !== "") {
+    if (cell.revealed || cell.checked || cell.guess !== "") {
       return {
         revealed: cell.revealed,
-        confirmed: cell.confirmed,
+        checked: cell.checked,
         guess: cell.guess
       };
     } else {
@@ -91,7 +91,7 @@ const parseFile = buffer => {
       );
     } 
 
-    history.push("/");
+    history.push("/puzzle");
 
   };
 };
@@ -100,7 +100,7 @@ const parseIpuz = json => {
   const parser = new PuzzleParser();
   parser.parseIpuz(json);
   const puzzle = parser.data;
-  history.push("/");
+  history.push("/puzzle");
 
   return {
     type: puzzleTypes.PUZZLE_PARSED,

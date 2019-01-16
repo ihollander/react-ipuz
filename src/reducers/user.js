@@ -1,16 +1,17 @@
 import { userTypes } from "../actionTypes/user";
-import { puzzleTypes } from "../actionTypes/puzzle";
+import { authTypes } from "../actionTypes/auth";
 
 const INITIAL_STATE = {
-  currentPuzzleId: null,
   savedPuzzles: []
 };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case puzzleTypes.PUZZLE_PARSING:
-      return { ...state, currentPuzzleId: null };
+    case authTypes.LOGIN_SUCCESS:
+    case authTypes.LOGOUT_SUCCESS:
+      return INITIAL_STATE;
     case userTypes.PUZZLE_SAVED:
+      debugger;
       return { ...state, currentPuzzleId: action.payload.id };
     case userTypes.PUZZLES_FETCHED:
       return { ...state, savedPuzzles: action.payload };

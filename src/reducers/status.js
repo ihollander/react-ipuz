@@ -1,5 +1,6 @@
 import { puzzleTypes } from "../actionTypes/puzzle";
 import { statusTypes } from "../actionTypes/status";
+import { authTypes } from "../actionTypes/auth";
 
 const INITIAL_STATE = {
   loaded: false,
@@ -16,6 +17,9 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case authTypes.LOGIN_SUCCESS:
+    case authTypes.LOGOUT_SUCCESS:
+      return INITIAL_STATE;
     case puzzleTypes.PUZZLE_PARSING:
       return INITIAL_STATE;
     case puzzleTypes.PUZZLE_PARSED:

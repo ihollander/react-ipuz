@@ -31,13 +31,15 @@ class PuzzleSourcePage extends React.Component {
             date. You can also upload puzzles in the Across Lite .puz format
             using the File Upload tool.
           </p>
+        </Segment>
+        <Segment>
           <Header as="h2">Upload .puz File</Header>
           <FileUploadController />
-          <Divider />
-          <Header as="h2">Get Recent Puzzles</Header>
-          <Grid columns={2} divided>
-            <Grid.Row>
-              <Grid.Column>
+        </Segment>
+        <Grid columns={2}>
+          <Grid.Row>
+            <Grid.Column>
+              <Segment>
                 <Header as="h3">Wall Street Journal</Header>
                 <DateInput
                   maxDate={moment()}
@@ -46,8 +48,10 @@ class PuzzleSourcePage extends React.Component {
                   disable="Saturday"
                   onChange={this.onWsjDatePicked}
                 />
-              </Grid.Column>
-              <Grid.Column>
+              </Segment>
+            </Grid.Column>
+            <Grid.Column>
+              <Segment>
                 <Header as="h3">Washington Post/LA Times</Header>
                 <DateInput
                   maxDate={moment()}
@@ -55,10 +59,12 @@ class PuzzleSourcePage extends React.Component {
                   value=""
                   onChange={this.onWaPoDatePicked}
                 />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column>
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column>
+              <Segment>
                 <Header as="h3">Puzzle Society</Header>
                 <DateInput
                   maxDate={moment()}
@@ -66,10 +72,10 @@ class PuzzleSourcePage extends React.Component {
                   value=""
                   onChange={this.onPsDatePicked}
                 />
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
-        </Segment>
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
       </>
     );
   }

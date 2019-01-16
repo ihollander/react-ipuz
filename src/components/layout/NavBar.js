@@ -19,10 +19,10 @@ const NavBar = () => {
     <Menu inverted className="fixed">
       <Container>
         <NavLink exact to="/" className="item">
-          Current Puzzle
-        </NavLink>
-        <NavLink exact to="/puzzles" className="item">
           Puzzle Sources
+        </NavLink>
+        <NavLink exact to="/puzzle" className="item">
+          Current Puzzle
         </NavLink>
         <SavedPuzzlesWithAuth />
         <Menu.Menu position="right">
