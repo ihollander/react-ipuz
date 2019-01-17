@@ -1,5 +1,7 @@
 import { statusTypes } from "../actionTypes/status";
 
+const dismissAllModals = () => ({type: statusTypes.DISMISS_ALL_MODALS})
+
 const setSelectedCell = index => {
   return {
     type: statusTypes.CELL_SELECTED,
@@ -58,5 +60,6 @@ export const statusActions = {
   markSolved,
   saveTimer,
   togglePaused,
-  toggleRebus
+  toggleRebus,
+  dismissAllModals
 };

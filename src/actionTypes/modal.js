@@ -1,0 +1,5 @@
+export const modalTypes = {
+  SHOW_SIGNUP: 'SHOW_SIGNUP',
+  SHOW_LOGIN: 'SHOW_LOGIN',
+  DISMISS_MODALS: 'DISMISS_MODALS'
+}

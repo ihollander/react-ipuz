@@ -12,14 +12,17 @@ const SavedPuzzles = () => (
   </NavLink>
 );
 
-const SavedPuzzlesWithAuth = renderWithAuth(SavedPuzzles)
+const SavedPuzzlesWithAuth = renderWithAuth(SavedPuzzles);
 
 const NavBar = () => {
   return (
     <Menu inverted className="fixed">
       <Container>
-        <NavLink exact to="/puzzles" className="item">
+        <NavLink exact to="/" className="item">
           Puzzle Sources
+        </NavLink>
+        <NavLink exact to="/puzzle" className="item">
+          Current Puzzle
         </NavLink>
         <SavedPuzzlesWithAuth />
         <Menu.Menu position="right">

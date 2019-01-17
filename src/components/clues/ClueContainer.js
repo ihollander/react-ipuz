@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Grid } from "semantic-ui-react";
 import { statusActions } from "../../actions/status";
 import { getSelectedCell, getSelectedClue } from "../../selectors";
-import ClueList from "../clues/ClueList";
+import ClueList from "./ClueList";
 
 class ClueContainer extends React.Component {
   // Event Handlers
@@ -79,7 +79,6 @@ class ClueContainer extends React.Component {
   }
 
   render() {
-    console.log(this.props.selectedClue);
     return (
       <>
         <Grid columns={2} style={{ maxHeight: "680px", marginBottom: "2rem" }}>

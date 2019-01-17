@@ -1,18 +1,17 @@
-class PuzzleProxyAdaptor {
-  constructor() {
-    this.baseUrl = 'http://localhost:4000/api/v1/puzzle_proxy'
-  }
+import BaseApiAdaptor from './BaseApiAdaptor'
+
+class PuzzleProxyAdaptor extends BaseApiAdaptor {
 
   getWsj(date) {
-    return this.sendRequest(`${this.baseUrl}/wsj/${date}`)
+    return this.sendRequest(`${this.baseUrl}/puzzle_proxy/wsj/${date}`)
   }
 
   getWaPo(date) {
-    return this.sendRequest(`${this.baseUrl}/wapo/${date}`)
+    return this.sendRequest(`${this.baseUrl}/puzzle_proxy/wapo/${date}`)
   }
 
   getPs(date) {
-    return this.sendRequest(`${this.baseUrl}/ps/${date}`)
+    return this.sendRequest(`${this.baseUrl}/puzzle_proxy/ps/${date}`)
   }
 
   sendRequest(endpoint) {

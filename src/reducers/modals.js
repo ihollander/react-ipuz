@@ -1,20 +1,33 @@
 import { statusTypes } from "../actionTypes/status";
+import { downloadTypes } from "../actionTypes/download";
+import { modalTypes } from "../actionTypes/modal";
+import { authTypes } from '../actionTypes/auth'
+
+import { modals } from "../constants/modal";
 
 const INITIAL_STATE = {
-  pausedModal: false,
-  solvedModal: false,
-  completedModal: false
+  activeModal: ""
 };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case modalTypes.SHOW_LOGIN:
+      return { ...state, activeModal: modals.LOGIN };
+    case modalTypes.SHOW_SIGNUP:
+      return { ...state, activeModal: modals.SIGNUP };
+    case authTypes.LOGIN_SUCCESS:
+      return { ...state, activeModal: "" }
+    case downloadTypes.DOWNLOAD_FAILURE:
+      return { ...state, activeModal: modals.DOWNLOAD_ERROR };
     case statusTypes.TOGGLE_PAUSED:
-      return { ...state, pausedModal: !state.pausedModal };
+      const pauseModal =
+        state.activeModal === modals.PAUSED ? "" : modals.PAUSED;
+      return { ...state, activeModal: pauseModal };
     case statusTypes.MARK_COMPLETED:
-      return { ...state, completedModal: true };
+      return { ...state, activeModal: modals.PUZZLE_COMPLETED };
     case statusTypes.MARK_SOLVED:
-      return { ...state, solvedModal: true };
-    case "DISMISS_ALL":
+      return { ...state, activeModal: modals.PUZZLE_SOLVED };
+    case modalTypes.DISMISS_MODALS:
       return INITIAL_STATE;
     default:
       return state;

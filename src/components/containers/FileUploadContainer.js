@@ -7,7 +7,7 @@ class FileUploadContainer extends React.Component {
     this.props.parsing()
     const file = e.target.files[0]
     const reader = new FileReader()
-    reader.onload = e => { // after the file is read
+    reader.onload = e => {
       this.props.parseFile(e.target.result)
     }
     reader.readAsArrayBuffer(file)

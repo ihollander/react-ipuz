@@ -39,8 +39,8 @@ class PuzzleParser {
     this.data.clues = this.getCluesFromPuz(puzFile);
   }
 
-  parseIpuz(ipuz) {
-    // const ipuz = JSON.parse(ipuzFile);
+  parseIpuz(ipuzFile) {
+    const ipuz = JSON.parse(ipuzFile);
     this.data.meta.copyright = ipuz.copyright;
     this.data.meta.author = ipuz.author;
     this.data.meta.title = ipuz.title;

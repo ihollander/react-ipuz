@@ -1,11 +1,15 @@
 import React from "react";
 import { Modal, Button, Header, Icon, Form } from "semantic-ui-react";
+import { connect } from "react-redux";
 
-class LoginModal extends React.Component {
+import { authActions } from "../../actions/auth";
+import { modalActions } from "../../actions/modal";
+
+class SignUpModal extends React.Component {
   state = { username: "", password: "", password_confirmation: "" };
 
   onFormSubmit = e => {
-    this.props.onFormSubmit(this.state);
+    this.props.signUp(this.state);
   };
 
   onInputChange = e => {
@@ -29,7 +33,7 @@ class LoginModal extends React.Component {
           </p>
           <p>
             Have an account?
-            <Button onClick={this.props.onModalToggle}>Log in</Button>
+            <Button onClick={() => this.props.showLogin()}>Log in</Button>
           </p>
           <Form onSubmit={this.onFormSubmit}>
             <Form.Field>
@@ -76,4 +80,10 @@ class LoginModal extends React.Component {
   }
 }
 
-export default LoginModal;
+export default connect(
+  null,
+  {
+    signUp: authActions.signUp,
+    showLogin: modalActions.showLogin
+  }
+)(SignUpModal);

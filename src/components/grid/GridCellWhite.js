@@ -19,12 +19,12 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
   };
 
   const calcFontSize = () => {
-    if (cell.guess.length) { 
-      return 22 * (1 - (cell.guess.length / 10))
+    if (cell.guess.length) {
+      return 22 * (1 - cell.guess.length / 10);
     } else {
-      return 22
+      return 22;
     }
-  }
+  };
 
   const drawCheckmarkPoints = () => {
     const start = `${display.x + display.width - 9} ${display.y +
@@ -49,7 +49,20 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
         height={display.height}
         stroke="black"
         fill={cell.selected ? "red" : cell.clueSelected ? "pink" : "white"}
+        opacity="0.7"
       />
+      {cell.sharedSelected && (
+        <rect
+          className="rect-svg"
+          x={display.x}
+          y={display.y}
+          width={display.width}
+          height={display.height}
+          stroke="black"
+          fill="blue"
+          opacity="0.7"
+        />
+      )}
       <text
         fill="black"
         x={labelPosition.x}
