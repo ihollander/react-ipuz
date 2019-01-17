@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Segment, Header, Grid, Divider } from "semantic-ui-react";
+import { Segment, Header, Grid } from "semantic-ui-react";
 import { DateInput } from "semantic-ui-calendar-react";
 import * as moment from "moment";
 import { downloadActions } from "../../actions/download";

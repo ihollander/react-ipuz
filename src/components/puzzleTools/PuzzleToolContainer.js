@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { puzzleActions } from "../../actions/puzzle";
 import { statusActions } from "../../actions/status";
 import { userActions } from "../../actions/user";
+import { sharedGameActions } from "../../actions/sharedGames";
 
 import RebusToggle from "./RebusToggle";
 import PuzzleTimer from "./PuzzleTimer";
@@ -12,20 +13,18 @@ import RevealAnswer from "./RevealAnswer";
 import CheckAnswer from "./CheckAnswer";
 
 class PuzzleToolContainer extends React.Component {
-  
-  savePuzzle = (timer) => {
-    
-    const {
-      isSignedIn,
-      puzzle,
-      savePuzzle,
-      createPuzzle
-    } = this.props;
+  onCollaborateClick = () => {
+    const { puzzle } = this.props;
+    // create a new game (POST)
+    // push game slug to history object at /puzzle/:slug
+    this.props.createSharedGame(puzzle.id);
+  };
+
+  savePuzzle = timer => {
+    const { isSignedIn, puzzle, savePuzzle, createPuzzle } = this.props;
 
     if (isSignedIn) {
-      puzzle.id
-        ? savePuzzle(puzzle, puzzle.id, timer)
-        : createPuzzle(puzzle);
+      puzzle.id ? savePuzzle(puzzle, puzzle.id, timer) : createPuzzle(puzzle);
     }
   };
 
@@ -88,6 +87,9 @@ class PuzzleToolContainer extends React.Component {
           rebus={this.props.rebus}
           onRebusClick={this.onRebusClick}
         />
+        <Menu.Item name="rebus" onClick={this.onCollaborateClick}>
+          Collaborate
+        </Menu.Item>
         <Menu.Menu position="right">
           <PuzzleTimer
             timer={this.props.timer}
@@ -139,6 +141,7 @@ export default connect(
     revealAnswer: puzzleActions.revealAnswer,
     setCellValue: puzzleActions.setCellValue,
     savePuzzle: userActions.savePuzzle,
-    createPuzzle: userActions.createPuzzle
+    createPuzzle: userActions.createPuzzle,
+    createSharedGame: sharedGameActions.createSharedGame
   }
 )(PuzzleToolContainer);

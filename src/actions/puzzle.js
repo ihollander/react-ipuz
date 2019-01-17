@@ -1,6 +1,6 @@
 import { puzzleTypes } from "../actionTypes/puzzle";
 import { userTypes } from "../actionTypes/user";
-import {statusTypes} from '../actionTypes/status'
+import { statusTypes } from "../actionTypes/status";
 
 import history from "../history";
 
@@ -8,7 +8,6 @@ import PuzReader from "../helpers/puzFile/PuzReader";
 import PuzzleParser from "../helpers/PuzzleParser";
 
 import puzzleAdaptor from "../apis/PuzzleAdaptor";
-
 
 // helper, don't export
 const parsePuzzleFromState = puzzleFromState => {
@@ -59,7 +58,7 @@ const parseFile = buffer => {
     const isSignedIn = getState().auth.isSignedIn;
 
     if (isSignedIn) {
-      const parsedPuzzle = parsePuzzleFromState(puzzle)
+      const parsedPuzzle = parsePuzzleFromState(puzzle);
       puzzleAdaptor.create(parsedPuzzle).then(
         puzzleResponse => {
           // parse puzzle response
@@ -67,19 +66,24 @@ const parseFile = buffer => {
           const mappedCells = puzzle.grid.cells.map((cell, index) => {
             const guessedCell = guessedCells[index];
             if (guessedCell.guess) {
-              return {...cell, guess: guessedCell.guess, revealed: guessedCell.revealed, confirmed: guessedCell.confirmed}
+              return {
+                ...cell,
+                guess: guessedCell.guess,
+                revealed: guessedCell.revealed,
+                confirmed: guessedCell.confirmed
+              };
             } else {
-              return cell
+              return cell;
             }
           });
-          puzzle.grid.cells = mappedCells
-          puzzle.id = puzzleResponse.id
-          
+          puzzle.grid.cells = mappedCells;
+          puzzle.id = puzzleResponse.id;
+
           dispatch({
             type: statusTypes.SAVE_TIMER,
             payload: puzzleResponse.timer
-          })
-          
+          });
+
           dispatch({
             type: userTypes.PUZZLE_FETCHED,
             payload: puzzle
@@ -89,10 +93,9 @@ const parseFile = buffer => {
           console.error(error);
         }
       );
-    } 
+    }
 
     history.push("/puzzle");
-
   };
 };
 

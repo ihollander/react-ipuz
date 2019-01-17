@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 
 import { puzzleActions } from "../../actions/puzzle";
 import { statusActions } from "../../actions/status";
+import {sharedGameActions} from '../../actions/sharedGames'
 
 import { getSelectedCell, getSelectedClue } from "../../selectors";
 
@@ -16,6 +17,20 @@ class PuzzleKeyEventContainer extends React.Component {
 
   componentDidUpdate() {
     this.divRef.current && this.divRef.current.focus();
+  }
+
+  setCellValue(index, value) {
+    if (this.props.sharedGameId) {
+      this.props.broadcastUpdateCell(this.props.sharedGameId, index, value)
+    }
+    this.props.setCellValue(index, value)
+  }
+
+  setSelectedCell(index) {
+    if (this.props.sharedGameId) {
+      this.props.broadcastUpdatePosition(this.props.sharedGameId, index)
+    }
+    this.props.setSelectedCell(index)
   }
 
   getNextCellIndexFor(direction) {
@@ -73,8 +88,7 @@ class PuzzleKeyEventContainer extends React.Component {
   handleArrowPress(keyCode) {
     const {
       status: { selectedDirection },
-      toggleDirection,
-      setSelectedCell
+      toggleDirection
     } = this.props;
     let newIndex;
     switch (keyCode) {
@@ -110,7 +124,7 @@ class PuzzleKeyEventContainer extends React.Component {
         break;
     }
     if (newIndex !== undefined) {
-      setSelectedCell(newIndex);
+      this.setSelectedCell(newIndex);
     }
   }
 
@@ -121,14 +135,14 @@ class PuzzleKeyEventContainer extends React.Component {
     } = this.props;
 
     if (selectedCell.guess !== "") {
-      this.props.setCellValue(selectedCell.index, "");
+      this.setCellValue(selectedCell.index, "");
     } else {
       const newIndex =
         selectedDirection === "ACROSS"
           ? this.getNextCellIndexFor("LEFT")
           : this.getNextCellIndexFor("UP");
-      this.props.setCellValue(newIndex, "");
-      this.props.setSelectedCell(newIndex);
+      this.setCellValue(newIndex, "");
+      this.setSelectedCell(newIndex);
     }
   }
 
@@ -138,8 +152,6 @@ class PuzzleKeyEventContainer extends React.Component {
         grid: { cells }
       },
       status: { selectedDirection },
-      setCellValue,
-      setSelectedCell,
       selectedCell,
       selectedClue
     } = this.props;
@@ -147,7 +159,7 @@ class PuzzleKeyEventContainer extends React.Component {
     const value = String.fromCharCode(keyCode).toUpperCase();
 
     // set value of selected cell
-    setCellValue(selectedCell.index, value);
+    this.setCellValue(selectedCell.index, value);
 
     // move cursor to next empty cell for current selected clue
     const sameClueEmptyCells = cells.filter(
@@ -168,7 +180,7 @@ class PuzzleKeyEventContainer extends React.Component {
         emptyCellsBelow.length > 0
           ? emptyCellsBelow[0].index
           : sameClueEmptyCells[0].index;
-      setSelectedCell(nextIndex);
+      this.setSelectedCell(nextIndex);
     }
   }
 
@@ -208,14 +220,15 @@ class PuzzleKeyEventContainer extends React.Component {
 }
 
 const mapStateToProps = state => {
-  const { puzzle, status } = state;
+  const { puzzle, status, sharedGame: {sharedGameId} } = state;
   const selectedCell = getSelectedCell(state);
   const selectedClue = getSelectedClue(state);
   return {
     selectedCell,
     selectedClue,
     puzzle,
-    status
+    status,
+    sharedGameId
   };
 };
 
@@ -224,6 +237,8 @@ export default connect(
   {
     toggleDirection: statusActions.toggleDirection,
     setSelectedCell: statusActions.setSelectedCell,
-    setCellValue: puzzleActions.setCellValue
+    setCellValue: puzzleActions.setCellValue,
+    broadcastUpdateCell: sharedGameActions.broadcastUpdateCell,
+    broadcastUpdatePosition: sharedGameActions.broadcastUpdatePosition
   }
 )(PuzzleKeyEventContainer);

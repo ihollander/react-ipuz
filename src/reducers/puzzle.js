@@ -26,6 +26,8 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case userTypes.PUZZLE_FAILURE:
+      return state
     case authTypes.LOGIN_SUCCESS:
     case authTypes.LOGOUT_SUCCESS:
       return INITIAL_STATE

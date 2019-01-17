@@ -11,7 +11,6 @@ export default (state = INITIAL_STATE, action) => {
     case authTypes.LOGOUT_SUCCESS:
       return INITIAL_STATE;
     case userTypes.PUZZLE_SAVED:
-      debugger;
       return { ...state, currentPuzzleId: action.payload.id };
     case userTypes.PUZZLES_FETCHED:
       return { ...state, savedPuzzles: action.payload };

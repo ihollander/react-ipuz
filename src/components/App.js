@@ -17,6 +17,7 @@ import SavedPuzzlesPage from "./pages/SavedPuzzlesPage";
 import DefaultLayoutRoute from "./routes/DefaultLayoutRoute";
 
 import ModalContainer from "./modals/ModalContainer";
+import SharedPuzzlePage from "./pages/SharedPuzzlePage";
 
 class App extends React.Component {
   componentDidMount() {
@@ -45,7 +46,13 @@ class App extends React.Component {
               <DefaultLayoutRoute path="/" exact component={PuzzleSourcePage} />
               <DefaultLayoutRoute
                 path="/puzzle"
+                exact
                 component={CurrentPuzzlePage}
+              />
+              <DefaultLayoutRoute
+                path="/shared/:id"
+                exact
+                component={SharedPuzzlePage}
               />
               <AuthenticatedLayoutRoute
                 isAuthenticated={isSignedIn}

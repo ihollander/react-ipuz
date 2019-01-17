@@ -4,22 +4,25 @@ import { connect } from "react-redux";
 import { getSelectedCell, getSelectedClue } from "../../selectors";
 import { puzzleActions } from "../../actions/puzzle";
 import { statusActions } from "../../actions/status";
+import { sharedGameActions } from "../../actions/sharedGames";
 
 import ActiveClue from "../clues/ActiveClue";
 import GridBox from "../grid/GridBox";
 
 class PuzzleContainer extends React.Component {
-
   // check for puzzle completedness
   componentDidUpdate(prevProps) {
     const solvableCells = this.props.cells.filter(c => c.solution);
     const filledCells = solvableCells.filter(c => c.guess !== "");
     const solvedCells = solvableCells.filter(c => c.guess === c.solution);
-    if (filledCells.length === solvableCells.length) {
-      if (solvedCells.length === solvableCells.length) {
-        this.props.markSolved();
-      } else {
-        this.props.markCompleted();
+
+    if (!this.props.solved || !this.props.completed) {
+      if (filledCells.length === solvableCells.length) {
+        if (solvedCells.length === solvableCells.length) {
+          this.props.markSolved();
+        } else {
+          this.props.markCompleted();
+        }
       }
     } else if (
       prevProps.completed &&
@@ -34,6 +37,9 @@ class PuzzleContainer extends React.Component {
     if (index === this.props.selectedCell.index) {
       this.props.toggleDirection();
     } else {
+      if (this.props.sharedGame.sharedGameId) {
+        this.props.broadcastUpdatePosition(this.props.sharedGame.sharedGameId, index);
+      }
       this.props.setSelectedCell(index);
     }
   };
@@ -46,7 +52,7 @@ class PuzzleContainer extends React.Component {
 
   // Render Helpers
   get mappedCells() {
-    const { cells, selectedCell, selectedDirection } = this.props;
+    const { cells, selectedCell, selectedDirection, sharedGame } = this.props;
     const selectedClueIndex =
       selectedDirection === "ACROSS"
         ? selectedCell.clues.across
@@ -55,12 +61,13 @@ class PuzzleContainer extends React.Component {
     return cells.map(cell => {
       if (cell.clues) {
         const selected = cell.index === selectedCell.index;
+        const sharedSelected = sharedGame.selectedCellIndex !== null && sharedGame.selectedCellIndex === cell.index
         const clueSelected =
           (selectedDirection === "ACROSS" &&
             selectedClueIndex === cell.clues.across) ||
           (selectedDirection === "DOWN" &&
             selectedClueIndex === cell.clues.down);
-        return { ...cell, selected, clueSelected };
+        return { ...cell, selected, clueSelected, sharedSelected };
       } else {
         return cell;
       }
@@ -96,7 +103,8 @@ const mapStateToProps = state => {
     puzzle: {
       grid: { dimensions, cells }
     },
-    status: { completed, solved, rebus, selectedDirection }
+    status: { completed, solved, rebus, selectedDirection },
+    sharedGame
   } = state;
   const selectedCell = getSelectedCell(state);
   const selectedClue = getSelectedClue(state);
@@ -108,7 +116,8 @@ const mapStateToProps = state => {
     selectedDirection,
     completed,
     solved,
-    rebus
+    rebus,
+    sharedGame
   };
 };
 
@@ -121,6 +130,7 @@ export default connect(
     markCompleted: statusActions.markCompleted,
     unmarkCompleted: statusActions.unmarkCompleted,
     markSolved: statusActions.markSolved,
-    toggleRebus: statusActions.toggleRebus
+    toggleRebus: statusActions.toggleRebus,
+    broadcastUpdatePosition: sharedGameActions.broadcastUpdatePosition
   }
 )(PuzzleContainer);

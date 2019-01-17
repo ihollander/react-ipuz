@@ -1,6 +1,6 @@
 export default class BaseApiAdaptor {
   constructor() {
-    this.baseUrl = "http://localhost:4000/api/v1";
+    this.baseUrl = `${process.env.REACT_APP_API_ROOT}/api/v1`;
     this.defaultHeaders = {
       "Content-Type": "application/json",
       Accept: "application/json"

@@ -78,7 +78,6 @@ const savePuzzle = (puzzleFromState, id, timer) => {
     dispatch(request());
     const createPuzzleObj = parsePuzzleFromState(puzzleFromState, timer);
 
-    debugger
     puzzleAdaptor.update(createPuzzleObj, id).then(
       puzzle => {
         dispatch(success(puzzle));

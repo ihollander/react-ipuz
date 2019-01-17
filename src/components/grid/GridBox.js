@@ -27,7 +27,6 @@ class GridBox extends React.Component {
       (displayDimensions.width - borderOffset) / dimensions.width;
     const xOffset = cellWidth * column + borderOffset / 2;
     const yOffset = cellHeight * row + borderOffset / 2;
-    debugger
     return {
       x: xOffset,
       y: yOffset,
