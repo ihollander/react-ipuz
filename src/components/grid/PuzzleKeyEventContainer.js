@@ -1,11 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import { puzzleActions } from "../../actions/puzzle";
-import { statusActions } from "../../actions/status";
-import {sharedGameActions} from '../../actions/sharedGames'
-
 import { getSelectedCell, getSelectedClue } from "../../selectors";
+
+import { setCellValue } from "../../actions/puzzle";
+import { toggleDirection, setSelectedCell } from "../../actions/status";
+import { sharedGameActions } from "../../actions/sharedGames";
 
 class PuzzleKeyEventContainer extends React.Component {
   divRef = React.createRef();
@@ -21,16 +21,16 @@ class PuzzleKeyEventContainer extends React.Component {
 
   setCellValue(index, value) {
     if (this.props.sharedGameId) {
-      this.props.broadcastUpdateCell(this.props.sharedGameId, index, value)
+      this.props.broadcastUpdateCell(this.props.sharedGameId, index, value);
     }
-    this.props.setCellValue(index, value)
+    this.props.setCellValue(index, value);
   }
 
   setSelectedCell(index) {
     if (this.props.sharedGameId) {
-      this.props.broadcastUpdatePosition(this.props.sharedGameId, index)
+      this.props.broadcastUpdatePosition(this.props.sharedGameId, index);
     }
-    this.props.setSelectedCell(index)
+    this.props.setSelectedCell(index);
   }
 
   getNextCellIndexFor(direction) {
@@ -87,7 +87,9 @@ class PuzzleKeyEventContainer extends React.Component {
 
   handleArrowPress(keyCode) {
     const {
-      status: { selectedDirection },
+      game: {
+        host: { selectedDirection }
+      },
       toggleDirection
     } = this.props;
     let newIndex;
@@ -130,11 +132,16 @@ class PuzzleKeyEventContainer extends React.Component {
 
   handleBackspace() {
     const {
-      status: { selectedDirection },
+      game: {
+        host: { selectedDirection, guesses }
+      },
       selectedCell
     } = this.props;
 
-    if (selectedCell.guess !== "") {
+    if (
+      guesses[selectedCell.index] === undefined ||
+      guesses[selectedCell.index].guess !== ""
+    ) {
       this.setCellValue(selectedCell.index, "");
     } else {
       const newIndex =
@@ -151,7 +158,9 @@ class PuzzleKeyEventContainer extends React.Component {
       puzzle: {
         grid: { cells }
       },
-      status: { selectedDirection },
+      game: {
+        host: { selectedDirection, guesses }
+      },
       selectedCell,
       selectedClue
     } = this.props;
@@ -165,8 +174,9 @@ class PuzzleKeyEventContainer extends React.Component {
     const sameClueEmptyCells = cells.filter(
       cell =>
         cell.clues &&
-        cell !== selectedCell &&
-        cell.guess === "" &&
+        cell.index !== selectedCell.index &&
+        (guesses[cell.index] === undefined ||
+          guesses[cell.index].guess === "") &&
         ((selectedDirection === "ACROSS" &&
           cell.clues.across === selectedClue.label) ||
           (selectedDirection === "DOWN" &&
@@ -186,7 +196,7 @@ class PuzzleKeyEventContainer extends React.Component {
 
   onKeyDown = e => {
     const { keyCode } = e;
-    const { rebus, paused } = this.props.status;
+    const { rebus, paused } = this.props.game;
     if (!rebus && !paused && !e.ctrlKey && !e.altKey && !e.metaKey) {
       if (37 <= keyCode && keyCode <= 40) {
         // arrow keys
@@ -220,24 +230,27 @@ class PuzzleKeyEventContainer extends React.Component {
 }
 
 const mapStateToProps = state => {
-  const { puzzle, status, sharedGame: {sharedGameId} } = state;
-  const selectedCell = getSelectedCell(state);
-  const selectedClue = getSelectedClue(state);
-  return {
-    selectedCell,
-    selectedClue,
+  const {
     puzzle,
-    status,
-    sharedGameId
+    game,
+    sharedGame: { sharedGameId }
+  } = state;
+
+  return {
+    puzzle,
+    game,
+    sharedGameId,
+    selectedCell: getSelectedCell(state),
+    selectedClue: getSelectedClue(state)
   };
 };
 
 export default connect(
   mapStateToProps,
   {
-    toggleDirection: statusActions.toggleDirection,
-    setSelectedCell: statusActions.setSelectedCell,
-    setCellValue: puzzleActions.setCellValue,
+    toggleDirection,
+    setSelectedCell,
+    setCellValue,
     broadcastUpdateCell: sharedGameActions.broadcastUpdateCell,
     broadcastUpdatePosition: sharedGameActions.broadcastUpdatePosition
   }

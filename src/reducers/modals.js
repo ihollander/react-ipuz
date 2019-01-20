@@ -1,7 +1,8 @@
 import { statusTypes } from "../actionTypes/status";
 import { downloadTypes } from "../actionTypes/download";
 import { modalTypes } from "../actionTypes/modal";
-import { authTypes } from '../actionTypes/auth'
+import { authTypes } from "../actionTypes/auth";
+import { puzzleTypes } from "../actionTypes/puzzle";
 
 import { modals } from "../constants/modal";
 
@@ -11,12 +12,14 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case puzzleTypes.PUZZLE_PARSED:
+      return { ...state, activeModal: modals.PUZZLE_READY };
     case modalTypes.SHOW_LOGIN:
       return { ...state, activeModal: modals.LOGIN };
     case modalTypes.SHOW_SIGNUP:
       return { ...state, activeModal: modals.SIGNUP };
     case authTypes.LOGIN_SUCCESS:
-      return { ...state, activeModal: "" }
+      return { ...state, activeModal: "" };
     case downloadTypes.DOWNLOAD_FAILURE:
       return { ...state, activeModal: modals.DOWNLOAD_ERROR };
     case statusTypes.TOGGLE_PAUSED:

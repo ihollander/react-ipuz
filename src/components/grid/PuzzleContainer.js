@@ -1,13 +1,25 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import { getSelectedCell, getSelectedClue } from "../../selectors";
-import { puzzleActions } from "../../actions/puzzle";
-import { statusActions } from "../../actions/status";
+import {
+  getSelectedCell,
+  getSelectedClue,
+  getMappedCells
+} from "../../selectors";
+
+import { setCellValue } from "../../actions/puzzle";
+import {
+  setSelectedCell,
+  toggleDirection,
+  markCompleted,
+  unmarkCompleted,
+  markSolved,
+  toggleRebus
+} from "../../actions/status";
 import { sharedGameActions } from "../../actions/sharedGames";
 
 import ActiveClue from "../clues/ActiveClue";
-import GridBox from "../grid/GridBox";
+import GridBox from "./GridBox";
 
 class PuzzleContainer extends React.Component {
   // check for puzzle completedness
@@ -38,7 +50,10 @@ class PuzzleContainer extends React.Component {
       this.props.toggleDirection();
     } else {
       if (this.props.sharedGame.sharedGameId) {
-        this.props.broadcastUpdatePosition(this.props.sharedGame.sharedGameId, index);
+        this.props.broadcastUpdatePosition(
+          this.props.sharedGame.sharedGameId,
+          index
+        );
       }
       this.props.setSelectedCell(index);
     }
@@ -50,44 +65,22 @@ class PuzzleContainer extends React.Component {
     toggleRebus();
   };
 
-  // Render Helpers
-  get mappedCells() {
-    const { cells, selectedCell, selectedDirection, sharedGame } = this.props;
-    const selectedClueIndex =
-      selectedDirection === "ACROSS"
-        ? selectedCell.clues.across
-        : selectedCell.clues.down;
-
-    return cells.map(cell => {
-      if (cell.clues) {
-        const selected = cell.index === selectedCell.index;
-        const sharedSelected = sharedGame.selectedCellIndex !== null && sharedGame.selectedCellIndex === cell.index
-        const clueSelected =
-          (selectedDirection === "ACROSS" &&
-            selectedClueIndex === cell.clues.across) ||
-          (selectedDirection === "DOWN" &&
-            selectedClueIndex === cell.clues.down);
-        return { ...cell, selected, clueSelected, sharedSelected };
-      } else {
-        return cell;
-      }
-    });
-  }
-
   render() {
     const {
       dimensions,
       selectedDirection,
       selectedClue,
       selectedCell,
+      mappedCells,
       rebus
     } = this.props;
+    
     return (
       <>
         <ActiveClue clue={selectedClue} direction={selectedDirection} />
         <GridBox
           dimensions={dimensions}
-          cells={this.mappedCells}
+          cells={mappedCells}
           selectedCell={selectedCell}
           rebus={rebus}
           onCellClick={this.onCellClick}
@@ -103,34 +96,39 @@ const mapStateToProps = state => {
     puzzle: {
       grid: { dimensions, cells }
     },
-    status: { completed, solved, rebus, selectedDirection },
+    game: {
+      completed,
+      solved,
+      rebus,
+      host: { selectedDirection }
+    },
     sharedGame
   } = state;
-  const selectedCell = getSelectedCell(state);
-  const selectedClue = getSelectedClue(state);
+  
   return {
-    selectedCell,
-    selectedClue,
     dimensions,
     cells,
-    selectedDirection,
     completed,
     solved,
     rebus,
-    sharedGame
+    selectedDirection,
+    sharedGame,
+    selectedCell: getSelectedCell(state),
+    selectedClue: getSelectedClue(state),
+    mappedCells: getMappedCells(state)
   };
 };
 
 export default connect(
   mapStateToProps,
   {
-    setCellValue: puzzleActions.setCellValue,
-    setSelectedCell: statusActions.setSelectedCell,
-    toggleDirection: statusActions.toggleDirection,
-    markCompleted: statusActions.markCompleted,
-    unmarkCompleted: statusActions.unmarkCompleted,
-    markSolved: statusActions.markSolved,
-    toggleRebus: statusActions.toggleRebus,
+    setCellValue,
+    setSelectedCell,
+    toggleDirection,
+    markCompleted,
+    unmarkCompleted,
+    markSolved,
+    toggleRebus,
     broadcastUpdatePosition: sharedGameActions.broadcastUpdatePosition
   }
 )(PuzzleContainer);

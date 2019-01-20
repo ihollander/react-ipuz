@@ -1,8 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
-import { puzzleActions } from "../../actions/puzzle";
+import { parsing, parseFile } from "../../actions/puzzle";
 
 class FileUploadContainer extends React.Component {
+
   onFileUpload = e => {
     this.props.parsing()
     const file = e.target.files[0]
@@ -19,6 +20,6 @@ class FileUploadContainer extends React.Component {
 }
 
 export default connect(null,{
-  parseFile: puzzleActions.parseFile,
-  parsing: puzzleActions.parsing
+  parseFile,
+  parsing
 })(FileUploadContainer);

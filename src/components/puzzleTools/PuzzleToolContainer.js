@@ -2,8 +2,10 @@ import React from "react";
 import { Menu } from "semantic-ui-react";
 import { connect } from "react-redux";
 
-import { puzzleActions } from "../../actions/puzzle";
-import { statusActions } from "../../actions/status";
+import { getMappedCells, getSelectedCell, getSelectedCellsForClue } from "../../selectors";
+
+import { revealAnswer, checkAnswer, setCellValue } from "../../actions/puzzle";
+import { saveTimer, togglePaused, toggleRebus } from "../../actions/status";
 import { userActions } from "../../actions/user";
 import { sharedGameActions } from "../../actions/sharedGames";
 
@@ -34,33 +36,32 @@ class PuzzleToolContainer extends React.Component {
       puzzle: {
         grid: { cells }
       },
-      selectedCellIndex,
-      selectedDirection
+      game: {
+        host: {
+          guesses
+        }
+      },
+      selectedCell,
+      selectedCellsForClue
     } = this.props;
     const selectedCells = [];
 
+    debugger
     switch (type) {
       case "CHECK_SQUARE":
       case "REVEAL_SQUARE":
-        selectedCells.push(selectedCellIndex);
+        selectedCells.push(selectedCell);
         break;
       case "CHECK_WORD":
       case "REVEAL_WORD":
-        const selectedCell = cells.find(c => c.index === selectedCellIndex);
-        cells.forEach(c => {
-          const selectedClue =
-            c.clues &&
-            ((selectedDirection === "ACROSS" &&
-              c.clues.across === selectedCell.clues.across) ||
-              (selectedDirection === "DOWN" &&
-                c.clues.down === selectedCell.clues.down));
-          if (selectedClue) selectedCells.push(c.index);
+        selectedCellsForClue.forEach(c => {
+          selectedCells.push(c);
         });
         break;
       case "CHECK_PUZZLE":
       case "REVEAL_PUZZLE":
         cells.forEach(c => {
-          if (c.type !== "BLACK") selectedCells.push(c.index);
+          if (c.type !== "BLACK") selectedCells.push(c);
         });
         break;
       default:
@@ -68,7 +69,7 @@ class PuzzleToolContainer extends React.Component {
     }
 
     if (type.includes("CHECK")) {
-      this.props.checkAnswer(selectedCells);
+      this.props.checkAnswer(selectedCells, guesses);
     } else if (type.includes("REVEAL")) {
       this.props.revealAnswer(selectedCells);
     }
@@ -105,41 +106,34 @@ class PuzzleToolContainer extends React.Component {
   }
 }
 
-const mapStateToProps = ({
-  auth: { isSignedIn },
-  user: { currentPuzzleId },
-  status: {
-    timer,
-    paused,
-    solved,
-    rebus,
-    selectedDirection,
-    selectedCellIndex
-  },
-  puzzle
-}) => {
+const mapStateToProps = state => {
+  const {
+    auth: { isSignedIn },
+    user: { currentPuzzleId },
+    game,
+    puzzle
+  } = state;
+  
   return {
-    timer,
-    paused,
-    solved,
-    rebus,
     puzzle,
-    selectedCellIndex,
-    selectedDirection,
+    game,
     isSignedIn,
-    currentPuzzleId
+    currentPuzzleId,
+    selectedCell: getSelectedCell(state),
+    selectedCellsForClue: getSelectedCellsForClue(state),
+    mappedCells: getMappedCells(state)
   };
 };
 
 export default connect(
   mapStateToProps,
   {
-    saveTimer: statusActions.saveTimer,
-    togglePaused: statusActions.togglePaused,
-    toggleRebus: statusActions.toggleRebus,
-    checkAnswer: puzzleActions.checkAnswer,
-    revealAnswer: puzzleActions.revealAnswer,
-    setCellValue: puzzleActions.setCellValue,
+    saveTimer,
+    togglePaused,
+    toggleRebus,
+    checkAnswer,
+    revealAnswer,
+    setCellValue,
     savePuzzle: userActions.savePuzzle,
     createPuzzle: userActions.createPuzzle,
     createSharedGame: sharedGameActions.createSharedGame

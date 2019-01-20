@@ -3,13 +3,13 @@ import { connect } from "react-redux";
 import { ActionCable } from "react-actioncable-provider";
 import { Segment, Grid } from "semantic-ui-react";
 
-import { puzzleActions } from "../../actions/puzzle";
+import { setCellValue } from "../../actions/puzzle";
 import { userActions } from "../../actions/user";
 import { sharedGameActions } from "../../actions/sharedGames";
 import renderWhenLoaded from "../hocs/renderWhenLoaded";
 
-import PuzzleKeyEventContainer from "../containers/PuzzleKeyEventContainer";
-import PuzzleContainer from "../containers/PuzzleContainer";
+import PuzzleKeyEventContainer from "../grid/PuzzleKeyEventContainer";
+import PuzzleContainer from "../grid/PuzzleContainer";
 import PuzzleToolContainer from "../puzzleTools/PuzzleToolContainer";
 import ClueContainer from "../clues/ClueContainer";
 import PuzzleHeader from "../grid/PuzzleHeader";
@@ -120,7 +120,7 @@ export default connect(
     createPuzzle: userActions.createPuzzle,
     loadPuzzle: userActions.loadPuzzle,
     getSharedGame: sharedGameActions.getSharedGame,
-    setCellValue: puzzleActions.setCellValue,
+    setCellValue,
     updateSharedPosition: sharedGameActions.updateSharedPosition
   }
 )(renderWhenLoaded(CurrentPuzzlePage));

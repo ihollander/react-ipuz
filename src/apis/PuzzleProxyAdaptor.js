@@ -2,6 +2,10 @@ import BaseApiAdaptor from './BaseApiAdaptor'
 
 class PuzzleProxyAdaptor extends BaseApiAdaptor {
 
+  getToday() {
+    return this.sendRequest(`${this.baseUrl}/puzzle_proxy/today`)
+  }
+
   getWsj(date) {
     return this.sendRequest(`${this.baseUrl}/puzzle_proxy/wsj/${date}`)
   }
