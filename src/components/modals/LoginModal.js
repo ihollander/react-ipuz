@@ -2,8 +2,8 @@ import React from "react";
 import { connect } from "react-redux";
 import { Modal, Button, Header, Icon, Form } from "semantic-ui-react";
 
-import { authActions } from "../../actions/auth";
-import { modalActions } from "../../actions/modal";
+import { signIn } from "../../actions/auth";
+import { showSignUpModal } from "../../actions/modal";
 
 class LoginModal extends React.Component {
   state = { username: "", password: "" };
@@ -56,7 +56,7 @@ class LoginModal extends React.Component {
             </Button>
             <p>
               Need an account?
-              <Button onClick={() => this.props.showSignUp()}>Sign Up</Button>
+              <Button onClick={() => this.props.showSignUpModal()}>Sign Up</Button>
             </p>
           </Form>
         </Modal.Content>
@@ -73,7 +73,7 @@ class LoginModal extends React.Component {
 export default connect(
   null,
   {
-    signIn: authActions.signIn,
-    showSignUp: modalActions.showSignUp
+    signIn,
+    showSignUpModal
   }
 )(LoginModal);

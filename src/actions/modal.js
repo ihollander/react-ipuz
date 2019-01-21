@@ -1,19 +1,13 @@
 import { modalTypes } from "../actionTypes/modal";
 
-const showSignUp = () => ({
+export const showSignUpModal = () => ({
   type: modalTypes.SHOW_SIGNUP
 });
 
-const showLogin = () => ({
+export const showLoginModal = () => ({
   type: modalTypes.SHOW_LOGIN
 });
 
-const dismiss = () => ({
+export const dismissModals = () => ({
   type: modalTypes.DISMISS_MODALS
 });
-
-export const modalActions = {
-  showSignUp,
-  showLogin,
-  dismiss
-};

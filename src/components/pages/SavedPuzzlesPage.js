@@ -3,13 +3,14 @@ import { connect } from "react-redux";
 import { List, Header, Segment } from "semantic-ui-react";
 import * as moment from "moment";
 
-import { userActions } from "../../actions/user";
+import { getSavedPuzzles, loadPuzzle } from "../../actions/user";
+
+import DefaultLayout from "../layouts/DefaultLayout";
 
 class SavedPuzzlesPage extends React.Component {
   onSavedPuzzleClick = id => {
     this.props.loadPuzzle(id);
   };
-
 
   getDisplayTime(timer) {
     const format = timer > 60 * 60 * 1000 ? "H:mm:ss" : "mm:ss";
@@ -22,8 +23,12 @@ class SavedPuzzlesPage extends React.Component {
         <List.Item key={p.id}>
           <List.Icon name="chess board" size="large" verticalAlign="middle" />
           <List.Content>
-            <List.Header onClick={() => this.onSavedPuzzleClick(p.id)} as="a">{p.title}</List.Header>
-            <List.Description as="a">{this.getDisplayTime(p.timer)}</List.Description>
+            <List.Header onClick={() => this.onSavedPuzzleClick(p.id)} as="a">
+              {p.title}
+            </List.Header>
+            <List.Description as="a">
+              {this.getDisplayTime(p.timer)}
+            </List.Description>
           </List.Content>
         </List.Item>
       );
@@ -32,14 +37,18 @@ class SavedPuzzlesPage extends React.Component {
 
   render() {
     return this.props.savedPuzzles.length ? (
-      <Segment>
-        <Header as="h1">Saved Puzzles</Header>
-        <List divided relaxed>
-          {this.renderPuzzles()}
-        </List>
-      </Segment>
+      <DefaultLayout>
+        <Segment>
+          <Header as="h1">Saved Puzzles</Header>
+          <List divided relaxed>
+            {this.renderPuzzles()}
+          </List>
+        </Segment>
+      </DefaultLayout>
     ) : (
-      <div>Loading...</div>
+      <DefaultLayout>
+        <div>Loading...</div>
+      </DefaultLayout>
     );
   }
 }
@@ -49,7 +58,7 @@ const mapStateToProps = ({ user: { savedPuzzles } }) => ({ savedPuzzles });
 export default connect(
   mapStateToProps,
   {
-    getSavedPuzzles: userActions.getSavedPuzzles,
-    loadPuzzle: userActions.loadPuzzle
+    getSavedPuzzles,
+    loadPuzzle
   }
 )(SavedPuzzlesPage);

@@ -1,57 +1,48 @@
 import { authTypes } from "../actionTypes/auth";
-import authAdaptor from "../apis/AuthAdaptor"
+import authAdaptor from "../apis/AuthAdaptor";
 import history from "../history";
 
-const signUp = formData => {
-  const request = () => ({ type: authTypes.LOGIN_REQUEST });
-  const success = user => ({ type: authTypes.LOGIN_SUCCESS, payload: user });
-  const failure = error => ({ type: authTypes.LOGIN_ERROR, payload: error });
+// helpers
+const loginRequest = () => ({ type: authTypes.LOGIN_REQUEST });
+const loginSuccess = user => ({ type: authTypes.LOGIN_SUCCESS, payload: user });
+const loginFailure = error => ({ type: authTypes.LOGIN_ERROR, payload: error });
 
+// exported action creators
+export const signUp = formData => {
   return dispatch => {
-    dispatch(request());
+    dispatch(loginRequest());
 
-    authAdaptor.signUp({user: formData})
-      .then(
-        user => {
-          dispatch(success(user))
-          history.push("/")
-        },
-        error => {
-          dispatch(failure(error))
-        }
-      )
+    authAdaptor.signUp({ user: formData }).then(
+      user => {
+        dispatch(loginSuccess(user));
+        history.push("/");
+      },
+      error => {
+        dispatch(loginFailure(error));
+      }
+    );
   };
 };
 
-const signIn = formData => {
-  const request = () => ({ type: authTypes.LOGIN_REQUEST });
-  const success = user => ({ type: authTypes.LOGIN_SUCCESS, payload: user });
-  const failure = error => ({ type: authTypes.LOGIN_ERROR, payload: error });
-
+export const signIn = formData => {
   return dispatch => {
-    dispatch(request());
+    dispatch(loginRequest());
 
-    authAdaptor.login({user: formData}).then(
-        user => {
-          dispatch(success(user))
-          history.push("/")
-        },
-        error => {
-          dispatch(failure(error))
-        }
-      )
+    authAdaptor.login({ user: formData }).then(
+      user => {
+        dispatch(loginSuccess(user));
+        history.push("/");
+      },
+      error => {
+        dispatch(loginFailure(error));
+      }
+    );
   };
 };
 
-const signOut = () => {
-  authAdaptor.logout()
+export const signOut = () => {
+  authAdaptor.logout();
   return {
     type: authTypes.LOGOUT_SUCCESS
   };
-};
-
-export const authActions = {
-  signIn,
-  signOut,
-  signUp
 };

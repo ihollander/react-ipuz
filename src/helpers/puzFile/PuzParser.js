@@ -17,9 +17,9 @@ class PuzParser {
     const clues = {
       across: this.getClues(this.clueList["Across"]),
       down: this.getClues(this.clueList["Down"])
-    }
+    };
 
-    const cells = this.getCells()
+    const cells = this.getCells();
 
     return {
       meta: {
@@ -28,13 +28,11 @@ class PuzParser {
         title: this.data.title,
         notes: this.data.notes
       },
-      grid: {
-        dimensions: {
-          width: this.data.header.width,
-          height: this.data.header.height
-        },
-        cells
+      dimensions: {
+        width: this.data.header.width,
+        height: this.data.header.height
       },
+      cells,
       clues
     };
   }
@@ -124,7 +122,7 @@ class PuzParser {
         cells.push(cell);
       }
     }
-    return cells
+    return cells;
   }
 
   getSolutionGrid() {

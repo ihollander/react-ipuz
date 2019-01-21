@@ -1,82 +1,39 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Grid } from "semantic-ui-react";
-import { statusActions } from "../../actions/status";
-import { getSelectedCell, getSelectedClue } from "../../selectors";
+
+import {
+  getSelectedCell,
+  getSelectedClue,
+  mappedCluesSelector
+} from "../../selectors";
+
+import { toggleDirection, setSelectedCell } from "../../actions/status";
+
 import ClueList from "./ClueList";
 
 class ClueContainer extends React.Component {
   // Event Handlers
   handleClueClick(direction, label) {
-    const {
-      cells,
-      selectedDirection,
-      setSelectedCell,
-      toggleDirection
-    } = this.props;
+    const { cells, selectedDirection } = this.props;
 
+    // toggle direction if new direction selected
     if (selectedDirection !== direction) {
-      toggleDirection();
+      this.props.toggleDirection();
     }
-    const clueCell = cells.find(cell => {
-      if (direction === "ACROSS") {
-        return cell.clues && cell.clues.across === label;
-      } else {
-        return cell.clues && cell.clues.down === label;
-      }
-    });
-    setSelectedCell(clueCell.index);
+
+    // set selected cell index to first cell for given clue number
+    const clueCell = cells.find(
+      cell =>
+        (direction === "ACROSS" && cell.clues && cell.clues.across === label) ||
+        (direction === "DOWN" && cell.clues && cell.clues.down === label)
+    );
+    this.props.setSelectedCell(clueCell.index);
   }
 
-  onDownClueClick = label => {
-    this.handleClueClick("DOWN", label);
-  };
+  onDownClueClick = label => this.handleClueClick("DOWN", label);
 
-  onAcrossClueClick = label => {
-    this.handleClueClick("ACROSS", label);
-  };
-
-  get mappedAcrossClues() {
-    const { selectedCell, clues, cells, selectedDirection } = this.props;
-    const mappedClues = { ...clues.across };
-    // mark as answered
-    Object.keys(mappedClues).forEach(id => {
-      const cellsWithClue = cells.filter(
-        cell => cell.clues && cell.clues.across === mappedClues[id].label
-      );
-      const answered = cellsWithClue.every(cell => cell.guess !== "");
-      mappedClues[id] = { ...mappedClues[id], answered };
-    });
-    // mark as selected
-    if (selectedDirection === "ACROSS") {
-      mappedClues[selectedCell.clues.across] = {
-        ...mappedClues[selectedCell.clues.across],
-        selected: true
-      };
-    }
-    return mappedClues;
-  }
-
-  get mappedDownClues() {
-    const { selectedCell, clues, cells, selectedDirection } = this.props;
-    const mappedClues = { ...clues.down };
-    // mark as answered
-    Object.keys(mappedClues).forEach(id => {
-      const cellsWithClue = cells.filter(
-        cell => cell.clues && cell.clues.down === mappedClues[id].label
-      );
-      const answered = cellsWithClue.every(cell => cell.guess !== "");
-      mappedClues[id] = { ...mappedClues[id], answered };
-    });
-    // mark as selected
-    if (selectedDirection === "DOWN") {
-      mappedClues[selectedCell.clues.down] = {
-        ...mappedClues[selectedCell.clues.down],
-        selected: true
-      };
-    }
-    return mappedClues;
-  }
+  onAcrossClueClick = label => this.handleClueClick("ACROSS", label);
 
   render() {
     return (
@@ -84,14 +41,14 @@ class ClueContainer extends React.Component {
         <Grid columns={2} style={{ maxHeight: "680px", marginBottom: "2rem" }}>
           <Grid.Column>
             <ClueList
-              clues={this.mappedAcrossClues}
+              clues={this.props.mappedClues.across}
               onClueClick={this.onAcrossClueClick}
               heading="Across"
             />
           </Grid.Column>
           <Grid.Column>
             <ClueList
-              clues={this.mappedDownClues}
+              clues={this.props.mappedClues.down}
               onClueClick={this.onDownClueClick}
               heading="Down"
             />
@@ -104,21 +61,25 @@ class ClueContainer extends React.Component {
 
 const mapStateToProps = state => {
   const {
-    puzzle: {
-      clues,
-      grid: { cells }
-    },
-    status: { selectedDirection }
+    puzzle: { cells },
+    game: {
+      host: { selectedDirection }
+    }
   } = state;
-  const selectedCell = getSelectedCell(state);
-  const selectedClue = getSelectedClue(state);
-  return { selectedCell, selectedClue, clues, cells, selectedDirection };
+
+  return {
+    cells: cells,
+    selectedDirection: selectedDirection,
+    selectedCell: getSelectedCell(state),
+    selectedClue: getSelectedClue(state),
+    mappedClues: mappedCluesSelector(state)
+  };
 };
 
 export default connect(
   mapStateToProps,
   {
-    toggleDirection: statusActions.toggleDirection,
-    setSelectedCell: statusActions.setSelectedCell
+    toggleDirection,
+    setSelectedCell
   }
 )(ClueContainer);

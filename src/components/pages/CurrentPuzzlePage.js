@@ -1,70 +1,52 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Segment, Grid } from "semantic-ui-react";
+import { Redirect } from "react-router-dom";
 
-import { puzzleActions } from "../../actions/puzzle";
-import { userActions } from "../../actions/user";
-import { sharedGameActions } from "../../actions/sharedGames";
-import renderWhenLoaded from "../hocs/renderWhenLoaded";
-
-import PuzzleKeyEventContainer from "../containers/PuzzleKeyEventContainer";
-import PuzzleContainer from "../containers/PuzzleContainer";
+import DefaultLayout from "../layouts/DefaultLayout";
+import PuzzleKeyEventContainer from "../grid/PuzzleKeyEventContainer";
+import PuzzleContainer from "../grid/PuzzleContainer";
 import PuzzleToolContainer from "../puzzleTools/PuzzleToolContainer";
 import ClueContainer from "../clues/ClueContainer";
 import PuzzleHeader from "../grid/PuzzleHeader";
 
 class CurrentPuzzlePage extends React.Component {
-
   render() {
-    const {
-      puzzle: { meta }
-    } = this.props;
+    const { meta, loaded } = this.props;
+    if (!loaded) return <Redirect to="/" />;
 
     return (
-      <PuzzleKeyEventContainer>
-        <Segment>
-          <PuzzleHeader meta={meta} />
-        </Segment>
-        <Grid>
-          <Grid.Row>
-            <Grid.Column tablet={16} computer={8}>
-              <Segment>
-                <PuzzleToolContainer />
-              </Segment>
-              <Segment>
-                <PuzzleContainer />
-              </Segment>
-            </Grid.Column>
-            <Grid.Column computer={8} only="computer">
-              <Segment>
-                <ClueContainer />
-              </Segment>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </PuzzleKeyEventContainer>
+      <DefaultLayout>
+        <PuzzleKeyEventContainer>
+          <Segment>
+            <PuzzleHeader meta={meta} />
+          </Segment>
+          <Grid>
+            <Grid.Row>
+              <Grid.Column tablet={16} computer={8}>
+                <Segment>
+                  <PuzzleToolContainer />
+                </Segment>
+                <Segment>
+                  <PuzzleContainer />
+                </Segment>
+              </Grid.Column>
+              <Grid.Column computer={8} only="computer">
+                <Segment>
+                  <ClueContainer />
+                </Segment>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </PuzzleKeyEventContainer>
+      </DefaultLayout>
     );
   }
 }
 
-const mapStateToProps = ({
-  status: { loaded },
-  puzzle,
-  auth: { isSignedIn },
-  user: { currentPuzzleId }
-}) => ({
-  loaded,
-  puzzle,
-  isSignedIn,
-  currentPuzzleId
+const mapStateToProps = ({ puzzle: { meta }, game: { loaded } }) => ({
+  meta,
+  loaded
 });
 
-export default connect(
-  mapStateToProps,
-  {
-    createPuzzle: userActions.createPuzzle,
-    loadPuzzle: userActions.loadPuzzle,
-    getSharedGame: sharedGameActions.getSharedGame,
-    setCellValue: puzzleActions.setCellValue
-  }
-)(renderWhenLoaded(CurrentPuzzlePage));
+export default connect(mapStateToProps)(CurrentPuzzlePage);

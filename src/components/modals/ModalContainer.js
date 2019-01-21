@@ -3,27 +3,30 @@ import { connect } from "react-redux";
 
 import { modals } from "../../constants/modal";
 
-import { modalActions } from "../../actions/modal";
-import { statusActions } from "../../actions/status";
+import { dismissModals } from "../../actions/modal";
+import { togglePaused } from "../../actions/status";
 
 import LoginModal from "./LoginModal";
 import SignUpModal from "./SignUpModal";
 import PuzzlePausedModal from "./PuzzlePausedModal";
 import PuzzleSolvedModal from "./PuzzleSolvedModal";
-import DownloadErrorModal from './DownloadErrorModal'
+import DownloadErrorModal from "./DownloadErrorModal";
+import PuzzleReadyModal from "./PuzzleReadyModal";
 
-const ModalContainer = ({ activeModal, dismissModal, togglePaused }) => {
+const ModalContainer = ({ activeModal, dismissModals, togglePaused }) => {
   switch (activeModal) {
     case modals.LOGIN:
-      return <LoginModal modalOpen onModalClose={dismissModal} />;
+      return <LoginModal modalOpen onModalClose={dismissModals} />;
     case modals.SIGNUP:
-      return <SignUpModal modalOpen onModalClose={dismissModal} />;
+      return <SignUpModal modalOpen onModalClose={dismissModals} />;
     case modals.PAUSED:
       return <PuzzlePausedModal modalOpen onModalClose={togglePaused} />;
     case modals.PUZZLE_SOLVED:
-      return <PuzzleSolvedModal modalOpen onModalClose={dismissModal} />;
+      return <PuzzleSolvedModal modalOpen onModalClose={dismissModals} />;
     case modals.DOWNLOAD_ERROR:
-      return <DownloadErrorModal modalOpen onModalClose={dismissModal} />
+      return <DownloadErrorModal modalOpen onModalClose={dismissModals} />;
+    case modals.PUZZLE_READY:
+      return <PuzzleReadyModal modalOpen onModalClose={dismissModals} />;
     default:
       return null;
   }
@@ -34,7 +37,7 @@ const mapStateToProps = ({ modals: { activeModal } }) => ({ activeModal });
 export default connect(
   mapStateToProps,
   {
-    dismissModal: modalActions.dismiss,
-    togglePaused: statusActions.togglePaused 
+    dismissModals,
+    togglePaused
   }
 )(ModalContainer);

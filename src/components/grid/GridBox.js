@@ -4,12 +4,14 @@ import GridCellWhite from "./GridCellWhite";
 import RebusInput from "./RebusInput";
 
 class GridBox extends React.Component {
-  gridBoxRef = React.createRef()
+  gridBoxRef = React.createRef();
 
   // need a separate system for rebus display since it's not SVG based
-  calcRebusDisplayDimensions() {
+  getRebusDisplayDimensions() {
     const { dimensions } = this.props;
-    const puzzleWidth = this.gridBoxRef.current ? this.gridBoxRef.current.offsetWidth : 600;
+    const puzzleWidth = this.gridBoxRef.current
+      ? this.gridBoxRef.current.offsetWidth
+      : 600;
     const puzzleHeight = (dimensions.height / dimensions.width) * puzzleWidth;
     return {
       width: puzzleWidth,
@@ -17,9 +19,9 @@ class GridBox extends React.Component {
     };
   }
 
-  calcRebusDisplay(row, column) {
+  getRebusDisplay(row, column) {
     const { dimensions } = this.props;
-    const displayDimensions = this.calcRebusDisplayDimensions();
+    const displayDimensions = this.getRebusDisplayDimensions();
     const borderOffset = 4;
     const cellHeight =
       (displayDimensions.width - borderOffset) / dimensions.width;
@@ -35,7 +37,7 @@ class GridBox extends React.Component {
     };
   }
 
-  calcDisplayDimensions() {
+  getDisplayDimensions() {
     const { dimensions } = this.props;
     const puzzleWidth = 600;
     const puzzleHeight = (dimensions.height / dimensions.width) * puzzleWidth;
@@ -45,9 +47,9 @@ class GridBox extends React.Component {
     };
   }
 
-  calcCellDisplay(row, column) {
+  getCellDisplay(row, column) {
     const { dimensions } = this.props;
-    const displayDimensions = this.calcDisplayDimensions();
+    const displayDimensions = this.getDisplayDimensions();
     const borderOffset = 4;
     const cellHeight =
       (displayDimensions.width - borderOffset) / dimensions.width;
@@ -64,9 +66,16 @@ class GridBox extends React.Component {
   }
 
   renderCells() {
-    const { cells, onCellClick } = this.props;
+    const { cells, onCellClick, selectedCell, selectedDirection } = this.props;
     const gridCells = cells.map(cell => {
-      const display = this.calcCellDisplay(cell.row, cell.column);
+      const display = this.getCellDisplay(cell.row, cell.column);
+      const isSelected = cell.index === selectedCell.index;
+      const isSelectedClue =
+        cell.clues &&
+        ((selectedDirection === "ACROSS" &&
+          cell.clues.across === selectedCell.clues.across) ||
+          (selectedDirection === "DOWN" &&
+            cell.clues.down === selectedCell.clues.down));
 
       if (cell.type === "BLACK") {
         return <GridCellBlack key={cell.index} display={display} />;
@@ -75,7 +84,16 @@ class GridBox extends React.Component {
           <GridCellWhite
             key={cell.index}
             display={display}
-            cell={cell}
+            guess={cell.guess}
+            index={cell.index}
+            isChecked={cell.checked}
+            isConfirmed={cell.confirmed}
+            isRevealed={cell.revealed}
+            isSelected={isSelected}
+            isSelectedClue={isSelectedClue}
+            label={cell.label}
+            style={cell.style}
+            sharedSelected={false}
             onCellClick={onCellClick}
           />
         );
@@ -86,7 +104,7 @@ class GridBox extends React.Component {
 
   render() {
     const { rebus, selectedCell, onRebusSubmit } = this.props;
-    const displayDimensions = this.calcDisplayDimensions();
+    const displayDimensions = this.getDisplayDimensions();
 
     return (
       <div ref={this.gridBoxRef} className="grid-box">
@@ -110,7 +128,7 @@ class GridBox extends React.Component {
         {rebus && (
           <RebusInput
             cell={selectedCell}
-            display={this.calcRebusDisplay(
+            display={this.getRebusDisplay(
               selectedCell.row,
               selectedCell.column
             )}

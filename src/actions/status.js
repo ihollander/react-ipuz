@@ -1,65 +1,55 @@
 import { statusTypes } from "../actionTypes/status";
 
-const dismissAllModals = () => ({type: statusTypes.DISMISS_ALL_MODALS})
+export const dismissAllModals = () => ({
+  type: statusTypes.DISMISS_ALL_MODALS
+});
 
-const setSelectedCell = index => {
+export const setSelectedCell = index => {
   return {
     type: statusTypes.CELL_SELECTED,
     payload: index
   };
 };
 
-const toggleDirection = () => {
+export const toggleDirection = () => {
   return {
     type: statusTypes.TOGGLE_DIRECTION
   };
 };
 
-const togglePaused = () => {
+export const togglePaused = () => {
   return {
     type: statusTypes.TOGGLE_PAUSED
-  }
-}
+  };
+};
 
-const toggleRebus = () => {
+export const toggleRebus = () => {
   return {
     type: statusTypes.TOGGLE_REBUS
-  }
-}
+  };
+};
 
-const saveTimer = timer => {
+export const saveTimer = timer => {
   return {
     type: statusTypes.SAVE_TIMER,
     payload: timer
-  }
-}
+  };
+};
 
-const markCompleted = () => {
+export const markCompleted = () => {
   return {
     type: statusTypes.MARK_COMPLETED
   };
 };
 
-const unmarkCompleted = () => {
+export const unmarkCompleted = () => {
   return {
     type: statusTypes.UNMARK_COMPLETED
   };
 };
 
-const markSolved = () => {
+export const markSolved = () => {
   return {
     type: statusTypes.MARK_SOLVED
   };
-};
-
-export const statusActions = {
-  setSelectedCell,
-  toggleDirection,
-  markCompleted,
-  unmarkCompleted,
-  markSolved,
-  saveTimer,
-  togglePaused,
-  toggleRebus,
-  dismissAllModals
 };
