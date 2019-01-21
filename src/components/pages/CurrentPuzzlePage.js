@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Segment, Grid } from "semantic-ui-react";
 import { Redirect } from "react-router-dom";
 
+import DefaultLayout from "../layouts/DefaultLayout";
 import PuzzleKeyEventContainer from "../grid/PuzzleKeyEventContainer";
 import PuzzleContainer from "../grid/PuzzleContainer";
 import PuzzleToolContainer from "../puzzleTools/PuzzleToolContainer";
@@ -15,28 +16,30 @@ class CurrentPuzzlePage extends React.Component {
     if (!loaded) return <Redirect to="/" />;
 
     return (
-      <PuzzleKeyEventContainer>
-        <Segment>
-          <PuzzleHeader meta={meta} />
-        </Segment>
-        <Grid>
-          <Grid.Row>
-            <Grid.Column tablet={16} computer={8}>
-              <Segment>
-                <PuzzleToolContainer />
-              </Segment>
-              <Segment>
-                <PuzzleContainer />
-              </Segment>
-            </Grid.Column>
-            <Grid.Column computer={8} only="computer">
-              <Segment>
-                <ClueContainer />
-              </Segment>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </PuzzleKeyEventContainer>
+      <DefaultLayout>
+        <PuzzleKeyEventContainer>
+          <Segment>
+            <PuzzleHeader meta={meta} />
+          </Segment>
+          <Grid>
+            <Grid.Row>
+              <Grid.Column tablet={16} computer={8}>
+                <Segment>
+                  <PuzzleToolContainer />
+                </Segment>
+                <Segment>
+                  <PuzzleContainer />
+                </Segment>
+              </Grid.Column>
+              <Grid.Column computer={8} only="computer">
+                <Segment>
+                  <ClueContainer />
+                </Segment>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </PuzzleKeyEventContainer>
+      </DefaultLayout>
     );
   }
 }

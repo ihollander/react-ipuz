@@ -35,9 +35,7 @@ class PuzzleKeyEventContainer extends React.Component {
 
   getNextCellIndexFor(direction) {
     const {
-      puzzle: {
-        grid: { cells, dimensions }
-      },
+      puzzle: { cells, dimensions },
       selectedCell
     } = this.props;
     let currentColumn = selectedCell.column;
@@ -133,15 +131,12 @@ class PuzzleKeyEventContainer extends React.Component {
   handleBackspace() {
     const {
       game: {
-        host: { selectedDirection, guesses }
+        host: { selectedDirection }
       },
       selectedCell
     } = this.props;
 
-    if (
-      guesses[selectedCell.index] === undefined ||
-      guesses[selectedCell.index].guess !== ""
-    ) {
+    if (selectedCell.guess !== "") {
       this.setCellValue(selectedCell.index, "");
     } else {
       const newIndex =
@@ -155,11 +150,9 @@ class PuzzleKeyEventContainer extends React.Component {
 
   handleValueKeyPress(keyCode) {
     const {
-      puzzle: {
-        grid: { cells }
-      },
+      puzzle: { cells },
       game: {
-        host: { selectedDirection, guesses }
+        host: { selectedDirection }
       },
       selectedCell,
       selectedClue
@@ -175,8 +168,7 @@ class PuzzleKeyEventContainer extends React.Component {
       cell =>
         cell.clues &&
         cell.index !== selectedCell.index &&
-        (guesses[cell.index] === undefined ||
-          guesses[cell.index].guess === "") &&
+        cell.guess === "" &&
         ((selectedDirection === "ACROSS" &&
           cell.clues.across === selectedClue.label) ||
           (selectedDirection === "DOWN" &&

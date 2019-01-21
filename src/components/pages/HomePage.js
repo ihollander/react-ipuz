@@ -6,15 +6,19 @@ import {
   downloadPs,
   downloadToday,
   downloadWaPo,
-  downloadWSJ
+  downloadWSJ,
+  downloadNYT
 } from "../../actions/download";
 
+import DefaultLayout from "../layouts/DefaultLayout";
 import PuzzleCalendar from "../shared/PuzzleCalendar";
 import FileUploadController from "../containers/FileUploadContainer";
 
 class HomePage extends React.Component {
   onTodayPicked = () => this.props.downloadToday()
   
+  onNYTDatePicked = formattedDate => this.props.downloadNYT(formattedDate);
+
   onWsjDatePicked = formattedDate => this.props.downloadWSJ(formattedDate);
 
   onWaPoDatePicked = formattedDate => this.props.downloadWaPo(formattedDate);
@@ -23,7 +27,7 @@ class HomePage extends React.Component {
 
   render() {
     return (
-      <>
+      <DefaultLayout>
         <Segment>
           <Header as="h1">Welcome to [APP NAME HERE]</Header>
           <p>
@@ -45,16 +49,18 @@ class HomePage extends React.Component {
             <Grid.Column>
               <Segment>
                 <PuzzleCalendar
-                  header="Wall Street Journal"
-                  onDateCalendarSubmit={this.onWsjDatePicked}
+                  header="New York Times"
+                  dateFormat="YYYY-MM-DD"
+                  onDateCalendarSubmit={this.onNYTDatePicked}
                 />
               </Segment>
             </Grid.Column>
             <Grid.Column>
               <Segment>
                 <PuzzleCalendar
-                  header="Washington Post"
-                  onDateCalendarSubmit={this.onWaPoDatePicked}
+                  header="Wall Street Journal"
+                  dateFormat="YYMMDD"
+                  onDateCalendarSubmit={this.onWsjDatePicked}
                 />
               </Segment>
             </Grid.Column>
@@ -63,14 +69,24 @@ class HomePage extends React.Component {
             <Grid.Column>
               <Segment>
                 <PuzzleCalendar
+                  header="Washington Post"
+                  dateFormat="YYMMDD"
+                  onDateCalendarSubmit={this.onWaPoDatePicked}
+                />
+              </Segment>
+            </Grid.Column>
+            <Grid.Column>
+              <Segment>
+                <PuzzleCalendar
                   header="Puzzle Society"
+                  dateFormat="YYMMDD"
                   onDateCalendarSubmit={this.onPsDatePicked}
                 />
               </Segment>
             </Grid.Column>
           </Grid.Row>
         </Grid>
-      </>
+      </DefaultLayout>
     );
   }
 }
@@ -81,6 +97,7 @@ export default connect(
     downloadWSJ,
     downloadWaPo,
     downloadPs,
-    downloadToday
+    downloadToday,
+    downloadNYT
   }
 )(HomePage);

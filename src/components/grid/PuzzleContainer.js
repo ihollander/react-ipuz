@@ -1,11 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import {
-  getSelectedCell,
-  getSelectedClue,
-  getMappedCells
-} from "../../selectors";
+import { getSelectedCell, getSelectedClue } from "../../selectors";
 
 import { setCellValue } from "../../actions/puzzle";
 import {
@@ -71,17 +67,18 @@ class PuzzleContainer extends React.Component {
       selectedDirection,
       selectedClue,
       selectedCell,
-      mappedCells,
+      cells,
       rebus
     } = this.props;
-    
+
     return (
       <>
         <ActiveClue clue={selectedClue} direction={selectedDirection} />
         <GridBox
           dimensions={dimensions}
-          cells={mappedCells}
+          cells={cells}
           selectedCell={selectedCell}
+          selectedDirection={selectedDirection}
           rebus={rebus}
           onCellClick={this.onCellClick}
           onRebusSubmit={this.onRebusSubmit}
@@ -93,9 +90,7 @@ class PuzzleContainer extends React.Component {
 
 const mapStateToProps = state => {
   const {
-    puzzle: {
-      grid: { dimensions, cells }
-    },
+    puzzle: { dimensions, cells },
     game: {
       completed,
       solved,
@@ -104,7 +99,7 @@ const mapStateToProps = state => {
     },
     sharedGame
   } = state;
-  
+
   return {
     dimensions,
     cells,
@@ -114,8 +109,7 @@ const mapStateToProps = state => {
     selectedDirection,
     sharedGame,
     selectedCell: getSelectedCell(state),
-    selectedClue: getSelectedClue(state),
-    mappedCells: getMappedCells(state)
+    selectedClue: getSelectedClue(state)
   };
 };
 

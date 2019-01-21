@@ -8,13 +8,11 @@ class PuzzleParser {
         title: "",
         notes: ""
       },
-      grid: {
-        dimensions: {
-          width: null,
-          height: null
-        },
-        cells: []
+      dimensions: {
+        width: null,
+        height: null
       },
+      cells: [],
       clues: {
         across: null,
         down: null
@@ -24,7 +22,8 @@ class PuzzleParser {
 
   parseState(state) {
     this.data.meta = state.meta;
-    this.data.grid = state.grid;
+    this.data.dimensions = state.dimensions;
+    this.data.cells = state.cells;
     this.data.clues = state.clues;
   }
 
@@ -33,9 +32,9 @@ class PuzzleParser {
     this.data.meta.author = puzFile.author;
     this.data.meta.title = puzFile.title;
     this.data.meta.notes = puzFile.notes;
-    this.data.grid.dimensions.width = puzFile.header.width;
-    this.data.grid.dimensions.height = puzFile.header.height;
-    this.data.grid.cells = this.getCellsFromPuz(puzFile);
+    this.data.dimensions.width = puzFile.header.width;
+    this.data.dimensions.height = puzFile.header.height;
+    this.data.cells = this.getCellsFromPuz(puzFile);
     this.data.clues = this.getCluesFromPuz(puzFile);
   }
 
@@ -45,9 +44,9 @@ class PuzzleParser {
     this.data.meta.author = ipuz.author;
     this.data.meta.title = ipuz.title;
     this.data.meta.notes = ipuz.intro;
-    this.data.grid.dimensions.width = ipuz.dimensions.width;
-    this.data.grid.dimensions.height = ipuz.dimensions.height;
-    this.data.grid.cells = this.getCellsFromIpuz(ipuz);
+    this.data.dimensions.width = ipuz.dimensions.width;
+    this.data.dimensions.height = ipuz.dimensions.height;
+    this.data.cells = this.getCellsFromIpuz(ipuz);
     this.data.clues.across = this.getCluesFromIpuz(ipuz.clues["Across"]);
     this.data.clues.down = this.getCluesFromIpuz(ipuz.clues["Down"]);
   }
@@ -62,8 +61,8 @@ class PuzzleParser {
       title: this.data.meta.title,
       intro: this.data.meta.notes,
       dimensions: {
-        width: this.data.grid.dimensions.width,
-        height: this.data.grid.dimensions.height
+        width: this.data.dimensions.width,
+        height: this.data.dimensions.height
       },
       puzzle: this.toIpuzPuzzle(),
       clues: this.toIpuzClues(),
@@ -91,12 +90,12 @@ class PuzzleParser {
   toIpuzSolution() {
     // convert cell values to 2D grid
     const grid = [];
-    const { width, height } = this.data.grid.dimensions;
+    const { width, height } = this.data.dimensions;
 
     for (let row = 0; row < height; row++) {
       grid[row] = [];
       for (let column = 0; column < width; column++) {
-        const cell = this.data.grid.cells.find(
+        const cell = this.data.cells.find(
           c => c.row === row && c.column === column
         );
         if (cell.type === "BLACK") {
@@ -113,12 +112,12 @@ class PuzzleParser {
   toIpuzPuzzle() {
     // convert cell values to 2D grid
     const grid = [];
-    const { width, height } = this.data.grid.dimensions;
+    const { width, height } = this.data.dimensions;
 
     for (let row = 0; row < height; row++) {
       grid[row] = [];
       for (let column = 0; column < width; column++) {
-        const cell = this.data.grid.cells.find(
+        const cell = this.data.cells.find(
           c => c.row === row && c.column === column
         );
         if (cell.type === "BLACK") {

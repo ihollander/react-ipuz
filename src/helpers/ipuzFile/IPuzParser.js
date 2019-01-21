@@ -9,7 +9,7 @@ class IPuzParser {
       down: this.getClues(this.data.clues["Down"])
     };
 
-    const cells = this.getCells()
+    const cells = this.getCells();
 
     return {
       meta: {
@@ -18,13 +18,11 @@ class IPuzParser {
         title: this.data.title,
         notes: this.data.intro
       },
-      grid: {
-        dimensions: {
-          width: this.data.dimensions.width,
-          height: this.data.dimensions.height
-        },
-        cells
+      dimensions: {
+        width: this.data.dimensions.width,
+        height: this.data.dimensions.height
       },
+      cells,
       clues
     };
   }
@@ -86,7 +84,7 @@ class IPuzParser {
         cells.push(cell);
       }
     }
-    return cells
+    return cells;
   }
 
   getCellLabel(puzzleCell) {

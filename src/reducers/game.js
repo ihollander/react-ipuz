@@ -1,16 +1,17 @@
 import { authTypes } from "../actionTypes/auth";
 import { statusTypes } from "../actionTypes/status";
 import { puzzleTypes } from "../actionTypes/puzzle";
+import { userTypes } from "../actionTypes/user";
 // game: { status keys, puzzleId, guesses: [{cell: guess, username, revealed, checked}], host: {username, selectedCell, selectedDirection}, guest: {username, selectedCell, selectedDirection} }
 
 const INITIAL_STATE = {
   loaded: false,
+  puzzleId: null,
   solved: false, // add as key to game in backend
   completed: false, // add as key to game in backend
   timer: 0, // add as key to game in backend
   paused: true, // add as key to game in backend
   rebus: false, // add as key to game in backend
-  puzzleId: null,
   host: {
     username: "",
     selectedCellIndex: null,
@@ -33,7 +34,7 @@ export default (state = INITIAL_STATE, action) => {
     case puzzleTypes.PUZZLE_PARSING:
       return INITIAL_STATE;
     case puzzleTypes.PUZZLE_PARSED:
-      const selectedCellIndex = action.payload.grid.cells.find(
+      const selectedCellIndex = action.payload.cells.find(
         c => c.type !== "BLACK"
       ).index;
       // auto-start timer?
@@ -52,66 +53,10 @@ export default (state = INITIAL_STATE, action) => {
         ...state,
         host: { ...state.host, selectedCellIndex: action.payload }
       };
-    case puzzleTypes.CELL_VALUE_CHANGED:
-      const guessesAtIndex = state.host.guesses[action.payload.index]
-        ? {
-            ...state.host.guesses[action.payload.index],
-            guess: action.payload.value
-          }
-        : { guess: action.payload.value };
-      return {
-        ...state,
-        host: {
-          ...state.host,
-          guesses: {
-            ...state.host.guesses,
-            [action.payload.index]: guessesAtIndex
-          }
-        }
-      };
-    case puzzleTypes.CHECK_ANSWER:
-      const checkedValues = Object.keys(action.payload).reduce((obj, index) => {
-        const { confirmed, checked } = action.payload[index];
-        obj[index] = state.host.guesses[index]
-          ? {
-              ...state.host.guesses[index],
-              confirmed,
-              checked
-            }
-          : { confirmed, checked };
-        return obj;
-      }, {});
-
-      return {
-        ...state,
-        host: {
-          ...state.host,
-          guesses: { ...state.host.guesses, ...checkedValues }
-        }
-      };
-    case puzzleTypes.REVEAL_ANSWER:
-      const revealedValues = Object.keys(action.payload).reduce(
-        (obj, index) => {
-          const { revealed, guess } = action.payload[index];
-          obj[index] = state.host.guesses[index]
-            ? {
-                ...state.host.guesses[index],
-                revealed,
-                guess
-              }
-            : { revealed, guess };
-          return obj;
-        },
-        {}
-      );
-      
-      return {
-        ...state,
-        host: {
-          ...state.host,
-          guesses: { ...state.host.guesses, ...revealedValues }
-        }
-      };
+    case userTypes.GAME_FETCHED:
+    case userTypes.GAME_SAVED:
+      // TODO: also get the timer and any other saved info...
+      return { ...state, puzzleId: action.payload.id };
     case statusTypes.TOGGLE_REBUS:
       return { ...state, rebus: !state.rebus };
     case statusTypes.TOGGLE_PAUSED:

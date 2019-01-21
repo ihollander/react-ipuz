@@ -1,11 +1,10 @@
 import { createSelector } from "reselect";
 
-const getCells = state => state.puzzle.grid.cells;
+const getCells = state => state.puzzle.cells;
 const getClues = state => state.puzzle.clues;
 
 const getSelectedCellIndex = state => state.game.host.selectedCellIndex;
 const getSelectedDirection = state => state.game.host.selectedDirection;
-const getGuesses = state => state.game.host.guesses;
 
 // cell selectors
 export const getSelectedCell = createSelector(
@@ -28,17 +27,6 @@ export const getSelectedCellsForClue = createSelector(
   }
 );
 
-export const getMappedCells = createSelector(
-  [getCells, getGuesses, getSelectedCell, getSelectedCellsForClue],
-  (cells, guesses, selectedCell, clueCells) => {
-    return cells.map(cell => {
-      const matchingGuesses = guesses[cell.index];
-      const selected = cell === selectedCell;
-      const clueSelected = clueCells.includes(cell);
-      return { ...cell, ...matchingGuesses, selected, clueSelected };
-    });
-  }
-);
 
 // clue selectors
 export const getSelectedClue = createSelector(
@@ -55,7 +43,7 @@ export const getSelectedClue = createSelector(
 );
 
 export const mappedCluesSelector = createSelector(
-  [getClues, getSelectedClue, getMappedCells],
+  [getClues, getSelectedClue, getCells],
   (clues, selectedClue, cells) => {
     return Object.keys(clues).reduce((outerObj, direction) => {
       outerObj[direction] = Object.keys(clues[direction]).reduce(

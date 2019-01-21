@@ -9,13 +9,11 @@ const INITIAL_STATE = {
     title: "",
     notes: ""
   },
-  grid: {
-    dimensions: {
-      width: null,
-      height: null
-    },
-    cells: []
+  dimensions: {
+    width: null,
+    height: null
   },
+  cells: [],
   clues: {
     across: null,
     down: null
@@ -24,18 +22,15 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case userTypes.PUZZLE_FAILURE:
-      return state
+    case userTypes.GAME_FETCH_FAILURE:
+      return state;
     case authTypes.LOGIN_SUCCESS:
     case authTypes.LOGOUT_SUCCESS:
-      return INITIAL_STATE
-    case userTypes.PUZZLE_FETCHED:
+      return INITIAL_STATE;
+    case userTypes.GAME_FETCHED:
       return {
         ...state,
-        grid: {
-          ...state.grid,
-          cells: action.payload.grid.cells
-        }
+        cells: action.payload.cells
       };
     case puzzleTypes.PUZZLE_PARSED:
       return {
@@ -48,63 +43,52 @@ export default (state = INITIAL_STATE, action) => {
           title: action.payload.meta.title,
           notes: action.payload.meta.notes
         },
-        grid: {
-          ...state.grid,
-          dimensions: {
-            ...state.grid.dimensions,
-            width: action.payload.grid.dimensions.width,
-            height: action.payload.grid.dimensions.height
-          },
-          cells: action.payload.grid.cells
+        dimensions: {
+          ...state.dimensions,
+          width: action.payload.dimensions.width,
+          height: action.payload.dimensions.height
         },
+        cells: action.payload.cells,
         clues: {
           ...state.clues,
           across: action.payload.clues.across,
           down: action.payload.clues.down
         }
       };
-    // case puzzleTypes.CELL_VALUE_CHANGED:
-    //   const newCellValues = state.grid.cells.map(cell =>
-    //     cell.index === action.payload.index
-    //       ? { ...cell, guess: action.payload.value }
-    //       : cell
-    //   );
-    //   return {
-    //     ...state,
-    //     grid: {
-    //       ...state.grid,
-    //       cells: newCellValues
-    //     }
-    //   };
-    // case puzzleTypes.CHECK_ANSWER:
-    //   const checkAnswerCells = state.grid.cells.map(cell => {
-    //     if (action.payload.includes(cell.index)) {
-    //       const checked = cell.guess !== "";
-    //       const confirmed = checked && cell.guess === cell.solution;
-    //       if (checked) {
-    //         return { ...cell, checked, confirmed };
-    //       } else {
-    //         return cell;
-    //       }
-    //     } else {
-    //       return cell;
-    //     }
-    //   });
-    //   return { ...state, grid: { ...state.grid, cells: checkAnswerCells } };
-    // case puzzleTypes.REVEAL_ANSWER:
-    //   const revealSquareCells = state.grid.cells.map(cell => {
-    //     if (action.payload.includes(cell.index)) {
-    //       return {
-    //         ...cell,
-    //         guess: cell.solution,
-    //         revealed: true,
-    //         confirmed: true
-    //       };
-    //     } else {
-    //       return cell;
-    //     }
-    //   });
-    //   return { ...state, grid: { ...state.grid, cells: revealSquareCells } };
+    case puzzleTypes.CELL_VALUE_CHANGED:
+      const newCellValues = state.cells.map(cell =>
+        cell.index === action.payload.index
+          ? { ...cell, guess: action.payload.value }
+          : cell
+      );
+      return {
+        ...state,
+        cells: newCellValues
+      };
+    case puzzleTypes.CHECK_ANSWER:
+      const checkAnswerCells = state.cells.map(cell => {
+        if (action.payload.includes(cell)) {
+          const confirmed = cell.guess === cell.solution;
+          return { ...cell, confirmed, checked: true };
+        } else {
+          return cell;
+        }
+      });
+      return { ...state, cells: checkAnswerCells };
+    case puzzleTypes.REVEAL_ANSWER:
+      const revealSquareCells = state.cells.map(cell => {
+        if (action.payload.includes(cell)) {
+          return {
+            ...cell,
+            guess: cell.solution,
+            revealed: true,
+            confirmed: true
+          };
+        } else {
+          return cell;
+        }
+      });
+      return { ...state, cells: revealSquareCells };
     default:
       return state;
   }

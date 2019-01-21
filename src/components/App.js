@@ -2,17 +2,16 @@ import "./App.css";
 
 import React from "react";
 import { connect } from "react-redux";
-import { Router, Switch } from "react-router-dom";
+import { Router, Route, Switch } from "react-router-dom";
 
 import history from "../history";
-import { userActions } from "../actions/user";
+import { getSavedPuzzles } from "../actions/user";
 
 import ScrollToTop from "./layout/ScrollToTop";
-import AuthenticatedLayoutRoute from "./routes/AuthenticatedLayoutRoute";
+import AuthenticatedRoute from "./routes/AuthenticatedRoute";
 import CurrentPuzzlePage from "./pages/CurrentPuzzlePage";
 import HomePage from "./pages/HomePage";
 import SavedPuzzlesPage from "./pages/SavedPuzzlesPage";
-import DefaultLayoutRoute from "./routes/DefaultLayoutRoute";
 
 import ModalContainer from "./modals/ModalContainer";
 import SharedPuzzlePage from "./pages/SharedPuzzlePage";
@@ -38,18 +37,14 @@ class App extends React.Component {
         <Router history={history}>
           <ScrollToTop>
             <Switch>
-              <DefaultLayoutRoute path="/" exact component={HomePage} />
-              <DefaultLayoutRoute
-                path="/puzzle"
-                exact
-                component={CurrentPuzzlePage}
-              />
-              <DefaultLayoutRoute
+              <Route path="/" exact component={HomePage} />
+              <Route path="/puzzle" component={CurrentPuzzlePage} />
+              <AuthenticatedRoute
                 path="/shared/:id"
                 exact
                 component={SharedPuzzlePage}
               />
-              <AuthenticatedLayoutRoute
+              <AuthenticatedRoute
                 isAuthenticated={isSignedIn}
                 path="/saved"
                 exact
@@ -68,6 +63,6 @@ const mapStateToProps = ({ auth: { isSignedIn } }) => ({ isSignedIn });
 export default connect(
   mapStateToProps,
   {
-    getSavedPuzzles: userActions.getSavedPuzzles
+    getSavedPuzzles
   }
 )(App);

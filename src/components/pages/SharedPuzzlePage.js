@@ -4,10 +4,11 @@ import { ActionCable } from "react-actioncable-provider";
 import { Segment, Grid } from "semantic-ui-react";
 
 import { setCellValue } from "../../actions/puzzle";
-import { userActions } from "../../actions/user";
+import { loadPuzzle } from "../../actions/user";
 import { sharedGameActions } from "../../actions/sharedGames";
 import renderWhenLoaded from "../hocs/renderWhenLoaded";
 
+import DefaultLayout from "../layouts/DefaultLayout";
 import PuzzleKeyEventContainer from "../grid/PuzzleKeyEventContainer";
 import PuzzleContainer from "../grid/PuzzleContainer";
 import PuzzleToolContainer from "../puzzleTools/PuzzleToolContainer";
@@ -62,7 +63,7 @@ class CurrentPuzzlePage extends React.Component {
     } = this.props;
 
     return (
-      <>
+      <DefaultLayout>
         {this.props.sharedGameId && (
           <ActionCable
             channel={{
@@ -94,7 +95,7 @@ class CurrentPuzzlePage extends React.Component {
             </Grid.Row>
           </Grid>
         </PuzzleKeyEventContainer>
-      </>
+      </DefaultLayout>
     );
   }
 }
@@ -117,8 +118,7 @@ const mapStateToProps = ({
 export default connect(
   mapStateToProps,
   {
-    createPuzzle: userActions.createPuzzle,
-    loadPuzzle: userActions.loadPuzzle,
+    loadPuzzle,
     getSharedGame: sharedGameActions.getSharedGame,
     setCellValue,
     updateSharedPosition: sharedGameActions.updateSharedPosition

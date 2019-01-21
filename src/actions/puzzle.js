@@ -118,31 +118,16 @@ export const setCellValue = (index, value) => {
   };
 };
 
-export const checkAnswer = (cells, guesses) => {
-  const checkedCells = cells
-    .filter(cell => guesses[cell.index] && guesses[cell.index].guess !== "")
-    .reduce((result, cell) => {
-      const confirmed = guesses[cell.index].guess === cell.solution;
-      result[cell.index] = {
-        checked: true,
-        confirmed
-      };
-      return result;
-    }, {});
+export const checkAnswer = cells => {
   return {
     type: puzzleTypes.CHECK_ANSWER,
-    payload: checkedCells
+    payload: cells
   };
 };
 
 export const revealAnswer = cells => {
-  const revealedCells = cells.reduce((result, cell) => {
-    result[cell.index] = { revealed: true, guess: cell.solution };
-    return result;
-  }, {});
-
   return {
     type: puzzleTypes.REVEAL_ANSWER,
-    payload: revealedCells
+    payload: cells
   };
 };

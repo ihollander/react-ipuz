@@ -13,7 +13,6 @@ import { toggleDirection, setSelectedCell } from "../../actions/status";
 import ClueList from "./ClueList";
 
 class ClueContainer extends React.Component {
-  
   // Event Handlers
   handleClueClick(direction, label) {
     const { cells, selectedDirection } = this.props;
@@ -62,9 +61,7 @@ class ClueContainer extends React.Component {
 
 const mapStateToProps = state => {
   const {
-    puzzle: {
-      grid: { cells }
-    },
+    puzzle: { cells },
     game: {
       host: { selectedDirection }
     }

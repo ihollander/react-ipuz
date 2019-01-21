@@ -10,7 +10,7 @@ const parsePuzzleResponse = puzzle => {
   const parsedPuzzle = parser.data;
   // map thru cells
   const guessedCells = JSON.parse(puzzle.cells);
-  parsedPuzzle.grid.cells.forEach((cell, index) => {
+  parsedPuzzle.cells.forEach((cell, index) => {
     const guessedCell = guessedCells[index];
     if (guessedCell.guess) {
       cell.guess = guessedCell.guess;

@@ -4,12 +4,12 @@ import history from "../history";
 import puzzleAdaptor from "../apis/PuzzleAdaptor";
 import PuzzleParser from "../helpers/PuzzleParser";
 
-// helper, don't export
+// helpers: move to separate file
 const parsePuzzleFromState = (puzzleFromState, timer) => {
   const parser = new PuzzleParser();
   parser.parseState(puzzleFromState);
   const ipuz = parser.convertToIpuz();
-  const cells = puzzleFromState.grid.cells.map(cell => {
+  const cells = puzzleFromState.cells.map(cell => {
     if (cell.revealed || cell.checked || cell.guess !== "") {
       return {
         revealed: cell.revealed,
@@ -36,7 +36,7 @@ const parsePuzzleResponse = puzzle => {
   const parsedPuzzle = parser.data;
   // map thru cells
   const guessedCells = JSON.parse(puzzle.cells);
-  parsedPuzzle.grid.cells.forEach((cell, index) => {
+  parsedPuzzle.cells.forEach((cell, index) => {
     const guessedCell = guessedCells[index];
     if (guessedCell.guess) {
       cell.guess = guessedCell.guess;
@@ -47,102 +47,93 @@ const parsePuzzleResponse = puzzle => {
   return { ...parsedPuzzle, id: puzzle.id };
 };
 
-const createPuzzle = puzzleFromState => {
-  const request = () => ({ type: userTypes.PUZZLE_REQUEST });
-  const success = puzzle => ({ type: userTypes.PUZZLE_SAVED, payload: puzzle });
-  const failure = error => ({ type: userTypes.PUZZLE_FAILURE, payload: error });
+// dispatch helpers
+const puzzleRequest = () => ({ type: userTypes.GAME_FETCH_REQUEST });
+const puzzleSaved = puzzle => ({
+  type: userTypes.GAME_SAVED,
+  payload: puzzle
+});
+const puzzleFetched = puzzle => ({
+  type: userTypes.GAME_FETCHED,
+  payload: puzzle
+});
+const puzzlesFetched = puzzles => ({
+  type: userTypes.GAMES_FETCHED,
+  payload: puzzles
+});
+const puzzleFailure = error => ({
+  type: userTypes.GAME_FETCH_FAILURE,
+  payload: error
+});
 
+// exported action creators
+export const newPuzzle = puzzleFromState => {
   return dispatch => {
-    dispatch(request());
+    dispatch(puzzleRequest());
     const createPuzzleObj = parsePuzzleFromState(puzzleFromState);
 
     puzzleAdaptor.create(createPuzzleObj).then(
       puzzle => {
-        // parse puzzle response
         const parsedResponse = parsePuzzleResponse(puzzle);
-        dispatch(success(parsedResponse));
+        dispatch(puzzleFetched(parsedResponse));
+        history.push(`/puzzle/${puzzle.id}`);
       },
       error => {
-        dispatch(failure(error));
+        dispatch(puzzleFailure(error));
       }
     );
   };
 };
 
-const savePuzzle = (puzzleFromState, id, timer) => {
-  const request = () => ({ type: userTypes.PUZZLE_REQUEST });
-  const success = puzzle => ({ type: userTypes.PUZZLE_SAVED, payload: puzzle });
-  const failure = error => ({ type: userTypes.PUZZLE_FAILURE, payload: error });
-
+export const savePuzzle = (puzzleFromState, id, timer) => {
   return dispatch => {
-    dispatch(request());
+    dispatch(puzzleRequest());
     const createPuzzleObj = parsePuzzleFromState(puzzleFromState, timer);
 
     puzzleAdaptor.update(createPuzzleObj, id).then(
       puzzle => {
-        dispatch(success(puzzle));
+        dispatch(puzzleFetched(puzzle));
       },
       error => {
-        dispatch(failure(error));
+        dispatch(puzzleFailure(error));
       }
     );
   };
 };
 
-const loadPuzzle = id => {
-  const request = () => ({ type: userTypes.PUZZLE_REQUEST });
-  const success = puzzle => ({
-    type: userTypes.PUZZLE_FETCHED,
-    payload: puzzle
-  });
-  const failure = error => ({ type: userTypes.PUZZLE_FAILURE, payload: error });
-
+export const loadPuzzle = id => {
   return dispatch => {
-    dispatch(request());
+    dispatch(puzzleRequest());
 
     puzzleAdaptor.get(id).then(
       puzzle => {
+        dispatch({ type: puzzleTypes.PUZZLE_PARSING });
         const parsedResponse = parsePuzzleResponse(puzzle);
-        
         dispatch({
           type: puzzleTypes.PUZZLE_PARSED,
           payload: parsedResponse
         });
-        dispatch(success(parsedResponse));
+        dispatch(puzzleFetched(parsedResponse));
         history.push("/puzzle");
       },
       error => {
-        dispatch(failure(error));
+        dispatch(puzzleFailure(error));
       }
     );
   };
 };
 
-const getSavedPuzzles = () => {
-  const request = () => ({ type: userTypes.PUZZLE_REQUEST });
-  const success = puzzles => ({
-    type: userTypes.PUZZLES_FETCHED,
-    payload: puzzles
-  });
-  const failure = error => ({ type: userTypes.PUZZLE_FAILURE, payload: error });
-
+export const getSavedPuzzles = () => {
   return dispatch => {
-    dispatch(request());
+    dispatch(puzzleRequest());
 
     puzzleAdaptor.getAll().then(
       puzzles => {
-        dispatch(success(puzzles));
+        dispatch(puzzlesFetched(puzzles));
       },
       error => {
-        dispatch(failure(error));
+        dispatch(puzzleFailure(error));
       }
     );
   };
-};
-
-export const userActions = {
-  createPuzzle,
-  savePuzzle,
-  loadPuzzle,
-  getSavedPuzzles
 };

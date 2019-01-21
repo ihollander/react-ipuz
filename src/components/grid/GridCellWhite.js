@@ -1,7 +1,20 @@
 import React from "react";
 
-const GridCellWhite = ({ display, cell, onCellClick }) => {
-  const onClick = () => onCellClick(cell.index);
+const GridCellWhite = ({
+  display,
+  guess,
+  index,
+  isChecked,
+  isConfirmed,
+  isRevealed,
+  isSelected,
+  isSelectedClue,
+  label,
+  style,
+  sharedSelected,
+  onCellClick
+}) => {
+  const onClick = () => onCellClick(index);
 
   const labelPosition = {
     x: display.x + 2,
@@ -19,8 +32,8 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
   };
 
   const calcFontSize = () => {
-    if (cell.guess.length) {
-      return 22 * (1 - cell.guess.length / 10);
+    if (guess.length) {
+      return 22 * (1 - guess.length / 10);
     } else {
       return 22;
     }
@@ -48,10 +61,10 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
         width={display.width}
         height={display.height}
         stroke="black"
-        fill={cell.selected ? "red" : cell.clueSelected ? "pink" : "white"}
+        fill={isSelected ? "red" : isSelectedClue ? "pink" : "white"}
         opacity="0.7"
       />
-      {cell.sharedSelected && (
+      {sharedSelected && (
         <rect
           className="rect-svg"
           x={display.x}
@@ -70,19 +83,19 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
         fontSize="12"
         alignmentBaseline="hanging"
       >
-        {cell.label}
+        {label}
       </text>
       <text
-        fill={cell.checked ? "blue" : "black"}
+        fill={isChecked ? "blue" : "black"}
         x={solutionPosition.x}
         y={solutionPosition.y}
         fontSize={calcFontSize()}
         textAnchor="middle"
         alignmentBaseline="central"
       >
-        {cell.guess}
+        {guess}
       </text>
-      {cell.style && (
+      {style && (
         <circle
           cx={centerPosition.x}
           cy={centerPosition.y}
@@ -92,7 +105,7 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
           fill="transparent"
         />
       )}
-      {cell.checked && !cell.confirmed && (
+      {isChecked && !isConfirmed && (
         <line
           x1={display.x}
           y1={display.y + display.height}
@@ -102,7 +115,7 @@ const GridCellWhite = ({ display, cell, onCellClick }) => {
           strokeWidth="2"
         />
       )}
-      {cell.revealed && (
+      {isRevealed && (
         <polyline
           points={drawCheckmarkPoints()}
           fill="transparent"

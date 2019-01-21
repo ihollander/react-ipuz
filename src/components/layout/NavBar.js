@@ -21,9 +21,6 @@ const NavBar = () => {
         <NavLink exact to="/" className="item">
           Puzzle Sources
         </NavLink>
-        <NavLink exact to="/puzzle" className="item">
-          Current Puzzle
-        </NavLink>
         <SavedPuzzlesWithAuth />
         <Menu.Menu position="right">
           <LoginContainer />

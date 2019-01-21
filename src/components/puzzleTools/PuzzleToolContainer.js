@@ -2,12 +2,11 @@ import React from "react";
 import { Menu } from "semantic-ui-react";
 import { connect } from "react-redux";
 
-import { getMappedCells, getSelectedCell, getSelectedCellsForClue } from "../../selectors";
+import { getSelectedCell, getSelectedCellsForClue } from "../../selectors";
 
 import { revealAnswer, checkAnswer, setCellValue } from "../../actions/puzzle";
 import { saveTimer, togglePaused, toggleRebus } from "../../actions/status";
-import { userActions } from "../../actions/user";
-import { sharedGameActions } from "../../actions/sharedGames";
+import { savePuzzle } from "../../actions/user";
 
 import RebusToggle from "./RebusToggle";
 import PuzzleTimer from "./PuzzleTimer";
@@ -15,61 +14,45 @@ import RevealAnswer from "./RevealAnswer";
 import CheckAnswer from "./CheckAnswer";
 
 class PuzzleToolContainer extends React.Component {
-  onCollaborateClick = () => {
-    const { puzzle } = this.props;
-    // create a new game (POST)
-    // push game slug to history object at /puzzle/:slug
-    this.props.createSharedGame(puzzle.id);
-  };
-
   savePuzzle = timer => {
-    const { isSignedIn, puzzle, savePuzzle, createPuzzle } = this.props;
+    const { isSignedIn, puzzle, puzzleId, savePuzzle } = this.props;
 
     if (isSignedIn) {
-      puzzle.id ? savePuzzle(puzzle, puzzle.id, timer) : createPuzzle(puzzle);
+      savePuzzle(puzzle, puzzleId, timer);
     }
   };
 
   // event handlers
   onCheckChange = type => {
     const {
-      puzzle: {
-        grid: { cells }
-      },
-      game: {
-        host: {
-          guesses
-        }
-      },
+      puzzle: { cells },
       selectedCell,
       selectedCellsForClue
     } = this.props;
-    const selectedCells = [];
 
-    debugger
+    let selectedCells;
+
+    debugger;
     switch (type) {
       case "CHECK_SQUARE":
       case "REVEAL_SQUARE":
-        selectedCells.push(selectedCell);
+        selectedCells = [selectedCell];
         break;
       case "CHECK_WORD":
       case "REVEAL_WORD":
-        selectedCellsForClue.forEach(c => {
-          selectedCells.push(c);
-        });
+        selectedCells = selectedCellsForClue;
         break;
       case "CHECK_PUZZLE":
       case "REVEAL_PUZZLE":
-        cells.forEach(c => {
-          if (c.type !== "BLACK") selectedCells.push(c);
-        });
+        selectedCells = cells.filter(c => c.type !== "BLACK");
         break;
       default:
         break;
     }
 
     if (type.includes("CHECK")) {
-      this.props.checkAnswer(selectedCells, guesses);
+      selectedCells = selectedCells.filter(c => c.guess !== "");
+      this.props.checkAnswer(selectedCells);
     } else if (type.includes("REVEAL")) {
       this.props.revealAnswer(selectedCells);
     }
@@ -88,9 +71,6 @@ class PuzzleToolContainer extends React.Component {
           rebus={this.props.rebus}
           onRebusClick={this.onRebusClick}
         />
-        <Menu.Item name="rebus" onClick={this.onCollaborateClick}>
-          Collaborate
-        </Menu.Item>
         <Menu.Menu position="right">
           <PuzzleTimer
             timer={this.props.timer}
@@ -110,18 +90,17 @@ const mapStateToProps = state => {
   const {
     auth: { isSignedIn },
     user: { currentPuzzleId },
-    game,
+    game: { puzzleId },
     puzzle
   } = state;
-  
+
   return {
+    puzzleId,
     puzzle,
-    game,
     isSignedIn,
     currentPuzzleId,
     selectedCell: getSelectedCell(state),
-    selectedCellsForClue: getSelectedCellsForClue(state),
-    mappedCells: getMappedCells(state)
+    selectedCellsForClue: getSelectedCellsForClue(state)
   };
 };
 
@@ -134,8 +113,6 @@ export default connect(
     checkAnswer,
     revealAnswer,
     setCellValue,
-    savePuzzle: userActions.savePuzzle,
-    createPuzzle: userActions.createPuzzle,
-    createSharedGame: sharedGameActions.createSharedGame
+    savePuzzle
   }
 )(PuzzleToolContainer);
