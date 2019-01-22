@@ -22,13 +22,13 @@ const gamesFetched = games => ({
   payload: games
 });
 const gameCreated = game => ({ type: gameTypes.GAME_CREATED, payload: game });
-const gameUpdated = game => ({ type: gameTypes.GAME_UPDATED, payload: game})
+const gameUpdated = game => ({ type: gameTypes.GAME_UPDATED, payload: game });
 
 // exported action creators
 export const getGames = () => {
   return dispatch => {
     dispatch(gameRequest());
-
+    
     gameAdaptor.getAll().then(
       games => {
         dispatch(gamesFetched(games));
@@ -40,11 +40,14 @@ export const getGames = () => {
   };
 };
 
-export const getGame = id => {
+export const getGame = gameId => {
   return dispatch => {
     dispatch(gameRequest());
+    dispatch({
+      type: gameTypes.CLEAR_GAME_STATE
+    })
 
-    gameAdaptor.get(id).then(
+    gameAdaptor.get(gameId).then(
       game => {
         const parsedGame = {
           ...game,
@@ -59,14 +62,14 @@ export const getGame = id => {
   };
 };
 
-export const joinGame = id => {
+export const joinGame = gameId => {
   return dispatch => {
     dispatch(gameRequest());
 
-    gameAdaptor.join(id).then(
+    gameAdaptor.join(gameId).then(
       game => {
         dispatch(gameJoined(game));
-        history.push(`/game/${id}`);
+        history.push(`/game/${gameId}`);
       },
       error => {
         dispatch(gameFailure(error));
@@ -78,7 +81,7 @@ export const joinGame = id => {
 export const updatePlayers = players => ({
   type: gameTypes.PLAYERS_UPDATED,
   payload: players
-})
+});
 
 export const createGame = gameData => {
   return dispatch => {
@@ -96,11 +99,11 @@ export const createGame = gameData => {
   };
 };
 
-export const updateGame = (puzzleId, gameData) => {
+export const updateGame = (gameId, gameData) => {
   return dispatch => {
     // dispatch(gameRequest());
 
-    gameAdaptor.update(puzzleId, gameData).then(
+    gameAdaptor.update(gameId, gameData).then(
       response => {
         dispatch(gameUpdated(response));
       },
@@ -115,10 +118,10 @@ export const addGame = game => {
   return { type: gameTypes.GAME_CREATED, payload: game };
 };
 
-export const broadcastUpdateCell = (sharedGameId, index, value) => {
+export const broadcastUpdateCell = (gameId, index, value) => {
   // dispatch another action -> post setCellValue
   // response is handled by ActionCable component...
-  gameAdaptor.updateCellValue(sharedGameId, {
+  gameAdaptor.updateCellValue(gameId, {
     cell: {
       index,
       value
@@ -138,10 +141,10 @@ export const updatePosition = (user, index, direction) => ({
   }
 });
 
-export const broadcastUpdatePosition = (sharedGameId, index, direction) => {
+export const broadcastUpdatePosition = (gameId, index, direction) => {
   // dispatch another action -> post setCellValue
   // response is handled by ActionCable component...
-  gameAdaptor.updatePosition(sharedGameId, {
+  gameAdaptor.updatePosition(gameId, {
     position: {
       index,
       direction
@@ -152,15 +155,15 @@ export const broadcastUpdatePosition = (sharedGameId, index, direction) => {
   };
 };
 
-export const broadcastCheckAnswer = (sharedGameId, cells) => {
-  gameAdaptor.checkAnswer(sharedGameId, { cells });
+export const broadcastCheckAnswer = (gameId, cells) => {
+  gameAdaptor.checkAnswer(gameId, { cells });
   return {
     type: "BROADCAST_CHECK_ANSWER"
   };
 };
 
-export const broadcastRevealAnswer = (sharedGameId, cells) => {
-  gameAdaptor.revealAnswer(sharedGameId, { cells });
+export const broadcastRevealAnswer = (gameId, cells) => {
+  gameAdaptor.revealAnswer(gameId, { cells });
   return {
     type: "BROADCAST_REVEAL_ANSWER"
   };
@@ -168,16 +171,16 @@ export const broadcastRevealAnswer = (sharedGameId, cells) => {
 
 export const pause = () => ({
   type: gameTypes.GAME_PAUSED
-})
+});
 
 export const syncGame = gameData => ({
   type: gameTypes.GAME_DATA_RECEIVED,
   payload: gameData
-})
+});
 
 // SAVE GAME ON PAUSE!
-export const broadcastPaused = (sharedGameId, gameData) => {
-  gameAdaptor.pause(sharedGameId, gameData);
+export const broadcastPaused = (gameId, gameData) => {
+  gameAdaptor.pause(gameId, gameData);
   return {
     type: "BROADCAST_PAUSED"
   };
@@ -185,12 +188,35 @@ export const broadcastPaused = (sharedGameId, gameData) => {
 
 export const unpause = () => ({
   type: gameTypes.GAME_UNPAUSED
-})
+});
 
-export const broadcastUnpaused = sharedGameId => {
-  debugger
-  gameAdaptor.unpause(sharedGameId);
+export const broadcastUnpaused = gameId => {
+  gameAdaptor.unpause(gameId);
   return {
     type: "BROADCAST_UNPAUSED"
   };
 };
+
+export const broadcastActivePlayer = gameId => {
+  gameAdaptor.markActive(gameId);
+  return {
+    type: "BROADCAST_PLAYER_ACTIVE"
+  };
+};
+
+export const broadcastInactivePlayer = gameId => {
+  gameAdaptor.markInactive(gameId);
+  return {
+    type: "BROADCAST_PLAYER_INACTIVE"
+  };
+};
+
+export const setActivePlayer = (player, active) => ({
+  type: gameTypes.PLAYER_ACTIVE_UPDATED,
+  payload: { player, active }
+});
+
+export const updateLobbyGames = gameData => ({
+  type: gameTypes.LOBBY_UPDATED,
+  payload: gameData
+})

@@ -7,13 +7,14 @@ const GridCellWhite = ({
   isChecked,
   isConfirmed,
   isRevealed,
+  isHostActive,
   isHostSelected,
   isHostSelectedClue,
+  isGuestActive,
   isGuestSelected,
   isGuestSelectedClue,
   label,
   style,
-  sharedSelected,
   onCellClick
 }) => {
   const onClick = () => onCellClick(index);
@@ -63,10 +64,22 @@ const GridCellWhite = ({
         width={display.width}
         height={display.height}
         stroke="black"
-        fill={isHostSelected ? "red" : isHostSelectedClue ? "pink" : "white"}
+        fill="white"
         opacity="0.7"
       />
-      {(isGuestSelected || isGuestSelectedClue) && (
+      {isHostActive && (isHostSelected || isHostSelectedClue) && (
+        <rect
+          className="rect-svg"
+          x={display.x}
+          y={display.y}
+          width={display.width}
+          height={display.height}
+          stroke="black"
+          fill={isHostSelected ? "red" : "pink"}
+          opacity="0.7"
+        />
+      )}
+      {isGuestActive && (isGuestSelected || isGuestSelectedClue) && (
         <rect
           className="rect-svg"
           x={display.x}

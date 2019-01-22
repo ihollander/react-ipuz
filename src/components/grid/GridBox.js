@@ -69,8 +69,10 @@ class GridBox extends React.Component {
     const {
       cells,
       onCellClick,
+      hostActive,
       hostSelectedCell,
       hostSelectedDirection,
+      guestActive,
       guestSelectedCell,
       guestSelectedDirection
     } = this.props;
@@ -106,8 +108,10 @@ class GridBox extends React.Component {
             isChecked={cell.checked}
             isConfirmed={cell.confirmed}
             isRevealed={cell.revealed}
+            isHostActive={hostActive}
             isHostSelected={isHostSelected}
             isHostSelectedClue={isHostSelectedClue}
+            isGuestActive={guestActive}
             isGuestSelected={isGuestSelected}
             isGuestSelectedClue={isGuestSelectedClue}
             label={cell.label}

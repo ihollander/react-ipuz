@@ -4,8 +4,11 @@ import { ActionCable } from "react-actioncable-provider";
 import { Button, Segment, Header } from "semantic-ui-react";
 
 import { showCreateGameModal } from "../../actions/modal";
-import { addGame, getGames, joinGame } from "../../actions/game";
+import { addGame, getGames, joinGame, updateLobbyGames } from "../../actions/game";
 
+import history from "../../history";
+
+import GameList from "../lobby/GameList";
 import DefaultLayout from "../layouts/DefaultLayout";
 
 class LobbyPage extends React.Component {
@@ -14,16 +17,23 @@ class LobbyPage extends React.Component {
   }
 
   onJoinGameClick = gameId => {
-    this.props.joinGame(gameId)
-  }
+    this.props.joinGame(gameId);
+  };
+
+  onResumeGameClick = gameId => {
+    history.push(`/game/${gameId}`);
+  };
 
   handleSocketResponse = data => {
+    console.log(data)
     switch (data.type) {
       case "NEW_GAME":
         this.props.addGame(data.payload);
         break;
+      case "GAME_UPDATED":
+        this.props.updateLobbyGames(data.payload)
+        break;
       default:
-        console.log("socket response received:", data);
         break;
     }
   };
@@ -38,22 +48,22 @@ class LobbyPage extends React.Component {
         <Segment>
           <Header as="h2">Lobby</Header>
           <Button onClick={this.props.showCreateGameModal}>Create Game</Button>
-          <ul>
-            {this.props.games.map(game => (
-              <li key={game.id}>{game.title}<Button onClick={() => this.onJoinGameClick(game.id)}>Join</Button></li>
-            ))}
-          </ul>
+          <GameList
+            games={this.props.games}
+            user={this.props.user}
+            onResumeGameClick={this.onResumeGameClick}
+            onJoinGameClick={this.onJoinGameClick}
+          />
         </Segment>
       </DefaultLayout>
     );
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    games: state.lobby.games
-  };
-};
+const mapStateToProps = ({ lobby: { games }, auth: { user } }) => ({
+  games,
+  user
+});
 
 export default connect(
   mapStateToProps,
@@ -61,6 +71,7 @@ export default connect(
     addGame,
     getGames,
     joinGame,
-    showCreateGameModal
+    showCreateGameModal,
+    updateLobbyGames
   }
 )(LobbyPage);

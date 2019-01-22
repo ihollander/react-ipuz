@@ -12,12 +12,14 @@ const INITIAL_STATE = {
   host: {
     username: "",
     selectedCellIndex: null,
-    selectedDirection: "ACROSS"
+    selectedDirection: "ACROSS",
+    active: false
   },
   guest: {
     username: "",
     selectedCellIndex: null,
-    selectedDirection: "ACROSS"
+    selectedDirection: "ACROSS",
+    active: false
   }
 };
 
@@ -35,8 +37,10 @@ export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case authTypes.LOGIN_SUCCESS:
     case authTypes.LOGOUT_SUCCESS:
+    case gameTypes.CLEAR_GAME_STATE:
       return INITIAL_STATE;
     case gameTypes.GAME_FETCHED:
+      debugger;
       const selectedCellIndex = action.payload.puzzle.cells.find(
         c => c.type !== "BLACK"
       ).index;
@@ -50,22 +54,33 @@ export default (state = INITIAL_STATE, action) => {
         host: {
           ...state.host,
           username: action.payload.host_id.username,
-          selectedCellIndex
+          selectedCellIndex,
+          active: action.payload.host_active
         },
         guest: {
           ...state.guest,
           username: action.payload.guest_id
             ? action.payload.guest_id.username
             : null,
-          selectedCellIndex
+          selectedCellIndex,
+          active: action.payload.guest_active
         }
       };
     case gameTypes.PLAYERS_UPDATED:
       return {
         ...state,
-        host: { ...state.host, username: action.payload.players.host },
-        guest: { ...state.guest, username: action.payload.players.guest }
+        host: { ...state.host, username: action.payload.host },
+        guest: { ...state.guest, username: action.payload.guest }
       };
+    case gameTypes.PLAYER_ACTIVE_UPDATED: {
+      return {
+        ...state,
+        [action.payload.player]: {
+          ...state[action.payload.player],
+          active: action.payload.active
+        }
+      };
+    }
     case gameTypes.GAME_DATA_RECEIVED:
       return { ...state, timer: action.payload.game.timer };
     case gameTypes.GAME_JOINED:
@@ -76,7 +91,6 @@ export default (state = INITIAL_STATE, action) => {
       };
     case gameTypes.POSITION_UPDATED:
       const updatePositionFor = findUser(state, action.payload.user.username);
-      debugger;
       return updatePositionFor
         ? {
             ...state,

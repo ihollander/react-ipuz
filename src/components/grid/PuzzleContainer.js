@@ -16,12 +16,28 @@ import {
   markSolved,
   toggleRebus
 } from "../../actions/status";
-import { updatePosition, broadcastUpdatePosition } from "../../actions/game";
+
+import {
+  updatePosition,
+  broadcastUpdatePosition,
+  broadcastActivePlayer,
+  broadcastInactivePlayer
+} from "../../actions/game";
 
 import ActiveClue from "../clues/ActiveClue";
 import GridBox from "./GridBox";
 
 class PuzzleContainer extends React.Component {
+  componentDidMount() {
+    const { puzzleId, broadcastActivePlayer } = this.props;
+    broadcastActivePlayer(puzzleId);
+  }
+
+  componentWillUnmount() {
+    const { puzzleId, broadcastInactivePlayer } = this.props;
+    broadcastInactivePlayer(puzzleId);
+  }
+
   // check for puzzle completedness
   componentDidUpdate(prevProps) {
     const solvableCells = this.props.cells.filter(c => c.solution);
@@ -78,8 +94,10 @@ class PuzzleContainer extends React.Component {
         <GridBox
           dimensions={dimensions}
           cells={cells}
+          hostActive={host.active}
           hostSelectedCell={hostSelectedCell}
           hostSelectedDirection={host.selectedDirection}
+          guestActive={guest.active}
           guestSelectedCell={guestSelectedCell}
           guestSelectedDirection={guest.selectedDirection}
           rebus={rebus}
@@ -125,6 +143,8 @@ export default connect(
     markSolved,
     toggleRebus,
     updatePosition,
-    broadcastUpdatePosition
+    broadcastUpdatePosition,
+    broadcastActivePlayer,
+    broadcastInactivePlayer
   }
 )(PuzzleContainer);

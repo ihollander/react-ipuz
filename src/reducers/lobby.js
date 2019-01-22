@@ -23,6 +23,11 @@ export default (state = INITIAL_STATE, action) => {
             loading: false,
             games: [...state.games, action.payload.game]
           };
+    case gameTypes.LOBBY_UPDATED:
+      const updatedGames = state.games.map(game =>
+        game.id === action.payload.game.id ? action.payload.game : game
+      );
+      return { ...state, games: updatedGames };
     default:
       return state;
   }

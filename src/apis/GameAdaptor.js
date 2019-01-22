@@ -114,6 +114,26 @@ class GameAdaptor extends BaseApiAdaptor {
       }
     })
   }
+
+  markActive(id) {
+    fetch(`${this.baseUrl}/games/${id}/mark_active`, {
+      method: "PATCH",
+      headers: {
+        ...this.authHeader,
+        ...this.defaultHeaders
+      }
+    })
+  }
+
+  markInactive(id) {
+    fetch(`${this.baseUrl}/games/${id}/mark_inactive`, {
+      method: "PATCH",
+      headers: {
+        ...this.authHeader,
+        ...this.defaultHeaders
+      }
+    })
+  }
 }
 
 const adaptor = new GameAdaptor()
