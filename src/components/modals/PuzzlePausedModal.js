@@ -1,13 +1,32 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Modal, Button, Header, Icon } from "semantic-ui-react";
 
-const PuzzlePausedModal = ({ modalOpen, onModalClose }) => {
+import { unpause, broadcastUnpaused } from "../../actions/game";
+
+const PuzzlePausedModal = ({
+  modalOpen,
+  onModalClose,
+  unpause,
+  broadcastUnpaused,
+  puzzleId
+}) => {
+  const onPauseModalClose = () => {
+    unpause();
+    broadcastUnpaused(puzzleId);
+    onModalClose();
+  };
   return (
-    <Modal dimmer="blurring" open={modalOpen} onClose={onModalClose} size="small">
+    <Modal
+      dimmer="blurring"
+      open={modalOpen}
+      onClose={onPauseModalClose}
+      size="small"
+    >
       <Header icon="clock" content="Paused" />
       <Modal.Content>Puzzle paused</Modal.Content>
       <Modal.Actions>
-        <Button onClick={onModalClose} primary>
+        <Button onClick={onPauseModalClose} primary>
           <Icon name="remove" /> Resume
         </Button>
       </Modal.Actions>
@@ -15,4 +34,8 @@ const PuzzlePausedModal = ({ modalOpen, onModalClose }) => {
   );
 };
 
-export default PuzzlePausedModal;
+const mapStateToProps = ({game: {puzzleId}}) => ({puzzleId})
+export default connect(
+  mapStateToProps,
+  { unpause, broadcastUnpaused }
+)(PuzzlePausedModal);

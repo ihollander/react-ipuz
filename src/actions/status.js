@@ -4,12 +4,6 @@ export const dismissAllModals = () => ({
   type: statusTypes.DISMISS_ALL_MODALS
 });
 
-export const togglePaused = () => {
-  return {
-    type: statusTypes.TOGGLE_PAUSED
-  };
-};
-
 export const toggleRebus = () => {
   return {
     type: statusTypes.TOGGLE_REBUS

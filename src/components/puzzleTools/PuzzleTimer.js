@@ -53,10 +53,6 @@ class PuzzleTimer extends React.Component {
     this.props.savePuzzle(this.state.timer);
   }
 
-  onPauseButtonClick = () => {
-    this.props.togglePaused();
-  };
-
   get displayTime() {
     const format = this.state.timer > 60 * 60 * 1000 ? "H:mm:ss" : "mm:ss";
     return moment.utc(this.state.timer).format(format);
@@ -71,7 +67,7 @@ class PuzzleTimer extends React.Component {
         {!this.props.solved && (
           <Icon
             style={{ cursor: "pointer" }}
-            onClick={this.onPauseButtonClick}
+            onClick={() => this.props.togglePaused(this.state.timer)}
             name={this.props.paused ? "play" : "pause"}
           />
         )}

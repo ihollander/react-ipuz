@@ -27,10 +27,10 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, activeModal: "" };
     case downloadTypes.DOWNLOAD_FAILURE:
       return { ...state, activeModal: modals.DOWNLOAD_ERROR };
-    case statusTypes.TOGGLE_PAUSED:
-      const pauseModal =
-        state.activeModal === modals.PAUSED ? "" : modals.PAUSED;
-      return { ...state, activeModal: pauseModal };
+    case gameTypes.GAME_PAUSED:
+      return {...state, activeModal: modals.PAUSED}
+      case gameTypes.GAME_UNPAUSED:
+      return {...state, activeModal: ""}
     case statusTypes.MARK_COMPLETED:
       return { ...state, activeModal: modals.PUZZLE_COMPLETED };
     case statusTypes.MARK_SOLVED:

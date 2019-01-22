@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import { modals } from "../../constants/modal";
 
 import { dismissModals } from "../../actions/modal";
-import { togglePaused } from "../../actions/status";
 
 import LoginModal from "./LoginModal";
 import SignUpModal from "./SignUpModal";
@@ -14,14 +13,14 @@ import DownloadErrorModal from "./DownloadErrorModal";
 import PuzzleReadyModal from "./PuzzleReadyModal";
 import CreateGameModal from './CreateGameModal'
 
-const ModalContainer = ({ activeModal, dismissModals, togglePaused }) => {
+const ModalContainer = ({ activeModal, dismissModals }) => {
   switch (activeModal) {
     case modals.LOGIN:
       return <LoginModal modalOpen onModalClose={dismissModals} />;
     case modals.SIGNUP:
       return <SignUpModal modalOpen onModalClose={dismissModals} />;
     case modals.PAUSED:
-      return <PuzzlePausedModal modalOpen onModalClose={togglePaused} />;
+      return <PuzzlePausedModal modalOpen onModalClose={dismissModals} />;
     case modals.PUZZLE_SOLVED:
       return <PuzzleSolvedModal modalOpen onModalClose={dismissModals} />;
     case modals.DOWNLOAD_ERROR:
@@ -40,7 +39,6 @@ const mapStateToProps = ({ modals: { activeModal } }) => ({ activeModal });
 export default connect(
   mapStateToProps,
   {
-    dismissModals,
-    togglePaused
+    dismissModals
   }
 )(ModalContainer);

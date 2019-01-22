@@ -60,6 +60,14 @@ export default (state = INITIAL_STATE, action) => {
           selectedCellIndex
         }
       };
+    case gameTypes.PLAYERS_UPDATED:
+      return {
+        ...state,
+        host: { ...state.host, username: action.payload.players.host },
+        guest: { ...state.guest, username: action.payload.players.guest }
+      };
+    case gameTypes.GAME_DATA_RECEIVED:
+      return { ...state, timer: action.payload.game.timer };
     case gameTypes.GAME_JOINED:
       return {
         ...state,
@@ -68,6 +76,7 @@ export default (state = INITIAL_STATE, action) => {
       };
     case gameTypes.POSITION_UPDATED:
       const updatePositionFor = findUser(state, action.payload.user.username);
+      debugger;
       return updatePositionFor
         ? {
             ...state,
@@ -80,8 +89,10 @@ export default (state = INITIAL_STATE, action) => {
         : state;
     case statusTypes.TOGGLE_REBUS:
       return { ...state, rebus: !state.rebus };
-    case statusTypes.TOGGLE_PAUSED:
-      return { ...state, paused: !state.paused };
+    case gameTypes.GAME_PAUSED:
+      return { ...state, paused: true };
+    case gameTypes.GAME_UNPAUSED:
+      return { ...state, paused: false };
     case statusTypes.MARK_COMPLETED:
       return { ...state, completed: true };
     case statusTypes.UNMARK_COMPLETED:

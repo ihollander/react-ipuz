@@ -27,7 +27,7 @@ class GameAdaptor extends BaseApiAdaptor {
     }).then(this.handleResponse);
   }
 
-  update(data, id) {
+  update(id, data) {
     return fetch(`${this.baseUrl}/games/${id}`, {
       method: "PATCH",
       headers: {
@@ -69,6 +69,49 @@ class GameAdaptor extends BaseApiAdaptor {
         ...this.defaultHeaders
       },
       body: JSON.stringify(data)
+    })
+  }
+
+  checkAnswer(id, data) {
+    fetch(`${this.baseUrl}/games/${id}/check_answer`, {
+      method: "PATCH",
+      headers: {
+        ...this.authHeader,
+        ...this.defaultHeaders
+      },
+      body: JSON.stringify(data)
+    })
+  }
+
+  revealAnswer(id, data) {
+    fetch(`${this.baseUrl}/games/${id}/reveal_answer`, {
+      method: "PATCH",
+      headers: {
+        ...this.authHeader,
+        ...this.defaultHeaders
+      },
+      body: JSON.stringify(data)
+    })
+  }
+
+  pause(id, data) {
+    fetch(`${this.baseUrl}/games/${id}/pause`, {
+      method: "PATCH",
+      headers: {
+        ...this.authHeader,
+        ...this.defaultHeaders
+      },
+      body: JSON.stringify(data)
+    })
+  }
+
+  unpause(id) {
+    fetch(`${this.baseUrl}/games/${id}/unpause`, {
+      method: "PATCH",
+      headers: {
+        ...this.authHeader,
+        ...this.defaultHeaders
+      }
     })
   }
 }

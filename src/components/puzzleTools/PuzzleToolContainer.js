@@ -2,15 +2,20 @@ import React from "react";
 import { Menu } from "semantic-ui-react";
 import { connect } from "react-redux";
 
-import {
-  getHostSelectedCell,
-  getGuestSelectedCell,
-  getSelectedCellsForClue
-} from "../../selectors";
+import { getSelectedCellsForClue, getUserSelectedCell } from "../../selectors";
 
 import { revealAnswer, checkAnswer, setCellValue } from "../../actions/puzzle";
-import { saveTimer, togglePaused, toggleRebus } from "../../actions/status";
-import { savePuzzle } from "../../actions/user";
+import { saveTimer, toggleRebus } from "../../actions/status";
+
+import {
+  updateGame,
+  broadcastCheckAnswer,
+  broadcastRevealAnswer,
+  pause,
+  broadcastPaused,
+  unpause,
+  broadcastUnpaused
+} from "../../actions/game";
 
 import RebusToggle from "./RebusToggle";
 import PuzzleTimer from "./PuzzleTimer";
@@ -19,35 +24,29 @@ import CheckAnswer from "./CheckAnswer";
 
 class PuzzleToolContainer extends React.Component {
   savePuzzle = timer => {
-    const { isSignedIn, puzzle, puzzleId, savePuzzle } = this.props;
-
-    if (isSignedIn) {
-      savePuzzle(puzzle, puzzleId, timer);
-    }
+    const gameObj = {
+      game: {
+        puzzle: JSON.stringify(this.props.puzzle),
+        timer: timer
+      }
+    };
+    this.props.updateGame(this.props.puzzleId, gameObj);
   };
 
   // event handlers
   onCheckChange = type => {
     const {
-      auth,
-      game: { host, guest },
+      puzzleId,
       puzzle: { cells },
-      hostSelectedCell,
-      guestSelectedCell,
+      userSelectedCell,
       selectedCellsForClue
     } = this.props;
-
-    const selectedCell =
-      auth.user.username === host.username
-        ? hostSelectedCell
-        : guestSelectedCell;
     let selectedCells;
 
-    debugger;
     switch (type) {
       case "CHECK_SQUARE":
       case "REVEAL_SQUARE":
-        selectedCells = [selectedCell];
+        selectedCells = [userSelectedCell];
         break;
       case "CHECK_WORD":
       case "REVEAL_WORD":
@@ -64,13 +63,31 @@ class PuzzleToolContainer extends React.Component {
     if (type.includes("CHECK")) {
       selectedCells = selectedCells.filter(c => c.guess !== "");
       this.props.checkAnswer(selectedCells);
+      this.props.broadcastCheckAnswer(puzzleId, selectedCells);
     } else if (type.includes("REVEAL")) {
       this.props.revealAnswer(selectedCells);
+      this.props.broadcastRevealAnswer(puzzleId, selectedCells);
     }
   };
 
   onRebusClick = () => {
     this.props.toggleRebus();
+  };
+
+  onTogglePause = timer => {
+    if (this.props.paused) {
+      this.props.unpause();
+      this.props.broadcastUnpaused(this.props.puzzleId);
+    } else {
+      this.props.pause();
+      const gameObj = {
+        game: {
+          puzzle: JSON.stringify(this.props.puzzle),
+          timer: timer
+        }
+      };
+      this.props.broadcastPaused(this.props.puzzleId, gameObj);
+    }
   };
 
   render() {
@@ -87,7 +104,7 @@ class PuzzleToolContainer extends React.Component {
             timer={this.props.timer}
             paused={this.props.paused}
             solved={this.props.solved}
-            togglePaused={this.props.togglePaused}
+            togglePaused={this.onTogglePause}
             savePuzzle={this.savePuzzle}
             saveTimer={this.props.saveTimer}
           />
@@ -99,19 +116,17 @@ class PuzzleToolContainer extends React.Component {
 
 const mapStateToProps = state => {
   const {
-    auth,
-    game: { puzzleId, host, guest },
+    game: { puzzleId, timer, paused, solved },
     puzzle
   } = state;
 
   return {
     puzzleId,
+    timer,
+    paused,
+    solved,
     puzzle,
-    host,
-    guest,
-    auth,
-    hostSelectedCell: getHostSelectedCell(state),
-    guestSelectedCell: getGuestSelectedCell(state),
+    userSelectedCell: getUserSelectedCell(state),
     selectedCellsForClue: getSelectedCellsForClue(state)
   };
 };
@@ -120,11 +135,16 @@ export default connect(
   mapStateToProps,
   {
     saveTimer,
-    togglePaused,
+    pause,
+    broadcastPaused,
+    unpause,
+    broadcastUnpaused,
     toggleRebus,
     checkAnswer,
+    broadcastCheckAnswer,
     revealAnswer,
+    broadcastRevealAnswer,
     setCellValue,
-    savePuzzle
+    updateGame
   }
 )(PuzzleToolContainer);
