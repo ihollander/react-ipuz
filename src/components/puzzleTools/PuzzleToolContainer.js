@@ -2,7 +2,11 @@ import React from "react";
 import { Menu } from "semantic-ui-react";
 import { connect } from "react-redux";
 
-import { getSelectedCell, getSelectedCellsForClue } from "../../selectors";
+import {
+  getHostSelectedCell,
+  getGuestSelectedCell,
+  getSelectedCellsForClue
+} from "../../selectors";
 
 import { revealAnswer, checkAnswer, setCellValue } from "../../actions/puzzle";
 import { saveTimer, togglePaused, toggleRebus } from "../../actions/status";
@@ -25,11 +29,18 @@ class PuzzleToolContainer extends React.Component {
   // event handlers
   onCheckChange = type => {
     const {
+      auth,
+      game: { host, guest },
       puzzle: { cells },
-      selectedCell,
+      hostSelectedCell,
+      guestSelectedCell,
       selectedCellsForClue
     } = this.props;
 
+    const selectedCell =
+      auth.user.username === host.username
+        ? hostSelectedCell
+        : guestSelectedCell;
     let selectedCells;
 
     debugger;
@@ -88,18 +99,19 @@ class PuzzleToolContainer extends React.Component {
 
 const mapStateToProps = state => {
   const {
-    auth: { isSignedIn },
-    user: { currentPuzzleId },
-    game: { puzzleId },
+    auth,
+    game: { puzzleId, host, guest },
     puzzle
   } = state;
 
   return {
     puzzleId,
     puzzle,
-    isSignedIn,
-    currentPuzzleId,
-    selectedCell: getSelectedCell(state),
+    host,
+    guest,
+    auth,
+    hostSelectedCell: getHostSelectedCell(state),
+    guestSelectedCell: getGuestSelectedCell(state),
     selectedCellsForClue: getSelectedCellsForClue(state)
   };
 };

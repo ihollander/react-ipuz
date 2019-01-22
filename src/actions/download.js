@@ -1,23 +1,40 @@
 import { downloadTypes } from "../actionTypes/download";
 
-import { parseFile } from "./puzzle";
+import PuzReader from "../helpers/puzFile/PuzReader";
+import PuzzleParser from "../helpers/PuzzleParser";
 
 import puzzleAdaptor from "../apis/PuzzleProxyAdaptor";
-import { puzzleTypes } from "../actionTypes/puzzle";
+
+import { createGame } from "./game";
 
 // dispatch helpers
 const downloadRequest = () => ({
   type: downloadTypes.DOWNLOAD_REQUEST
 });
 
-const downloadSuccess = buffer => {
-  return parseFile(buffer); // trigger puzzle parser
-};
+const downloadSuccess = gameObj => createGame(gameObj);
 
 const downloadFailure = error => ({
   type: downloadTypes.DOWNLOAD_FAILURE,
   payload: error
 });
+
+// parse helpers
+const parseBuffer = buffer => {
+  const puzFile = new PuzReader(buffer);
+  const parser = new PuzzleParser();
+  parser.parsePuz(puzFile);
+  const gameObj = {
+    game: {
+      title: parser.data.meta.title,
+      puzzle: JSON.stringify(parser.data),
+      timer: 0,
+      solved: 0,
+      active: true
+    }
+  };
+  return gameObj;
+};
 
 // exported action creators
 export const downloadToday = () => {
@@ -27,8 +44,8 @@ export const downloadToday = () => {
     puzzleAdaptor
       .getToday()
       .then(buffer => {
-        dispatch({ type: puzzleTypes.PUZZLE_PARSING });
-        dispatch(downloadSuccess(buffer));
+        const gameObj = parseBuffer(buffer);
+        dispatch(downloadSuccess(gameObj));
       })
       .catch(error => {
         dispatch(downloadFailure(error));
@@ -43,8 +60,8 @@ export const downloadNYT = date => {
     puzzleAdaptor
       .getNYT(date)
       .then(buffer => {
-        dispatch({ type: puzzleTypes.PUZZLE_PARSING });
-        dispatch(downloadSuccess(buffer));
+        const gameObj = parseBuffer(buffer);
+        dispatch(downloadSuccess(gameObj));
       })
       .catch(error => {
         dispatch(downloadFailure(error));
@@ -59,8 +76,8 @@ export const downloadWSJ = date => {
     puzzleAdaptor
       .getWsj(date)
       .then(buffer => {
-        dispatch({ type: puzzleTypes.PUZZLE_PARSING });
-        dispatch(downloadSuccess(buffer));
+        const gameObj = parseBuffer(buffer);
+        dispatch(downloadSuccess(gameObj));
       })
       .catch(error => {
         dispatch(downloadFailure(error));
@@ -75,8 +92,8 @@ export const downloadWaPo = date => {
     puzzleAdaptor
       .getWaPo(date)
       .then(buffer => {
-        dispatch({ type: puzzleTypes.PUZZLE_PARSING });
-        dispatch(downloadSuccess(buffer));
+        const gameObj = parseBuffer(buffer);
+        dispatch(downloadSuccess(gameObj));
       })
       .catch(error => {
         dispatch(downloadFailure(error));
@@ -91,8 +108,8 @@ export const downloadPs = date => {
     puzzleAdaptor
       .getPs(date)
       .then(buffer => {
-        dispatch({ type: puzzleTypes.PUZZLE_PARSING });
-        dispatch(downloadSuccess(buffer));
+        const gameObj = parseBuffer(buffer);
+        dispatch(downloadSuccess(gameObj));
       })
       .catch(error => {
         dispatch(downloadFailure(error));

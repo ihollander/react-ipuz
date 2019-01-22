@@ -5,6 +5,7 @@ import { authTypes } from "../actionTypes/auth";
 import { puzzleTypes } from "../actionTypes/puzzle";
 
 import { modals } from "../constants/modal";
+import { gameTypes } from "../actionTypes/game";
 
 const INITIAL_STATE = {
   activeModal: ""
@@ -14,10 +15,14 @@ export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case puzzleTypes.PUZZLE_PARSED:
       return { ...state, activeModal: modals.PUZZLE_READY };
-    case modalTypes.SHOW_LOGIN:
+    case modalTypes.SHOW_LOGIN_MODAL:
       return { ...state, activeModal: modals.LOGIN };
-    case modalTypes.SHOW_SIGNUP:
+    case modalTypes.SHOW_SIGNUP_MODAL:
       return { ...state, activeModal: modals.SIGNUP };
+    case modalTypes.SHOW_CREATE_GAME_MODAL:
+      return { ...state, activeModal: modals.CREATE_GAME };
+    case gameTypes.GAME_CREATED:
+      return { ...state, activeModal: "" };
     case authTypes.LOGIN_SUCCESS:
       return { ...state, activeModal: "" };
     case downloadTypes.DOWNLOAD_FAILURE:

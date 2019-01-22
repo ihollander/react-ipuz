@@ -12,6 +12,7 @@ import PuzzlePausedModal from "./PuzzlePausedModal";
 import PuzzleSolvedModal from "./PuzzleSolvedModal";
 import DownloadErrorModal from "./DownloadErrorModal";
 import PuzzleReadyModal from "./PuzzleReadyModal";
+import CreateGameModal from './CreateGameModal'
 
 const ModalContainer = ({ activeModal, dismissModals, togglePaused }) => {
   switch (activeModal) {
@@ -27,6 +28,8 @@ const ModalContainer = ({ activeModal, dismissModals, togglePaused }) => {
       return <DownloadErrorModal modalOpen onModalClose={dismissModals} />;
     case modals.PUZZLE_READY:
       return <PuzzleReadyModal modalOpen onModalClose={dismissModals} />;
+    case modals.CREATE_GAME:
+      return <CreateGameModal modalOpen onModalClose={dismissModals} />;
     default:
       return null;
   }

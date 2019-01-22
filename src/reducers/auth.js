@@ -1,10 +1,10 @@
 import { authTypes } from "../actionTypes/auth";
 
-const user = JSON.parse(localStorage.getItem("user"));
+const userStorage = JSON.parse(localStorage.getItem("user"));
 const INITIAL_STATE = {
   loading: false,
-  isSignedIn: !!user,
-  user,
+  isSignedIn: !!userStorage,
+  user: userStorage.user,
   error: null
 };
 
@@ -18,7 +18,7 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isSignedIn: true,
-        user: action.payload,
+        user: action.payload.user,
         loading: false,
         error: null
       };

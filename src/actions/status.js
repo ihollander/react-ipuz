@@ -4,19 +4,6 @@ export const dismissAllModals = () => ({
   type: statusTypes.DISMISS_ALL_MODALS
 });
 
-export const setSelectedCell = index => {
-  return {
-    type: statusTypes.CELL_SELECTED,
-    payload: index
-  };
-};
-
-export const toggleDirection = () => {
-  return {
-    type: statusTypes.TOGGLE_DIRECTION
-  };
-};
-
 export const togglePaused = () => {
   return {
     type: statusTypes.TOGGLE_PAUSED

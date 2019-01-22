@@ -66,16 +66,33 @@ class GridBox extends React.Component {
   }
 
   renderCells() {
-    const { cells, onCellClick, selectedCell, selectedDirection } = this.props;
+    const {
+      cells,
+      onCellClick,
+      hostSelectedCell,
+      hostSelectedDirection,
+      guestSelectedCell,
+      guestSelectedDirection
+    } = this.props;
     const gridCells = cells.map(cell => {
       const display = this.getCellDisplay(cell.row, cell.column);
-      const isSelected = cell.index === selectedCell.index;
-      const isSelectedClue =
+      const isHostSelected = cell.index === hostSelectedCell.index;
+      const isHostSelectedClue =
         cell.clues &&
-        ((selectedDirection === "ACROSS" &&
-          cell.clues.across === selectedCell.clues.across) ||
-          (selectedDirection === "DOWN" &&
-            cell.clues.down === selectedCell.clues.down));
+        ((hostSelectedDirection === "ACROSS" &&
+          cell.clues.across === hostSelectedCell.clues.across) ||
+          (hostSelectedDirection === "DOWN" &&
+            cell.clues.down === hostSelectedCell.clues.down));
+
+      const isGuestSelected =
+        !!guestSelectedCell && cell.index === guestSelectedCell.index;
+      const isGuestSelectedClue =
+        !!guestSelectedCell &&
+        cell.clues &&
+        ((guestSelectedDirection === "ACROSS" &&
+          cell.clues.across === guestSelectedCell.clues.across) ||
+          (guestSelectedDirection === "DOWN" &&
+            cell.clues.down === guestSelectedCell.clues.down));
 
       if (cell.type === "BLACK") {
         return <GridCellBlack key={cell.index} display={display} />;
@@ -89,8 +106,10 @@ class GridBox extends React.Component {
             isChecked={cell.checked}
             isConfirmed={cell.confirmed}
             isRevealed={cell.revealed}
-            isSelected={isSelected}
-            isSelectedClue={isSelectedClue}
+            isHostSelected={isHostSelected}
+            isHostSelectedClue={isHostSelectedClue}
+            isGuestSelected={isGuestSelected}
+            isGuestSelectedClue={isGuestSelectedClue}
             label={cell.label}
             style={cell.style}
             sharedSelected={false}

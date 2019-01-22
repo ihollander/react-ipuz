@@ -1,19 +1,53 @@
 import { createSelector } from "reselect";
 
+const getUser = state => state.auth.user.username
+const getHost = state => state.game.host
+const getGuest = state => state.game.guest
 const getCells = state => state.puzzle.cells;
 const getClues = state => state.puzzle.clues;
 
-const getSelectedCellIndex = state => state.game.host.selectedCellIndex;
-const getSelectedDirection = state => state.game.host.selectedDirection;
+const getHostSelectedCellIndex = state => state.game.host.selectedCellIndex;
+const getGuestSelectedCellIndex = state => state.game.guest.selectedCellIndex;
+
+const getHostSelectedDirection = state => state.game.host.selectedDirection;
+const getGuestSelectedDirection = state => state.game.guest.selectedDirection;
 
 // cell selectors
-export const getSelectedCell = createSelector(
-  [getCells, getSelectedCellIndex],
+export const getUserSelectedDirection = createSelector(
+  [getUser, getHost, getGuest, getHostSelectedDirection, getGuestSelectedDirection],
+  (username, host, guest, hostSelectedDirection, guestSelectedDirection) => {
+    if (username === host.username) {
+      return hostSelectedDirection
+    } else if (username === guest.username) {
+      return guestSelectedDirection
+    }
+  }
+)
+
+export const getUserSelectedCell = createSelector(
+  [getCells, getUser, getHost, getGuest, getHostSelectedCellIndex, getGuestSelectedCellIndex],
+  (cells, username, host, guest, hostSelectedCellIndex, guestSelectedCellIndex) => {
+    if (username === host.username) {
+      return cells.find(c => c.index === hostSelectedCellIndex)
+    } else if (username === guest.username) {
+      return cells.find(c => c.index === guestSelectedCellIndex)
+    }
+  }
+)
+
+export const getHostSelectedCell = createSelector(
+  [getCells, getHostSelectedCellIndex],
   (cells, selectedCellIndex) => cells.find(c => c.index === selectedCellIndex)
 );
 
+export const getGuestSelectedCell = createSelector(
+  [getCells, getGuestSelectedCellIndex],
+  (cells, selectedCellIndex) => cells.find(c => c.index === selectedCellIndex)
+);
+
+
 export const getSelectedCellsForClue = createSelector(
-  [getCells, getSelectedCell, getSelectedDirection],
+  [getCells, getUserSelectedCell, getUserSelectedDirection],
   (cells, selectedCell, selectedDirection) => {
     if (selectedDirection === "ACROSS") {
       return cells.filter(
@@ -29,8 +63,34 @@ export const getSelectedCellsForClue = createSelector(
 
 
 // clue selectors
+export const getGuestSelectedClue = createSelector(
+  [getClues, getGuestSelectedDirection, getGuestSelectedCell],
+  (clues, selectedDirection, selectedCell) => {
+    if (selectedCell && clues && clues.across && clues.down) {
+      if (selectedDirection === "ACROSS") {
+        return clues.across[selectedCell.clues.across];
+      } else {
+        return clues.down[selectedCell.clues.down];
+      }
+    }
+  }
+)
+
+export const getHostSelectedClue = createSelector(
+  [getClues, getHostSelectedDirection, getHostSelectedCell],
+  (clues, selectedDirection, selectedCell) => {
+    if (selectedCell && clues && clues.across && clues.down) {
+      if (selectedDirection === "ACROSS") {
+        return clues.across[selectedCell.clues.across];
+      } else {
+        return clues.down[selectedCell.clues.down];
+      }
+    }
+  }
+)
+
 export const getSelectedClue = createSelector(
-  [getClues, getSelectedDirection, getSelectedCell],
+  [getClues, getUserSelectedDirection, getUserSelectedCell],
   (clues, selectedDirection, selectedCell) => {
     if (selectedCell && clues && clues.across && clues.down) {
       if (selectedDirection === "ACROSS") {
@@ -43,8 +103,8 @@ export const getSelectedClue = createSelector(
 );
 
 export const mappedCluesSelector = createSelector(
-  [getClues, getSelectedClue, getCells],
-  (clues, selectedClue, cells) => {
+  [getClues, getHostSelectedClue, getGuestSelectedClue, getCells],
+  (clues, hostSelectedClue, guestSelectedClue, cells) => {
     return Object.keys(clues).reduce((outerObj, direction) => {
       outerObj[direction] = Object.keys(clues[direction]).reduce(
         (innerObj, clueId) => {
@@ -54,10 +114,11 @@ export const mappedCluesSelector = createSelector(
               cell.clues[direction] === clues[direction][clueId].label
           );
           const answered = cellsWithClue.every(cell => cell.guess !== "");
-          const selected = clues[direction][clueId] === selectedClue;
+          const hostSelected = clues[direction][clueId] === hostSelectedClue;
+          const guestSelected = clues[direction][clueId] === guestSelectedClue;
           innerObj = {
             ...innerObj,
-            [clueId]: { ...clues[direction][clueId], answered, selected }
+            [clueId]: { ...clues[direction][clueId], answered, hostSelected, guestSelected }
           };
           return innerObj;
         },

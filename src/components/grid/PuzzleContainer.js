@@ -1,18 +1,22 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import { getSelectedCell, getSelectedClue } from "../../selectors";
+import {
+  getUserSelectedCell,
+  getHostSelectedCell,
+  getSelectedClue,
+  getGuestSelectedCell,
+  getUserSelectedDirection
+} from "../../selectors";
 
 import { setCellValue } from "../../actions/puzzle";
 import {
-  setSelectedCell,
-  toggleDirection,
   markCompleted,
   unmarkCompleted,
   markSolved,
   toggleRebus
 } from "../../actions/status";
-import { sharedGameActions } from "../../actions/sharedGames";
+import { updatePosition, broadcastUpdatePosition } from "../../actions/game";
 
 import ActiveClue from "../clues/ActiveClue";
 import GridBox from "./GridBox";
@@ -42,17 +46,12 @@ class PuzzleContainer extends React.Component {
 
   // Event Handlers
   onCellClick = index => {
-    if (index === this.props.selectedCell.index) {
-      this.props.toggleDirection();
-    } else {
-      if (this.props.sharedGame.sharedGameId) {
-        this.props.broadcastUpdatePosition(
-          this.props.sharedGame.sharedGameId,
-          index
-        );
-      }
-      this.props.setSelectedCell(index);
+    let direction = this.props.userSelectedDirection;
+    if (index === this.props.userSelectedCell.index) {
+      direction = direction === "ACROSS" ? "DOWN" : "ACROSS";
     }
+    this.props.broadcastUpdatePosition(this.props.puzzleId, index, direction);
+    this.props.updatePosition(this.props.auth.user, index, direction);
   };
 
   onRebusSubmit = rebusText => {
@@ -64,21 +63,25 @@ class PuzzleContainer extends React.Component {
   render() {
     const {
       dimensions,
-      selectedDirection,
       selectedClue,
-      selectedCell,
+      hostSelectedCell,
+      host,
+      guestSelectedCell,
+      guest,
       cells,
       rebus
     } = this.props;
 
     return (
       <>
-        <ActiveClue clue={selectedClue} direction={selectedDirection} />
+        <ActiveClue clue={selectedClue} direction={host.selectedDirection} />
         <GridBox
           dimensions={dimensions}
           cells={cells}
-          selectedCell={selectedCell}
-          selectedDirection={selectedDirection}
+          hostSelectedCell={hostSelectedCell}
+          hostSelectedDirection={host.selectedDirection}
+          guestSelectedCell={guestSelectedCell}
+          guestSelectedDirection={guest.selectedDirection}
           rebus={rebus}
           onCellClick={this.onCellClick}
           onRebusSubmit={this.onRebusSubmit}
@@ -90,25 +93,25 @@ class PuzzleContainer extends React.Component {
 
 const mapStateToProps = state => {
   const {
+    auth,
     puzzle: { dimensions, cells },
-    game: {
-      completed,
-      solved,
-      rebus,
-      host: { selectedDirection }
-    },
-    sharedGame
+    game: { completed, solved, rebus, host, guest, puzzleId }
   } = state;
 
   return {
+    auth,
     dimensions,
     cells,
     completed,
     solved,
     rebus,
-    selectedDirection,
-    sharedGame,
-    selectedCell: getSelectedCell(state),
+    puzzleId,
+    host,
+    userSelectedDirection: getUserSelectedDirection(state),
+    userSelectedCell: getUserSelectedCell(state),
+    hostSelectedCell: getHostSelectedCell(state),
+    guestSelectedCell: getGuestSelectedCell(state),
+    guest,
     selectedClue: getSelectedClue(state)
   };
 };
@@ -117,12 +120,11 @@ export default connect(
   mapStateToProps,
   {
     setCellValue,
-    setSelectedCell,
-    toggleDirection,
     markCompleted,
     unmarkCompleted,
     markSolved,
     toggleRebus,
-    broadcastUpdatePosition: sharedGameActions.broadcastUpdatePosition
+    updatePosition,
+    broadcastUpdatePosition
   }
 )(PuzzleContainer);

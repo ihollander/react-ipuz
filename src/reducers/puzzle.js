@@ -1,5 +1,5 @@
 import { puzzleTypes } from "../actionTypes/puzzle";
-import { userTypes } from "../actionTypes/user";
+import { gameTypes } from "../actionTypes/game";
 import { authTypes } from "../actionTypes/auth";
 
 const INITIAL_STATE = {
@@ -22,39 +22,11 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case userTypes.GAME_FETCH_FAILURE:
-      return state;
     case authTypes.LOGIN_SUCCESS:
     case authTypes.LOGOUT_SUCCESS:
       return INITIAL_STATE;
-    case userTypes.GAME_FETCHED:
-      return {
-        ...state,
-        cells: action.payload.cells
-      };
-    case puzzleTypes.PUZZLE_PARSED:
-      return {
-        ...state,
-        loaded: true,
-        meta: {
-          ...state.meta,
-          copyright: action.payload.meta.copyright,
-          author: action.payload.meta.author,
-          title: action.payload.meta.title,
-          notes: action.payload.meta.notes
-        },
-        dimensions: {
-          ...state.dimensions,
-          width: action.payload.dimensions.width,
-          height: action.payload.dimensions.height
-        },
-        cells: action.payload.cells,
-        clues: {
-          ...state.clues,
-          across: action.payload.clues.across,
-          down: action.payload.clues.down
-        }
-      };
+    case gameTypes.GAME_FETCHED:
+      return action.payload.puzzle;
     case puzzleTypes.CELL_VALUE_CHANGED:
       const newCellValues = state.cells.map(cell =>
         cell.index === action.payload.index

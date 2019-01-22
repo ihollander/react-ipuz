@@ -2,25 +2,16 @@ import React from "react";
 import { connect } from "react-redux";
 import { Grid } from "semantic-ui-react";
 
-import {
-  getSelectedCell,
-  getSelectedClue,
-  mappedCluesSelector
-} from "../../selectors";
+import { mappedCluesSelector } from "../../selectors";
 
-import { toggleDirection, setSelectedCell } from "../../actions/status";
+import { updatePosition } from "../../actions/game";
 
 import ClueList from "./ClueList";
 
 class ClueContainer extends React.Component {
   // Event Handlers
   handleClueClick(direction, label) {
-    const { cells, selectedDirection } = this.props;
-
-    // toggle direction if new direction selected
-    if (selectedDirection !== direction) {
-      this.props.toggleDirection();
-    }
+    const { cells, user } = this.props;
 
     // set selected cell index to first cell for given clue number
     const clueCell = cells.find(
@@ -28,7 +19,7 @@ class ClueContainer extends React.Component {
         (direction === "ACROSS" && cell.clues && cell.clues.across === label) ||
         (direction === "DOWN" && cell.clues && cell.clues.down === label)
     );
-    this.props.setSelectedCell(clueCell.index);
+    this.props.updatePosition(user, clueCell.index, direction);
   }
 
   onDownClueClick = label => this.handleClueClick("DOWN", label);
@@ -61,17 +52,13 @@ class ClueContainer extends React.Component {
 
 const mapStateToProps = state => {
   const {
-    puzzle: { cells },
-    game: {
-      host: { selectedDirection }
-    }
+    auth: { user },
+    puzzle: { cells }
   } = state;
 
   return {
-    cells: cells,
-    selectedDirection: selectedDirection,
-    selectedCell: getSelectedCell(state),
-    selectedClue: getSelectedClue(state),
+    user,
+    cells,
     mappedClues: mappedCluesSelector(state)
   };
 };
@@ -79,7 +66,6 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps,
   {
-    toggleDirection,
-    setSelectedCell
+    updatePosition
   }
 )(ClueContainer);

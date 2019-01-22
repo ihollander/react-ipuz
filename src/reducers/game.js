@@ -1,28 +1,33 @@
 import { authTypes } from "../actionTypes/auth";
 import { statusTypes } from "../actionTypes/status";
-import { puzzleTypes } from "../actionTypes/puzzle";
-import { userTypes } from "../actionTypes/user";
-// game: { status keys, puzzleId, guesses: [{cell: guess, username, revealed, checked}], host: {username, selectedCell, selectedDirection}, guest: {username, selectedCell, selectedDirection} }
+import { gameTypes } from "../actionTypes/game";
 
 const INITIAL_STATE = {
   loaded: false,
   puzzleId: null,
   solved: false, // add as key to game in backend
-  completed: false, // add as key to game in backend
   timer: 0, // add as key to game in backend
-  paused: true, // add as key to game in backend
-  rebus: false, // add as key to game in backend
+  paused: true,
+  rebus: false,
   host: {
     username: "",
     selectedCellIndex: null,
-    selectedDirection: "ACROSS",
-    guesses: {} // { cellIndex: { guess, username, revealed, checked} }
+    selectedDirection: "ACROSS"
   },
   guest: {
     username: "",
     selectedCellIndex: null,
-    selectedDirection: "ACROSS",
-    guesses: {} // { cellIndex: { guess, username, revealed, checked} }
+    selectedDirection: "ACROSS"
+  }
+};
+
+const findUser = (state, username) => {
+  if (state.host.username === username) {
+    return "host";
+  } else if (state.guest.username === username) {
+    return "guest";
+  } else {
+    // throw error
   }
 };
 
@@ -31,32 +36,48 @@ export default (state = INITIAL_STATE, action) => {
     case authTypes.LOGIN_SUCCESS:
     case authTypes.LOGOUT_SUCCESS:
       return INITIAL_STATE;
-    case puzzleTypes.PUZZLE_PARSING:
-      return INITIAL_STATE;
-    case puzzleTypes.PUZZLE_PARSED:
-      const selectedCellIndex = action.payload.cells.find(
+    case gameTypes.GAME_FETCHED:
+      const selectedCellIndex = action.payload.puzzle.cells.find(
         c => c.type !== "BLACK"
       ).index;
-      // auto-start timer?
       return {
         ...state,
         loaded: true,
         paused: false,
-        host: { ...state.host, selectedCellIndex }
+        timer: action.payload.timer,
+        puzzleId: action.payload.id,
+        solved: action.payload.solved === 1,
+        host: {
+          ...state.host,
+          username: action.payload.host_id.username,
+          selectedCellIndex
+        },
+        guest: {
+          ...state.guest,
+          username: action.payload.guest_id
+            ? action.payload.guest_id.username
+            : null,
+          selectedCellIndex
+        }
       };
-    case statusTypes.TOGGLE_DIRECTION:
-      const selectedDirection =
-        state.host.selectedDirection === "ACROSS" ? "DOWN" : "ACROSS";
-      return { ...state, host: { ...state.host, selectedDirection } };
-    case statusTypes.CELL_SELECTED:
+    case gameTypes.GAME_JOINED:
       return {
         ...state,
-        host: { ...state.host, selectedCellIndex: action.payload }
+        host: { ...state.host, username: action.payload.host_id.username },
+        guest: { ...state.guest, username: action.payload.guest_id.username }
       };
-    case userTypes.GAME_FETCHED:
-    case userTypes.GAME_SAVED:
-      // TODO: also get the timer and any other saved info...
-      return { ...state, puzzleId: action.payload.id };
+    case gameTypes.POSITION_UPDATED:
+      const updatePositionFor = findUser(state, action.payload.user.username);
+      return updatePositionFor
+        ? {
+            ...state,
+            [updatePositionFor]: {
+              ...state[updatePositionFor],
+              selectedDirection: action.payload.direction,
+              selectedCellIndex: action.payload.index
+            }
+          }
+        : state;
     case statusTypes.TOGGLE_REBUS:
       return { ...state, rebus: !state.rebus };
     case statusTypes.TOGGLE_PAUSED:

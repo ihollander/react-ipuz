@@ -1,20 +1,19 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
 
-const AuthenticatedRoute = ({
-  isAuthenticated,
-  component: Component,
-  ...rest
-}) => {
-  const renderLayout = props => {
-    return isAuthenticated ? (
-      <Component {...props} />
+const AuthenticatedRoute = ({ isSignedIn, component: Component, ...rest }) => {
+  const renderLayout = rest => {
+    return isSignedIn ? (
+      <Component {...rest} />
     ) : (
-      <Redirect to={{ pathname: "/", state: { from: props.location } }} />
+      <Redirect to={{ pathname: "/", state: { from: rest.location } }} />
     );
   };
 
   return <Route {...rest} render={renderLayout} />;
 };
 
-export default AuthenticatedRoute;
+const mapStateToProps = ({ auth: { isSignedIn } }) => ({ isSignedIn });
+
+export default connect(mapStateToProps)(AuthenticatedRoute);

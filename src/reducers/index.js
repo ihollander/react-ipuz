@@ -1,11 +1,10 @@
 import { combineReducers } from "redux";
 import auth from "../reducers/auth";
-import user from "../reducers/user";
 import puzzle from "../reducers/puzzle";
 import modals from "../reducers/modals";
-import sharedGame from "../reducers/sharedGame";
 
 import game from '../reducers/game'
+import lobby from '../reducers/lobby'
 
 // new store:
 // puzzle: only information from parsed puzzle; should be able to render a puzzle without any other keys
@@ -17,9 +16,8 @@ import game from '../reducers/game'
 
 export default combineReducers({
   auth,
-  user,
   puzzle,
   modals,
   game,
-  sharedGame
+  lobby
 });

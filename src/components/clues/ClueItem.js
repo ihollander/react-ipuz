@@ -44,7 +44,11 @@ class ClueItem extends React.Component {
         <List.Item
           onClick={() => onClueClick(clue.label)}
           style={{
-            backgroundColor: clue.selected ? "pink" : "",
+            backgroundColor: clue.hostSelected
+              ? "pink"
+              : clue.guestSelected
+              ? "lavender"
+              : "",
             color: clue.answered ? "grey" : "black"
           }}
         >

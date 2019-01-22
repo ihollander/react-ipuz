@@ -1,36 +1,21 @@
 import "./App.css";
 
 import React from "react";
-import { connect } from "react-redux";
 import { Router, Route, Switch } from "react-router-dom";
 
 import history from "../history";
-import { getSavedPuzzles } from "../actions/user";
 
 import ScrollToTop from "./layout/ScrollToTop";
 import AuthenticatedRoute from "./routes/AuthenticatedRoute";
-import CurrentPuzzlePage from "./pages/CurrentPuzzlePage";
-import HomePage from "./pages/HomePage";
-import SavedPuzzlesPage from "./pages/SavedPuzzlesPage";
-
 import ModalContainer from "./modals/ModalContainer";
-import SharedPuzzlePage from "./pages/SharedPuzzlePage";
+
+import HomePage from "./pages/HomePage";
+import LobbyPage from "./pages/LobbyPage";
+import GamePage from "./pages/GamePage";
 
 class App extends React.Component {
-  componentDidMount() {
-    if (this.props.isSignedIn) {
-      this.props.getSavedPuzzles();
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.isSignedIn && !prevProps.isSignedIn) {
-      this.props.getSavedPuzzles();
-    }
-  }
 
   render() {
-    const { isSignedIn } = this.props;
     return (
       <>
         <ModalContainer />
@@ -38,17 +23,15 @@ class App extends React.Component {
           <ScrollToTop>
             <Switch>
               <Route path="/" exact component={HomePage} />
-              <Route path="/puzzle" component={CurrentPuzzlePage} />
               <AuthenticatedRoute
-                path="/shared/:id"
+                path="/lobby"
                 exact
-                component={SharedPuzzlePage}
+                component={LobbyPage}
               />
               <AuthenticatedRoute
-                isAuthenticated={isSignedIn}
-                path="/saved"
+                path="/game/:id"
                 exact
-                component={SavedPuzzlesPage}
+                component={GamePage}
               />
             </Switch>
           </ScrollToTop>
@@ -58,11 +41,4 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = ({ auth: { isSignedIn } }) => ({ isSignedIn });
-
-export default connect(
-  mapStateToProps,
-  {
-    getSavedPuzzles
-  }
-)(App);
+export default App;

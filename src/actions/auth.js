@@ -15,7 +15,7 @@ export const signUp = formData => {
     authAdaptor.signUp({ user: formData }).then(
       user => {
         dispatch(loginSuccess(user));
-        history.push("/");
+        history.push("/lobby");
       },
       error => {
         dispatch(loginFailure(error));
@@ -31,7 +31,7 @@ export const signIn = formData => {
     authAdaptor.login({ user: formData }).then(
       user => {
         dispatch(loginSuccess(user));
-        history.push("/");
+        history.push("/lobby");
       },
       error => {
         dispatch(loginFailure(error));
