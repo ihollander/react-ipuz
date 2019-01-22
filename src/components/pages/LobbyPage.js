@@ -4,7 +4,15 @@ import { ActionCable } from "react-actioncable-provider";
 import { Button, Segment, Header } from "semantic-ui-react";
 
 import { showCreateGameModal } from "../../actions/modal";
-import { addGame, getGames, joinGame, updateLobbyGames } from "../../actions/game";
+import {
+  addGame,
+  broadcastDeleteGame,
+  deleteGame,
+  getGames,
+  leaveGames,
+  joinGame,
+  updateLobbyGames
+} from "../../actions/game";
 
 import history from "../../history";
 
@@ -14,7 +22,13 @@ import DefaultLayout from "../layouts/DefaultLayout";
 class LobbyPage extends React.Component {
   componentDidMount() {
     this.props.getGames();
+    //leave all games
+    this.props.leaveGames();
   }
+
+  onDeleteGameClick = gameId => {
+    this.props.broadcastDeleteGame(gameId);
+  };
 
   onJoinGameClick = gameId => {
     this.props.joinGame(gameId);
@@ -25,13 +39,16 @@ class LobbyPage extends React.Component {
   };
 
   handleSocketResponse = data => {
-    console.log(data)
+    console.log(data);
     switch (data.type) {
       case "NEW_GAME":
         this.props.addGame(data.payload);
         break;
       case "GAME_UPDATED":
-        this.props.updateLobbyGames(data.payload)
+        this.props.updateLobbyGames(data.payload);
+        break;
+      case "GAME_REMOVED":
+        this.props.deleteGame(data.payload.id);
         break;
       default:
         break;
@@ -53,6 +70,7 @@ class LobbyPage extends React.Component {
             user={this.props.user}
             onResumeGameClick={this.onResumeGameClick}
             onJoinGameClick={this.onJoinGameClick}
+            onDeleteGameClick={this.onDeleteGameClick}
           />
         </Segment>
       </DefaultLayout>
@@ -69,8 +87,11 @@ export default connect(
   mapStateToProps,
   {
     addGame,
+    deleteGame,
+    broadcastDeleteGame,
     getGames,
     joinGame,
+    leaveGames,
     showCreateGameModal,
     updateLobbyGames
   }

@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 
-const getUser = state => state.auth.user.username
+const getUser = state => state.auth.user.user.username
 const getHost = state => state.game.host
 const getGuest = state => state.game.guest
 const getCells = state => state.puzzle.cells;

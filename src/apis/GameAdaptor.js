@@ -38,6 +38,16 @@ class GameAdaptor extends BaseApiAdaptor {
     }).then(this.handleResponse);
   }
 
+  delete(id) {
+    return fetch(`${this.baseUrl}/games/${id}`, {
+      method: "DELETE",
+      headers: {
+        ...this.authHeader,
+        ...this.defaultHeaders
+      }
+    })
+  }
+
   join(id) {
     return fetch(`${this.baseUrl}/games/${id}/join`, {
       method: "PATCH",
@@ -127,6 +137,16 @@ class GameAdaptor extends BaseApiAdaptor {
 
   markInactive(id) {
     fetch(`${this.baseUrl}/games/${id}/mark_inactive`, {
+      method: "PATCH",
+      headers: {
+        ...this.authHeader,
+        ...this.defaultHeaders
+      }
+    })
+  }
+
+  leaveGames() {
+    fetch(`${this.baseUrl}/games/leave_all`, {
       method: "PATCH",
       headers: {
         ...this.authHeader,

@@ -40,7 +40,6 @@ export default (state = INITIAL_STATE, action) => {
     case gameTypes.CLEAR_GAME_STATE:
       return INITIAL_STATE;
     case gameTypes.GAME_FETCHED:
-      debugger;
       const selectedCellIndex = action.payload.puzzle.cells.find(
         c => c.type !== "BLACK"
       ).index;
@@ -87,7 +86,12 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         host: { ...state.host, username: action.payload.host_id.username },
-        guest: { ...state.guest, username: action.payload.guest_id.username }
+        guest: {
+          ...state.guest,
+          username: action.payload.guest_id
+            ? action.payload.guest_id.username
+            : null
+        }
       };
     case gameTypes.POSITION_UPDATED:
       const updatePositionFor = findUser(state, action.payload.user.username);

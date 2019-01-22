@@ -23,9 +23,12 @@ export default (state = INITIAL_STATE, action) => {
             loading: false,
             games: [...state.games, action.payload.game]
           };
+    case gameTypes.GAME_REMOVED:
+      const newGames = state.games.filter(game => game.id.toString() !== action.payload);
+      return { ...state, games: newGames };
     case gameTypes.LOBBY_UPDATED:
       const updatedGames = state.games.map(game =>
-        game.id === action.payload.game.id ? action.payload.game : game
+        game.id === action.payload.game.id ? { ...action.payload.game } : game
       );
       return { ...state, games: updatedGames };
     default:

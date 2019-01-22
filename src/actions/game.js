@@ -220,3 +220,22 @@ export const updateLobbyGames = gameData => ({
   type: gameTypes.LOBBY_UPDATED,
   payload: gameData
 })
+
+export const leaveGames = () => {
+  gameAdaptor.leaveGames();
+  return {
+    type: "BROADCAST_LEAVE_GAMES"
+  };
+}
+
+export const broadcastDeleteGame = gameId => {
+  gameAdaptor.delete(gameId)
+  return {
+    type: "BROADCAST_DELETE_GAME"
+  }
+}
+
+export const deleteGame = gameId => ({
+  type: gameTypes.GAME_REMOVED,
+  payload: gameId
+})

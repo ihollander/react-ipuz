@@ -6,24 +6,21 @@ const GameItem = ({
   isHost,
   isGuest,
   isFull,
+  updatedAt,
   onJoinGameClick,
-  onResumeGameClick
+  onResumeGameClick,
+  onDeleteGameClick
 }) => {
-  const renderGuestCell = () => {
-    if (game.guest_id && game.guest_id.username) {
-      return game.guest_id.username;
-    } else if (!isHost && !isFull) {
-      return <Button onClick={() => onJoinGameClick(game.id)}>Join</Button>;
-    } else {
-      return null;
-    }
-  };
-
   const renderResume = () => {
     if (isHost) {
-      return <Button onClick={() => onResumeGameClick(game.id)}>Resume</Button>;
-    } else if (isGuest && game.host_active) {
-      return <Button onClick={() => onResumeGameClick(game.id)}>Join</Button>;
+      return (
+        <>
+          <Button onClick={() => onResumeGameClick(game.id)}>Resume</Button>
+          <Button onClick={() => onDeleteGameClick(game.id)}>Delete</Button>
+        </>
+      );
+    } else if (!isFull || (isGuest && game.host_active)) {
+      return <Button onClick={() => onJoinGameClick(game.id)}>Join</Button>;
     } else {
       return null;
     }
@@ -35,8 +32,11 @@ const GameItem = ({
       <Table.Cell positive={game.host_active}>
         {game.host_id.username}
       </Table.Cell>
-      <Table.Cell positive={game.guest_active}>{renderGuestCell()}</Table.Cell>
+      <Table.Cell positive={game.guest_active}>
+        {game.guest_id && game.guest_id.username}
+      </Table.Cell>
       <Table.Cell>{renderResume()}</Table.Cell>
+      <Table.Cell>{updatedAt}</Table.Cell>
     </Table.Row>
   );
 };

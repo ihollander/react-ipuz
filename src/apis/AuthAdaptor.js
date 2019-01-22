@@ -8,11 +8,11 @@ class AuthAdaptor extends BaseApiAdaptor {
       body: JSON.stringify(data)
     })
       .then(this.handleResponse)
-      .then(response => {
-        if (response.jwt) {
-          localStorage.setItem("user", JSON.stringify(response.user));
+      .then(user => {
+        if (user.jwt) {
+          localStorage.setItem("user", JSON.stringify(user));
         }
-        return response.user;
+        return user;
       });
   }
 
