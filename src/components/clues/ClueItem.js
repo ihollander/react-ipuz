@@ -5,9 +5,10 @@ class ClueItem extends React.Component {
   liRef = React.createRef();
 
   componentDidUpdate() {
-    const { clue } = this.props;
+    const { selected } = this.props;
+    console.log(selected)
     const target = this.liRef.current;
-    if (clue.selected && target) {
+    if (selected && target) {
       // clearInterval(this.scrollInterval) // clear existing animations...
       // this.animateScroll(target, 1000);
       // target.scrollIntoView({

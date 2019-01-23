@@ -1,6 +1,5 @@
 import { authTypes } from "../actionTypes/auth";
 import authAdaptor from "../apis/AuthAdaptor";
-import gameAdaptor from "../apis/GameAdaptor";
 import history from "../history";
 
 // helpers
@@ -44,7 +43,6 @@ export const signIn = formData => {
 };
 
 export const signOut = () => {
-  gameAdaptor.leaveGames();
   authAdaptor.logout();
   return {
     type: authTypes.LOGOUT_SUCCESS

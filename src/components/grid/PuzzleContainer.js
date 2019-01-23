@@ -19,25 +19,14 @@ import {
 
 import {
   updatePosition,
-  broadcastUpdatePosition,
-  broadcastActivePlayer,
-  broadcastInactivePlayer
+  broadcastUpdatePosition
 } from "../../actions/game";
 
 import ActiveClue from "../clues/ActiveClue";
 import GridBox from "./GridBox";
 
 class PuzzleContainer extends React.Component {
-  componentDidMount() {
-    const { puzzleId, broadcastActivePlayer } = this.props;
-    broadcastActivePlayer(puzzleId);
-  }
-
-  componentWillUnmount() {
-    const { puzzleId, broadcastInactivePlayer } = this.props;
-    broadcastInactivePlayer(puzzleId);
-  }
-
+  
   // check for puzzle completedness
   componentDidUpdate(prevProps) {
     const solvableCells = this.props.cells.filter(c => c.solution);
@@ -67,7 +56,7 @@ class PuzzleContainer extends React.Component {
       direction = direction === "ACROSS" ? "DOWN" : "ACROSS";
     }
     this.props.broadcastUpdatePosition(this.props.puzzleId, index, direction);
-    this.props.updatePosition(this.props.auth.user, index, direction);
+    this.props.updatePosition(this.props.auth.user.user, index, direction);
   };
 
   onRebusSubmit = rebusText => {
@@ -143,8 +132,6 @@ export default connect(
     markSolved,
     toggleRebus,
     updatePosition,
-    broadcastUpdatePosition,
-    broadcastActivePlayer,
-    broadcastInactivePlayer
+    broadcastUpdatePosition
   }
 )(PuzzleContainer);

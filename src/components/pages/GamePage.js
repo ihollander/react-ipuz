@@ -13,6 +13,8 @@ import {
   setActivePlayer
 } from "../../actions/game";
 
+import { addMessage } from "../../actions/messages";
+
 import DefaultLayout from "../layouts/DefaultLayout";
 import PuzzleWrapper from "../grid/PuzzleWrapper";
 
@@ -26,17 +28,14 @@ class GamePage extends React.Component {
     console.log(type, payload);
 
     switch (type) {
-      case "HOST_ACTIVE":
-        this.props.setActivePlayer("host", true);
+      case "NEW_MESSAGE":
+        this.props.addMessage(payload.message)
         break;
-      case "HOST_INACTIVE":
-        this.props.setActivePlayer("host", false);
+      case "USER_ENTERED_GAME":
+        this.props.setActivePlayer(payload.user.username, true);
         break;
-      case "GUEST_ACTIVE":
-        this.props.setActivePlayer("guest", true);
-        break;
-      case "GUEST_INACTIVE":
-        this.props.setActivePlayer("guest", false);
+      case "USER_LEFT_GAME":
+        this.props.setActivePlayer(payload.user.username, false);
         break;
       case "GAME_JOINED":
         // update players
@@ -49,8 +48,9 @@ class GamePage extends React.Component {
       case "UPDATE_POSITION":
         if (
           payload.user &&
-          payload.user.username !== this.props.user.username
+          payload.user.username !== this.props.user.user.username
         ) {
+          debugger
           this.props.updatePosition(
             payload.user,
             payload.position.index,
@@ -61,7 +61,7 @@ class GamePage extends React.Component {
       case "UPDATE_CELL":
         if (
           payload.user &&
-          payload.user.username !== this.props.user.username
+          payload.user.username !== this.props.user.user.username
         ) {
           this.props.setCellValue(payload.cell.index, payload.cell.value);
         }
@@ -69,7 +69,7 @@ class GamePage extends React.Component {
       case "CHECK_ANSWER":
         if (
           payload.user &&
-          payload.user.username !== this.props.user.username
+          payload.user.username !== this.props.user.user.username
         ) {
           this.props.checkAnswer(payload.cells);
         }
@@ -77,7 +77,7 @@ class GamePage extends React.Component {
       case "REVEAL_ANSWER":
         if (
           payload.user &&
-          payload.user.username !== this.props.user.username
+          payload.user.username !== this.props.user.user.username
         ) {
           this.props.revealAnswer(payload.cells);
         }
@@ -85,7 +85,7 @@ class GamePage extends React.Component {
       case "PAUSED":
         if (
           payload.user &&
-          payload.user.username !== this.props.user.username
+          payload.user.username !== this.props.user.user.username
         ) {
           this.props.pause();
           this.props.syncGame(payload.puzzle);
@@ -94,7 +94,7 @@ class GamePage extends React.Component {
       case "UNPAUSED":
         if (
           payload.user &&
-          payload.user.username !== this.props.user.username
+          payload.user.username !== this.props.user.user.username
         ) {
           this.props.unpause();
         }
@@ -137,6 +137,7 @@ export default connect(
     unpause,
     syncGame,
     setActivePlayer,
-    updatePlayers
+    updatePlayers,
+    addMessage
   }
 )(GamePage);

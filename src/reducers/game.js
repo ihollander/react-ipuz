@@ -1,6 +1,7 @@
 import { authTypes } from "../actionTypes/auth";
 import { statusTypes } from "../actionTypes/status";
 import { gameTypes } from "../actionTypes/game";
+import { messageTypes } from "../actionTypes/message";
 
 const INITIAL_STATE = {
   loaded: false,
@@ -9,6 +10,7 @@ const INITIAL_STATE = {
   timer: 0, // add as key to game in backend
   paused: true,
   rebus: false,
+  messages: [],
   host: {
     username: "",
     selectedCellIndex: null,
@@ -50,6 +52,7 @@ export default (state = INITIAL_STATE, action) => {
         timer: action.payload.timer,
         puzzleId: action.payload.id,
         solved: action.payload.solved === 1,
+        messages: action.payload.messages,
         host: {
           ...state.host,
           username: action.payload.host_id.username,
@@ -71,15 +74,15 @@ export default (state = INITIAL_STATE, action) => {
         host: { ...state.host, username: action.payload.host },
         guest: { ...state.guest, username: action.payload.guest }
       };
-    case gameTypes.PLAYER_ACTIVE_UPDATED: {
-      return {
+    case gameTypes.PLAYER_ACTIVE_UPDATED: 
+      const updateFor = state.host.username === action.payload.player ? "host" : state.guest.username === action.payload.player ? "guest" : null
+      return updateFor ? {
         ...state,
-        [action.payload.player]: {
-          ...state[action.payload.player],
+        [updateFor]: {
+          ...state[updateFor],
           active: action.payload.active
         }
-      };
-    }
+      } : state
     case gameTypes.GAME_DATA_RECEIVED:
       return { ...state, timer: action.payload.game.timer };
     case gameTypes.GAME_JOINED:
@@ -105,6 +108,14 @@ export default (state = INITIAL_STATE, action) => {
             }
           }
         : state;
+    case messageTypes.MESSAGE_SENT:
+    case messageTypes.MESSAGE_RECEIVED:
+      const existingMessage = state.messages.find(
+        message => message.id === action.payload.id
+      );
+      return existingMessage
+        ? state
+        : { ...state, messages: [...state.messages, action.payload] };
     case statusTypes.TOGGLE_REBUS:
       return { ...state, rebus: !state.rebus };
     case gameTypes.GAME_PAUSED:

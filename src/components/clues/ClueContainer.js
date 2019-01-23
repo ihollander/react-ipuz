@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Grid } from "semantic-ui-react";
 
-import { mappedCluesSelector } from "../../selectors";
+import { mappedCluesSelector, getSelectedClue } from "../../selectors";
 
 import { updatePosition } from "../../actions/game";
 
@@ -19,7 +19,7 @@ class ClueContainer extends React.Component {
         (direction === "ACROSS" && cell.clues && cell.clues.across === label) ||
         (direction === "DOWN" && cell.clues && cell.clues.down === label)
     );
-    this.props.updatePosition(user, clueCell.index, direction);
+    this.props.updatePosition(user.user, clueCell.index, direction);
   }
 
   onDownClueClick = label => this.handleClueClick("DOWN", label);
@@ -32,6 +32,7 @@ class ClueContainer extends React.Component {
         <Grid columns={2} style={{ maxHeight: "680px", marginBottom: "2rem" }}>
           <Grid.Column>
             <ClueList
+              userSelectedClue={this.props.userSelectedClue}
               clues={this.props.mappedClues.across}
               onClueClick={this.onAcrossClueClick}
               heading="Across"
@@ -39,6 +40,7 @@ class ClueContainer extends React.Component {
           </Grid.Column>
           <Grid.Column>
             <ClueList
+              userSelectedClue={this.props.userSelectedClue}
               clues={this.props.mappedClues.down}
               onClueClick={this.onDownClueClick}
               heading="Down"
@@ -59,6 +61,7 @@ const mapStateToProps = state => {
   return {
     user,
     cells,
+    userSelectedClue: getSelectedClue(state),
     mappedClues: mappedCluesSelector(state)
   };
 };

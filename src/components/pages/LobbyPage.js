@@ -9,7 +9,6 @@ import {
   broadcastDeleteGame,
   deleteGame,
   getGames,
-  leaveGames,
   joinGame,
   updateLobbyGames
 } from "../../actions/game";
@@ -22,8 +21,6 @@ import DefaultLayout from "../layouts/DefaultLayout";
 class LobbyPage extends React.Component {
   componentDidMount() {
     this.props.getGames();
-    //leave all games
-    this.props.leaveGames();
   }
 
   onDeleteGameClick = gameId => {
@@ -91,7 +88,6 @@ export default connect(
     broadcastDeleteGame,
     getGames,
     joinGame,
-    leaveGames,
     showCreateGameModal,
     updateLobbyGames
   }

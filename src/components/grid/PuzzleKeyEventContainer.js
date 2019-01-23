@@ -29,7 +29,7 @@ class PuzzleKeyEventContainer extends React.Component {
       index,
       direction
     );
-    this.props.updatePosition(this.props.auth.user, index, direction);
+    this.props.updatePosition(this.props.auth.user.user, index, direction);
   }
 
   setCellValue(index, value) {

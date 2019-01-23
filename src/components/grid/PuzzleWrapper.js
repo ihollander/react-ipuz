@@ -7,6 +7,7 @@ import PuzzleContainer from "../grid/PuzzleContainer";
 import PuzzleToolContainer from "../puzzleTools/PuzzleToolContainer";
 import ClueContainer from "../clues/ClueContainer";
 import PuzzleHeader from "../grid/PuzzleHeader";
+import ChatboxContainer from "../chat/ChatboxContainer";
 
 class PuzzleWrapper extends React.Component {
   render() {
@@ -20,28 +21,33 @@ class PuzzleWrapper extends React.Component {
     }
 
     return (
-      <PuzzleKeyEventContainer>
+      <>
         <Segment>
-          <PuzzleHeader meta={meta} />
+          <ChatboxContainer />
         </Segment>
-        <Grid>
-          <Grid.Row>
-            <Grid.Column tablet={16} computer={8}>
-              <Segment>
-                <PuzzleToolContainer />
-              </Segment>
-              <Segment>
-                <PuzzleContainer />
-              </Segment>
-            </Grid.Column>
-            <Grid.Column computer={8} only="computer">
-              <Segment>
-                <ClueContainer />
-              </Segment>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </PuzzleKeyEventContainer>
+        <PuzzleKeyEventContainer>
+          <Segment>
+            <PuzzleHeader meta={meta} />
+          </Segment>
+          <Grid>
+            <Grid.Row>
+              <Grid.Column tablet={16} computer={8}>
+                <Segment>
+                  <PuzzleToolContainer />
+                </Segment>
+                <Segment>
+                  <PuzzleContainer />
+                </Segment>
+              </Grid.Column>
+              <Grid.Column computer={8} only="computer">
+                <Segment>
+                  <ClueContainer />
+                </Segment>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </PuzzleKeyEventContainer>
+      </>
     );
   }
 }

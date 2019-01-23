@@ -197,20 +197,6 @@ export const broadcastUnpaused = gameId => {
   };
 };
 
-export const broadcastActivePlayer = gameId => {
-  gameAdaptor.markActive(gameId);
-  return {
-    type: "BROADCAST_PLAYER_ACTIVE"
-  };
-};
-
-export const broadcastInactivePlayer = gameId => {
-  gameAdaptor.markInactive(gameId);
-  return {
-    type: "BROADCAST_PLAYER_INACTIVE"
-  };
-};
-
 export const setActivePlayer = (player, active) => ({
   type: gameTypes.PLAYER_ACTIVE_UPDATED,
   payload: { player, active }
@@ -220,13 +206,6 @@ export const updateLobbyGames = gameData => ({
   type: gameTypes.LOBBY_UPDATED,
   payload: gameData
 })
-
-export const leaveGames = () => {
-  gameAdaptor.leaveGames();
-  return {
-    type: "BROADCAST_LEAVE_GAMES"
-  };
-}
 
 export const broadcastDeleteGame = gameId => {
   gameAdaptor.delete(gameId)
