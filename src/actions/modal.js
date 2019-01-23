@@ -12,6 +12,10 @@ export const showCreateGameModal = () => ({
   type: modalTypes.SHOW_CREATE_GAME_MODAL
 });
 
+export const showProfileModal = () => ({
+  type: modalTypes.SHOW_PROFILE_MODAL
+})
+
 export const dismissModals = () => ({
   type: modalTypes.DISMISS_MODALS
 });

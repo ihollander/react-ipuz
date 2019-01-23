@@ -31,6 +31,25 @@ class AuthAdaptor extends BaseApiAdaptor {
       });
   }
 
+  update(data) {
+    return fetch(`${this.baseUrl}/profile`, {
+      method: "PATCH",
+      headers: {
+        ...this.defaultHeaders,
+        ...this.authHeader
+      },
+      body: JSON.stringify(data)
+    })
+      .then(this.handleResponse)
+      .then(user => {
+        // TODO: fix me
+        const currentUser = JSON.parse(localStorage.getItem("user"))
+        currentUser.user.avatar = user.avatar
+        localStorage.setItem("user", JSON.stringify(currentUser));
+        return user;
+      });
+  }
+
   logout() {
     localStorage.removeItem("user");
   }

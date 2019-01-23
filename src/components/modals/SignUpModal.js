@@ -1,22 +1,52 @@
 import React from "react";
 import { Modal, Button, Header, Icon, Form } from "semantic-ui-react";
 import { connect } from "react-redux";
+import EmojiPicker from "emoji-picker-react";
+import { EmojiConvertor } from "emoji-js";
 
 import { signUp } from "../../actions/auth";
 import { showLoginModal } from "../../actions/modal";
 
+const emojiConverter = new EmojiConvertor();
+
 class SignUpModal extends React.Component {
-  state = { username: "", password: "", password_confirmation: "" };
+  state = {
+    form: {
+      username: "",
+      password: "",
+      password_confirmation: "",
+      avatar: ""
+    },
+    pickerVisible: false
+  };
+
+  onShowEmojiPicker = e => {
+    e.preventDefault();
+    this.setState({
+      pickerVisible: !this.state.pickerVisible
+    });
+  };
 
   onFormSubmit = e => {
-    this.props.signUp(this.state);
+    this.props.signUp(this.state.form);
   };
 
   onInputChange = e => {
     this.setState({
-      [e.target.name]: e.target.value
+      form: { ...this.state.form, [e.target.name]: e.target.value }
     });
   };
+
+  onEmojiPicked = (code, emoji) => {
+    this.setState({
+      form: { ...this.state.form, avatar: `:${emoji.name}:` }
+    });
+  };
+
+  renderEmoji() {
+    const { avatar } = this.state.form;
+    return avatar === "" ? "" : emojiConverter.replace_colons(avatar);
+  }
 
   render() {
     return (
@@ -41,9 +71,19 @@ class SignUpModal extends React.Component {
               <input
                 placeholder="Username"
                 name="username"
-                value={this.state.username}
+                value={this.state.form.username}
                 onChange={this.onInputChange}
               />
+            </Form.Field>
+            <Form.Field>
+              <label>Emoji Avatar</label>
+              <div style={{fontSize: "34px"}}>{this.renderEmoji()}</div>
+              <Button onClick={this.onShowEmojiPicker}>
+                {this.state.pickerVisible ? "Save" : "Pick emoji"}
+              </Button>
+              {this.state.pickerVisible && (
+                <EmojiPicker style={{width: "400px"}} onEmojiClick={this.onEmojiPicked} />
+              )}
             </Form.Field>
             <Form.Field>
               <label>Password</label>
@@ -51,7 +91,7 @@ class SignUpModal extends React.Component {
                 placeholder="Password"
                 type="password"
                 name="password"
-                value={this.state.password}
+                value={this.state.form.password}
                 onChange={this.onInputChange}
               />
             </Form.Field>
@@ -61,7 +101,7 @@ class SignUpModal extends React.Component {
                 placeholder="Confirm Password"
                 type="password"
                 name="password_confirmation"
-                value={this.state.password_confirmation}
+                value={this.state.form.password_confirmation}
                 onChange={this.onInputChange}
               />
             </Form.Field>

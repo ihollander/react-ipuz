@@ -22,6 +22,17 @@ export default (state = INITIAL_STATE, action) => {
         loading: false,
         error: null
       };
+    case authTypes.PROFILE_UPDATE_SUCCESS:
+      return {
+        ...state,
+        user: {
+          ...state.user, 
+          user: {
+            ...state.user.user,
+            avatar: action.payload.avatar
+          }
+        }
+      }
     case authTypes.LOGOUT_SUCCESS:
       return {
         ...state,

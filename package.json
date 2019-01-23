@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "dotenv": "^6.2.0",
+    "emoji-js": "^3.4.1",
+    "emoji-picker-react": "^2.1.1",
     "moment": "^2.23.0",
     "react": "^16.7.0",
     "react-actioncable-provider": "^1.0.3",

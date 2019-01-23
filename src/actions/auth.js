@@ -42,6 +42,22 @@ export const signIn = formData => {
   };
 };
 
+export const updateProfile = formData => {
+  return dispatch => {
+    authAdaptor.update({ user: formData }).then(
+      user => {
+        dispatch({
+          type: authTypes.PROFILE_UPDATE_SUCCESS,
+          payload: user
+        });
+      },
+      error => {
+        console.error(error);
+      }
+    );
+  };
+}
+
 export const signOut = () => {
   authAdaptor.logout();
   return {
