@@ -2,12 +2,34 @@ import React from "react";
 import { connect } from "react-redux";
 import { Menu } from "semantic-ui-react";
 
-import { showLoginModal, showSignUpModal } from "../../actions/modal";
+import emojiConvertor from "../../services/emojiConverter";
+
+import {
+  showLoginModal,
+  showSignUpModal,
+  showProfileModal
+} from "../../actions/modal";
 import { signOut } from "../../actions/auth";
 
-const LoginContainer = ({ isSignedIn, signOut, showSignUpModal, showLoginModal }) => {
+const LoginContainer = ({
+  isSignedIn,
+  user,
+  signOut,
+  showProfileModal,
+  showSignUpModal,
+  showLoginModal
+}) => {
   return isSignedIn ? (
-    <Menu.Item onClick={signOut}>Logout</Menu.Item>
+    <>
+      <Menu.Item>{`Logged in as ${user.user.username}`}</Menu.Item>
+      <Menu.Item onClick={showProfileModal}>
+        Update Profile
+        <span style={{ fontSize: "24px", margin: "5px" }}>
+          {user.user.avatar && emojiConvertor.replace_colons(user.user.avatar)}
+        </span>
+      </Menu.Item>
+      <Menu.Item onClick={signOut}>Logout</Menu.Item>
+    </>
   ) : (
     <>
       <Menu.Item onClick={showSignUpModal}>Sign Up</Menu.Item>
@@ -16,13 +38,17 @@ const LoginContainer = ({ isSignedIn, signOut, showSignUpModal, showLoginModal }
   );
 };
 
-const mapStateToProps = ({ auth: { isSignedIn } }) => ({ isSignedIn });
+const mapStateToProps = ({ auth: { isSignedIn, user } }) => ({
+  isSignedIn,
+  user
+});
 
 export default connect(
   mapStateToProps,
   {
     signOut,
     showLoginModal,
-    showSignUpModal
+    showSignUpModal,
+    showProfileModal
   }
 )(LoginContainer);

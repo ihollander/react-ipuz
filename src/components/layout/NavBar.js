@@ -2,26 +2,15 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { Menu, Container } from "semantic-ui-react";
 
-import renderWithAuth from "../hocs/renderWithAuth";
-
 import LoginContainer from "../containers/LoginContainer";
 
-const SavedPuzzles = () => (
-  <NavLink exact to="/saved" className="item">
-    Saved Puzzles
-  </NavLink>
-);
-
-const SavedPuzzlesWithAuth = renderWithAuth(SavedPuzzles);
-
-const NavBar = () => {
+const NavBar = ({className}) => {
   return (
     <Menu inverted className="fixed">
-      <Container>
-        <NavLink exact to="/" className="item">
-          Puzzle Sources
+      <Container className={className}>
+        <NavLink exact to="/lobby" className="item">
+          Game Lobby
         </NavLink>
-        <SavedPuzzlesWithAuth />
         <Menu.Menu position="right">
           <LoginContainer />
         </Menu.Menu>

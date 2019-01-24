@@ -1,103 +1,52 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Segment, Header, Grid, Button } from "semantic-ui-react";
+import { Button, Icon } from "semantic-ui-react";
 
-import {
-  downloadPs,
-  downloadToday,
-  downloadWaPo,
-  downloadWSJ,
-  downloadNYT
-} from "../../actions/download";
+import history from "../../history";
+import gridbuds from "../../assets/gridbuds-3.png";
 
-import DefaultLayout from "../layouts/DefaultLayout";
-import PuzzleCalendar from "../shared/PuzzleCalendar";
-import FileUploadController from "../containers/FileUploadContainer";
+import { showLoginModal, showSignUpModal } from "../../actions/modal";
+import LoginLayout from "../layouts/LoginLayout";
 
 class HomePage extends React.Component {
-  onTodayPicked = () => this.props.downloadToday()
-  
-  onNYTDatePicked = formattedDate => this.props.downloadNYT(formattedDate);
-
-  onWsjDatePicked = formattedDate => this.props.downloadWSJ(formattedDate);
-
-  onWaPoDatePicked = formattedDate => this.props.downloadWaPo(formattedDate);
-
-  onPsDatePicked = formattedDate => this.props.downloadPs(formattedDate);
+  componentDidMount() {
+    if (this.props.isSignedIn) {
+      history.push("/lobby");
+    }
+  }
 
   render() {
     return (
-      <DefaultLayout>
-        <Segment>
-          <Header as="h1">Welcome to [APP NAME HERE]</Header>
-          <p>
-            You can play puzzles from the sources provided below by selecting a
-            date. You can also upload puzzles in the Across Lite .puz format
-            using the File Upload tool.
-          </p>
-        </Segment>
-        <Segment>
-          <Header as="h2">Play Today's Puzzle</Header>
-          <Button onClick={this.onTodayPicked}>Play Today's Puzzle</Button>
-        </Segment>
-        <Segment>
-          <Header as="h2">Upload .puz File</Header>
-          <FileUploadController />
-        </Segment>
-        <Grid columns={2}>
-          <Grid.Row>
-            <Grid.Column>
-              <Segment>
-                <PuzzleCalendar
-                  header="New York Times"
-                  dateFormat="YYYY-MM-DD"
-                  onDateCalendarSubmit={this.onNYTDatePicked}
-                />
-              </Segment>
-            </Grid.Column>
-            <Grid.Column>
-              <Segment>
-                <PuzzleCalendar
-                  header="Wall Street Journal"
-                  dateFormat="YYMMDD"
-                  onDateCalendarSubmit={this.onWsjDatePicked}
-                />
-              </Segment>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              <Segment>
-                <PuzzleCalendar
-                  header="Washington Post"
-                  dateFormat="YYMMDD"
-                  onDateCalendarSubmit={this.onWaPoDatePicked}
-                />
-              </Segment>
-            </Grid.Column>
-            <Grid.Column>
-              <Segment>
-                <PuzzleCalendar
-                  header="Puzzle Society"
-                  dateFormat="YYMMDD"
-                  onDateCalendarSubmit={this.onPsDatePicked}
-                />
-              </Segment>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </DefaultLayout>
+      <LoginLayout>
+        <div
+          style={{
+            backgroundImage: `radial-gradient(rgba(0,0,0,0.01), rgba(0,0,0,0.3)), url(${gridbuds})`
+          }}
+          className="login-container"
+        />
+        <div className="login-button-container">
+          <div className="login-buttons">
+            <Button primary size="big" onClick={this.props.showLoginModal}>
+              Login
+              <Icon name="right arrow" />
+            </Button>
+            <Button color="red" size="big" onClick={this.props.showSignUpModal}>
+              Sign Up
+              <Icon name="user plus" className="right" />
+            </Button>
+          </div>
+        </div>
+      </LoginLayout>
     );
   }
 }
 
+const mapStateToProps = ({ auth: { isSignedIn } }) => ({ isSignedIn });
+
 export default connect(
-  null,
+  mapStateToProps,
   {
-    downloadWSJ,
-    downloadWaPo,
-    downloadPs,
-    downloadToday,
-    downloadNYT
+    showLoginModal,
+    showSignUpModal
   }
 )(HomePage);

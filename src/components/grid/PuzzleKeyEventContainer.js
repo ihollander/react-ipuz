@@ -1,11 +1,15 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import { getSelectedCell, getSelectedClue } from "../../selectors";
+import { getUserSelectedCell, getUserSelectedDirection } from "../../selectors";
 
 import { setCellValue } from "../../actions/puzzle";
-import { toggleDirection, setSelectedCell } from "../../actions/status";
-import { sharedGameActions } from "../../actions/sharedGames";
+
+import {
+  updatePosition,
+  broadcastUpdatePosition,
+  broadcastUpdateCell
+} from "../../actions/game";
 
 class PuzzleKeyEventContainer extends React.Component {
   divRef = React.createRef();
@@ -16,30 +20,31 @@ class PuzzleKeyEventContainer extends React.Component {
   }
 
   componentDidUpdate() {
-    this.divRef.current && this.divRef.current.focus();
+    // this.divRef.current && this.divRef.current.focus();
+  }
+
+  updatePosition(index, direction) {
+    this.props.broadcastUpdatePosition(
+      this.props.game.puzzleId,
+      index,
+      direction
+    );
+    this.props.updatePosition(this.props.auth.user.user, index, direction);
   }
 
   setCellValue(index, value) {
-    if (this.props.sharedGameId) {
-      this.props.broadcastUpdateCell(this.props.sharedGameId, index, value);
-    }
+    this.props.broadcastUpdateCell(this.props.game.puzzleId, index, value);
     this.props.setCellValue(index, value);
-  }
-
-  setSelectedCell(index) {
-    if (this.props.sharedGameId) {
-      this.props.broadcastUpdatePosition(this.props.sharedGameId, index);
-    }
-    this.props.setSelectedCell(index);
   }
 
   getNextCellIndexFor(direction) {
     const {
       puzzle: { cells, dimensions },
-      selectedCell
+      userSelectedCell
     } = this.props;
-    let currentColumn = selectedCell.column;
-    let currentRow = selectedCell.row;
+
+    let currentColumn = userSelectedCell.column;
+    let currentRow = userSelectedCell.row;
 
     let newIndex;
     while (newIndex === undefined) {
@@ -84,105 +89,91 @@ class PuzzleKeyEventContainer extends React.Component {
   }
 
   handleArrowPress(keyCode) {
-    const {
-      game: {
-        host: { selectedDirection }
-      },
-      toggleDirection
-    } = this.props;
-    let newIndex;
+    const { userSelectedDirection, userSelectedCell } = this.props;
+    let { index } = userSelectedCell;
+    let direction = userSelectedDirection;
     switch (keyCode) {
       case 37: //left
-        if (selectedDirection === "DOWN") {
-          toggleDirection();
+        if (userSelectedDirection === "DOWN") {
+          direction = "ACROSS";
         } else {
-          newIndex = this.getNextCellIndexFor("LEFT");
+          index = this.getNextCellIndexFor("LEFT");
         }
         break;
       case 38: //up
-        if (selectedDirection === "ACROSS") {
-          toggleDirection();
+        if (userSelectedDirection === "ACROSS") {
+          direction = "DOWN";
         } else {
-          newIndex = this.getNextCellIndexFor("UP");
+          index = this.getNextCellIndexFor("UP");
         }
         break;
       case 39: //right
-        if (selectedDirection === "DOWN") {
-          toggleDirection();
+        if (userSelectedDirection === "DOWN") {
+          direction = "ACROSS";
         } else {
-          newIndex = this.getNextCellIndexFor("RIGHT");
+          index = this.getNextCellIndexFor("RIGHT");
         }
         break;
       case 40: //down
-        if (selectedDirection === "ACROSS") {
-          toggleDirection();
+        if (userSelectedDirection === "ACROSS") {
+          direction = "DOWN";
         } else {
-          newIndex = this.getNextCellIndexFor("DOWN");
+          index = this.getNextCellIndexFor("DOWN");
         }
         break;
       default:
         break;
     }
-    if (newIndex !== undefined) {
-      this.setSelectedCell(newIndex);
-    }
+    this.updatePosition(index, direction);
   }
 
   handleBackspace() {
-    const {
-      game: {
-        host: { selectedDirection }
-      },
-      selectedCell
-    } = this.props;
+    const { userSelectedCell, userSelectedDirection } = this.props;
 
-    if (selectedCell.guess !== "") {
-      this.setCellValue(selectedCell.index, "");
+    if (userSelectedCell.guess !== "") {
+      this.setCellValue(userSelectedCell.index, "");
     } else {
       const newIndex =
-        selectedDirection === "ACROSS"
+        userSelectedDirection === "ACROSS"
           ? this.getNextCellIndexFor("LEFT")
           : this.getNextCellIndexFor("UP");
       this.setCellValue(newIndex, "");
-      this.setSelectedCell(newIndex);
+      this.updatePosition(newIndex, userSelectedDirection);
     }
   }
 
   handleValueKeyPress(keyCode) {
     const {
       puzzle: { cells },
-      game: {
-        host: { selectedDirection }
-      },
-      selectedCell,
-      selectedClue
+      userSelectedCell,
+      userSelectedDirection
     } = this.props;
 
     const value = String.fromCharCode(keyCode).toUpperCase();
 
     // set value of selected cell
-    this.setCellValue(selectedCell.index, value);
+    this.setCellValue(userSelectedCell.index, value);
 
     // move cursor to next empty cell for current selected clue
     const sameClueEmptyCells = cells.filter(
       cell =>
         cell.clues &&
-        cell.index !== selectedCell.index &&
+        cell.index !== userSelectedCell.index &&
         cell.guess === "" &&
-        ((selectedDirection === "ACROSS" &&
-          cell.clues.across === selectedClue.label) ||
-          (selectedDirection === "DOWN" &&
-            cell.clues.down === selectedClue.label))
+        ((userSelectedDirection === "ACROSS" &&
+          cell.clues.across === userSelectedCell.clues.across) ||
+          (userSelectedDirection === "DOWN" &&
+            cell.clues.down === userSelectedCell.clues.down))
     );
     if (sameClueEmptyCells.length) {
       const emptyCellsBelow = sameClueEmptyCells.filter(
-        cell => cell.index > selectedCell.index
+        cell => cell.index > userSelectedCell.index
       );
       const nextIndex =
         emptyCellsBelow.length > 0
           ? emptyCellsBelow[0].index
           : sameClueEmptyCells[0].index;
-      this.setSelectedCell(nextIndex);
+      this.updatePosition(nextIndex, userSelectedDirection);
     }
   }
 
@@ -222,28 +213,23 @@ class PuzzleKeyEventContainer extends React.Component {
 }
 
 const mapStateToProps = state => {
-  const {
-    puzzle,
-    game,
-    sharedGame: { sharedGameId }
-  } = state;
+  const { auth, puzzle, game } = state;
 
   return {
+    auth,
     puzzle,
     game,
-    sharedGameId,
-    selectedCell: getSelectedCell(state),
-    selectedClue: getSelectedClue(state)
+    userSelectedDirection: getUserSelectedDirection(state),
+    userSelectedCell: getUserSelectedCell(state)
   };
 };
 
 export default connect(
   mapStateToProps,
   {
-    toggleDirection,
-    setSelectedCell,
     setCellValue,
-    broadcastUpdateCell: sharedGameActions.broadcastUpdateCell,
-    broadcastUpdatePosition: sharedGameActions.broadcastUpdatePosition
+    broadcastUpdateCell,
+    updatePosition,
+    broadcastUpdatePosition
   }
 )(PuzzleKeyEventContainer);

@@ -1,6 +1,21 @@
 import { puzzleTypes } from "../actionTypes/puzzle";
-import { userTypes } from "../actionTypes/user";
+import { gameTypes } from "../actionTypes/game";
 import { authTypes } from "../actionTypes/auth";
+
+// const letsTryThis = 
+// "............................................"+
+// "............................................"+
+// "............................................"+
+// "............................................"+
+// "....GGGG.RRRR.I.DD...BBB..U..U.DD...SSSS...."+
+// "....G....R..R.I.D.D..B..B.U..U.D.D..S......."+
+// "....G.GG.RRRR.I.D..D.BBB..U..U.D..D.SSSS...."+
+// "....G..G.R.R..I.D.D..B..B.U..U.D.D.....S...."+
+// "....GGGG.R..R.I.DD...BBB..UUUU.DD...SSSS...."+
+// "............................................"+
+// "............................................"+
+// "............................................"+
+// "............................................"
 
 const INITIAL_STATE = {
   meta: {
@@ -22,39 +37,13 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case userTypes.GAME_FETCH_FAILURE:
-      return state;
     case authTypes.LOGIN_SUCCESS:
     case authTypes.LOGOUT_SUCCESS:
       return INITIAL_STATE;
-    case userTypes.GAME_FETCHED:
-      return {
-        ...state,
-        cells: action.payload.cells
-      };
-    case puzzleTypes.PUZZLE_PARSED:
-      return {
-        ...state,
-        loaded: true,
-        meta: {
-          ...state.meta,
-          copyright: action.payload.meta.copyright,
-          author: action.payload.meta.author,
-          title: action.payload.meta.title,
-          notes: action.payload.meta.notes
-        },
-        dimensions: {
-          ...state.dimensions,
-          width: action.payload.dimensions.width,
-          height: action.payload.dimensions.height
-        },
-        cells: action.payload.cells,
-        clues: {
-          ...state.clues,
-          across: action.payload.clues.across,
-          down: action.payload.clues.down
-        }
-      };
+    case gameTypes.GAME_FETCHED:
+      return action.payload.puzzle;
+    case gameTypes.GAME_DATA_RECEIVED:
+      return JSON.parse(action.payload.game.puzzle)
     case puzzleTypes.CELL_VALUE_CHANGED:
       const newCellValues = state.cells.map(cell =>
         cell.index === action.payload.index
@@ -67,7 +56,8 @@ export default (state = INITIAL_STATE, action) => {
       };
     case puzzleTypes.CHECK_ANSWER:
       const checkAnswerCells = state.cells.map(cell => {
-        if (action.payload.includes(cell)) {
+        const payloadCell = action.payload.find(c => c.index === cell.index)
+        if (payloadCell) {
           const confirmed = cell.guess === cell.solution;
           return { ...cell, confirmed, checked: true };
         } else {
@@ -77,7 +67,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, cells: checkAnswerCells };
     case puzzleTypes.REVEAL_ANSWER:
       const revealSquareCells = state.cells.map(cell => {
-        if (action.payload.includes(cell)) {
+        const payloadCell = action.payload.find(c => c.index === cell.index)
+        if (payloadCell) {
           return {
             ...cell,
             guess: cell.solution,

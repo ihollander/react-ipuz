@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Modal, Button, Header, Icon, Form } from "semantic-ui-react";
+import { Modal, Button, Header, Icon, Form, Message } from "semantic-ui-react";
 
 import { signIn } from "../../actions/auth";
 import { showSignUpModal } from "../../actions/modal";
@@ -19,6 +19,7 @@ class LoginModal extends React.Component {
   };
 
   render() {
+    console.log(this.props.error);
     return (
       <Modal
         open={this.props.modalOpen}
@@ -27,14 +28,13 @@ class LoginModal extends React.Component {
       >
         <Header icon="user" content="Log in" />
         <Modal.Content>
-          <p>
-            Log in to save your progress and view stats for previously completed
-            puzzles.
-          </p>
-          <Form onSubmit={this.onFormSubmit}>
+          <Form
+            error={this.props.error !== null ? true : false}
+            onSubmit={this.onFormSubmit}
+          >
             <Form.Field>
               <label>Username</label>
-              <input
+              <Form.Input
                 placeholder="Username"
                 name="username"
                 value={this.state.username}
@@ -43,7 +43,7 @@ class LoginModal extends React.Component {
             </Form.Field>
             <Form.Field>
               <label>Password</label>
-              <input
+              <Form.Input
                 placeholder="Password"
                 type="password"
                 name="password"
@@ -51,16 +51,21 @@ class LoginModal extends React.Component {
                 onChange={this.onInputChange}
               />
             </Form.Field>
-            <Button primary>
-              <Icon name="user" /> Log in
-            </Button>
-            <p>
-              Need an account?
-              <Button onClick={() => this.props.showSignUpModal()}>Sign Up</Button>
-            </p>
+            <input type="submit" style={{ display: "none" }} />
+            <Message
+              error
+              header="Login Error"
+              content={this.props.error && this.props.error.message}
+            />
           </Form>
         </Modal.Content>
         <Modal.Actions>
+          <Button onClick={() => this.props.showSignUpModal()}>
+            Need an account? Sign Up
+          </Button>
+          <Button primary onClick={this.onFormSubmit}>
+            <Icon name="user" /> Log in
+          </Button>
           <Button onClick={this.props.onModalClose} color="red">
             <Icon name="remove" /> Cancel
           </Button>
@@ -70,8 +75,10 @@ class LoginModal extends React.Component {
   }
 }
 
+const mapStateToProps = ({ auth: { error } }) => ({ error });
+
 export default connect(
-  null,
+  mapStateToProps,
   {
     signIn,
     showSignUpModal

@@ -5,9 +5,9 @@ class ClueItem extends React.Component {
   liRef = React.createRef();
 
   componentDidUpdate() {
-    const { clue } = this.props;
+    const { selected } = this.props;
     const target = this.liRef.current;
-    if (clue.selected && target) {
+    if (selected && target) {
       // clearInterval(this.scrollInterval) // clear existing animations...
       // this.animateScroll(target, 1000);
       // target.scrollIntoView({
@@ -44,7 +44,11 @@ class ClueItem extends React.Component {
         <List.Item
           onClick={() => onClueClick(clue.label)}
           style={{
-            backgroundColor: clue.selected ? "pink" : "",
+            backgroundColor: clue.hostSelected
+              ? "pink"
+              : clue.guestSelected
+              ? "lavender"
+              : "",
             color: clue.answered ? "grey" : "black"
           }}
         >

@@ -1,6 +1,7 @@
 import BaseApiAdaptor from "./BaseApiAdaptor";
 
 class PuzzleProxyAdaptor extends BaseApiAdaptor {
+  
   // date format: https://www.nytimes.com/svc/crosswords/v2/puzzle/daily-2017-04-27.puz
   getToday() {
     return this.sendRequest(`${this.baseUrl}/puzzle_proxy/today`);

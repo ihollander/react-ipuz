@@ -14,8 +14,9 @@ export const signUp = formData => {
 
     authAdaptor.signUp({ user: formData }).then(
       user => {
+        console.log('signUp user', user)
         dispatch(loginSuccess(user));
-        history.push("/");
+        history.push("/lobby");
       },
       error => {
         dispatch(loginFailure(error));
@@ -30,8 +31,9 @@ export const signIn = formData => {
 
     authAdaptor.login({ user: formData }).then(
       user => {
+        console.log('signIn user', user)
         dispatch(loginSuccess(user));
-        history.push("/");
+        history.push("/lobby");
       },
       error => {
         dispatch(loginFailure(error));
@@ -39,6 +41,22 @@ export const signIn = formData => {
     );
   };
 };
+
+export const updateProfile = formData => {
+  return dispatch => {
+    authAdaptor.update({ user: formData }).then(
+      user => {
+        dispatch({
+          type: authTypes.PROFILE_UPDATE_SUCCESS,
+          payload: user
+        });
+      },
+      error => {
+        console.error(error);
+      }
+    );
+  };
+}
 
 export const signOut = () => {
   authAdaptor.logout();
