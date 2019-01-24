@@ -32,11 +32,17 @@ body {
 
 .ui.container.puzzle-wide {
   width: 90vw;
+  max-width: 1300px !important;
 }
 
 .ui.container.main {
   margin-top: 70px;
   margin-bottom: 20px;
+}
+
+.ui.container.main.puzzle-wide {
+  width: 90vw;
+  max-width: 1300px !important;
 }
 
 .clue-box {
@@ -65,9 +71,6 @@ body {
 }
 
 .ui.list.clue-list .clue-number {
-  width: 1.5em;
-  display: inline-block;
-  text-align: left;
   margin-right: 0.5em;
   font-weight: bold;
 }

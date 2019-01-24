@@ -26,11 +26,11 @@ class HomePage extends React.Component {
         />
         <div className="login-button-container">
           <div className="login-buttons">
-            <Button primary size="big" onClick={this.props.showLoginModal}>
+            <Button color="white" size="big" onClick={this.props.showLoginModal}>
               Login
               <Icon name="right arrow" />
             </Button>
-            <Button color="red" size="big" onClick={this.props.showSignUpModal}>
+            <Button color="white" size="big" onClick={this.props.showSignUpModal}>
               Sign Up
               <Icon name="user plus" className="right" />
             </Button>
