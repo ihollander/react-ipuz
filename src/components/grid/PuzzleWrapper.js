@@ -27,7 +27,7 @@ class PuzzleWrapper extends React.Component {
         </Segment>
         <Grid>
           <Grid.Row>
-            <Grid.Column tablet={10} computer={6}>
+            <Grid.Column tablet={10} computer={7}>
               <Segment>
                 <PuzzleToolContainer />
               </Segment>
@@ -42,7 +42,7 @@ class PuzzleWrapper extends React.Component {
                 <ClueContainer />
               </Segment>
             </Grid.Column>
-            <Grid.Column tablet={6} computer={4}>
+            <Grid.Column tablet={6} computer={3}>
               <Segment>
                 <ChatboxContainer />
               </Segment>

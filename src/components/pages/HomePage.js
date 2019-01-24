@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Button, Icon } from "semantic-ui-react";
 
 import history from "../../history";
-import gridbuds from "../../assets/gridbuds.png";
+import gridbuds from "../../assets/gridbuds-3.png";
 
 import { showLoginModal, showSignUpModal } from "../../actions/modal";
 import LoginLayout from "../layouts/LoginLayout";
