@@ -23,30 +23,32 @@ class PuzzleWrapper extends React.Component {
     return (
       <>
         <Segment>
-          <ChatboxContainer />
+          <PuzzleHeader meta={meta} />
         </Segment>
-        <PuzzleKeyEventContainer>
-          <Segment>
-            <PuzzleHeader meta={meta} />
-          </Segment>
-          <Grid>
-            <Grid.Row>
-              <Grid.Column tablet={16} computer={8}>
-                <Segment>
-                  <PuzzleToolContainer />
-                </Segment>
-                <Segment>
+        <Grid>
+          <Grid.Row>
+            <Grid.Column tablet={10} computer={6}>
+              <Segment>
+                <PuzzleToolContainer />
+              </Segment>
+              <Segment>
+                <PuzzleKeyEventContainer>
                   <PuzzleContainer />
-                </Segment>
-              </Grid.Column>
-              <Grid.Column computer={8} only="computer">
-                <Segment>
-                  <ClueContainer />
-                </Segment>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
-        </PuzzleKeyEventContainer>
+                </PuzzleKeyEventContainer>
+              </Segment>
+            </Grid.Column>
+            <Grid.Column computer={6} only="computer">
+              <Segment>
+                <ClueContainer />
+              </Segment>
+            </Grid.Column>
+            <Grid.Column tablet={6} computer={4}>
+              <Segment>
+                <ChatboxContainer />
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
       </>
     );
   }

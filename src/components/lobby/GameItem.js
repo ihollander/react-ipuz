@@ -1,5 +1,6 @@
 import React from "react";
-import { Table, Button } from "semantic-ui-react";
+import { Table, Button, Icon } from "semantic-ui-react";
+import * as moment from "moment";
 
 const GameItem = ({
   game,
@@ -16,7 +17,9 @@ const GameItem = ({
       return (
         <>
           <Button onClick={() => onResumeGameClick(game.id)}>Resume</Button>
-          <Button onClick={() => onDeleteGameClick(game.id)}>Delete</Button>
+          <Button icon color="red" onClick={() => onDeleteGameClick(game.id)}>
+            <Icon name="trash" />
+          </Button>
         </>
       );
     } else if (!isFull || (isGuest && game.host_active)) {
@@ -28,7 +31,7 @@ const GameItem = ({
 
   return (
     <Table.Row>
-      <Table.Cell>{game.title}</Table.Cell>
+      <Table.Cell style={{ fontWeight: "bold" }}>{game.title}</Table.Cell>
       <Table.Cell positive={game.host_active}>
         {game.host_id.username}
       </Table.Cell>
@@ -36,7 +39,7 @@ const GameItem = ({
         {game.guest_id && game.guest_id.username}
       </Table.Cell>
       <Table.Cell>{renderResume()}</Table.Cell>
-      <Table.Cell>{updatedAt}</Table.Cell>
+      <Table.Cell>{moment(updatedAt).format("M/D/YY @ h:mm a")}</Table.Cell>
     </Table.Row>
   );
 };

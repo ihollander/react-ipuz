@@ -15,7 +15,7 @@ import {
 
 import { addMessage } from "../../actions/messages";
 
-import DefaultLayout from "../layouts/DefaultLayout";
+import PuzzlePageLayout from "../layouts/PuzzlePageLayout";
 import PuzzleWrapper from "../grid/PuzzleWrapper";
 
 class GamePage extends React.Component {
@@ -50,7 +50,6 @@ class GamePage extends React.Component {
           payload.user &&
           payload.user.username !== this.props.user.user.username
         ) {
-          debugger
           this.props.updatePosition(
             payload.user,
             payload.position.index,
@@ -109,7 +108,7 @@ class GamePage extends React.Component {
 
     console.log("gameID", match.params.id);
     return (
-      <DefaultLayout>
+      <PuzzlePageLayout>
         <ActionCable
           channel={{
             channel: "GamesChannel",
@@ -118,7 +117,7 @@ class GamePage extends React.Component {
           onReceived={this.onActionCableDataReceived}
         />
         <PuzzleWrapper />
-      </DefaultLayout>
+      </PuzzlePageLayout>
     );
   }
 }

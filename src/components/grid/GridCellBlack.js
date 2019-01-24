@@ -7,7 +7,7 @@ const GridCellBlack = ({display}) => (
     y={display.y}
     width={display.width}
     height={display.height}
-    fill="black"
+    fill="transparent"
   />
 );
 

@@ -20,7 +20,7 @@ class PuzzleKeyEventContainer extends React.Component {
   }
 
   componentDidUpdate() {
-    this.divRef.current && this.divRef.current.focus();
+    // this.divRef.current && this.divRef.current.focus();
   }
 
   updatePosition(index, direction) {

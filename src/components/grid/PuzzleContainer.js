@@ -60,8 +60,8 @@ class PuzzleContainer extends React.Component {
   };
 
   onRebusSubmit = rebusText => {
-    const { setCellValue, selectedCell, toggleRebus } = this.props;
-    setCellValue(selectedCell.index, rebusText);
+    const { setCellValue, userSelectedCell, toggleRebus } = this.props;
+    setCellValue(userSelectedCell.index, rebusText);
     toggleRebus();
   };
 
@@ -69,6 +69,7 @@ class PuzzleContainer extends React.Component {
     const {
       dimensions,
       selectedClue,
+      userSelectedCell,
       hostSelectedCell,
       host,
       guestSelectedCell,
@@ -83,6 +84,7 @@ class PuzzleContainer extends React.Component {
         <GridBox
           dimensions={dimensions}
           cells={cells}
+          selectedCell={userSelectedCell}
           hostActive={host.active}
           hostSelectedCell={hostSelectedCell}
           hostSelectedDirection={host.selectedDirection}

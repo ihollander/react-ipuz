@@ -3,7 +3,6 @@ import { messageTypes } from "../actionTypes/message";
 
 export const broadcastMessage = (gameId, text) => {
   return dispatch => {
-    debugger
     messageAdaptor.create(gameId, { text }).then(
       message => {
         dispatch({

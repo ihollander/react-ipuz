@@ -60,8 +60,14 @@ class LobbyPage extends React.Component {
           onReceived={this.handleSocketResponse}
         />
         <Segment>
-          <Header as="h2">Lobby</Header>
-          <Button onClick={this.props.showCreateGameModal}>Create Game</Button>
+          <Header as="h2">Game Lobby</Header>
+          <p>
+            Games in progress are listed below. Click Create Game to start a new
+            game.
+          </p>
+          <Button primary onClick={this.props.showCreateGameModal}>
+            Create Game
+          </Button>
           <GameList
             games={this.props.games}
             user={this.props.user}

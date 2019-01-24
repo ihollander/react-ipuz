@@ -2,11 +2,10 @@ import React from "react";
 import { Modal, Button, Header, Icon, Form } from "semantic-ui-react";
 import { connect } from "react-redux";
 import EmojiPicker from "emoji-picker-react";
-import { EmojiConvertor } from "emoji-js";
+
+import emojiConverter from "../../services/emojiConverter";
 
 import { updateProfile } from "../../actions/auth";
-
-const emojiConverter = new EmojiConvertor();
 
 class ProfileModal extends React.Component {
   state = {
@@ -18,18 +17,19 @@ class ProfileModal extends React.Component {
 
   componentDidMount() {
     this.setState({
+      ...this.state,
       form: {
         ...this.state.form,
-        avatar: this.props.user.user.avatar
+        avatar: this.props.user.user.avatar || ""
       }
     });
   }
 
   onShowEmojiPicker = e => {
     e.preventDefault();
-    this.setState({
-      pickerVisible: !this.state.pickerVisible
-    });
+    this.setState(state => ({
+      pickerVisible: !state.pickerVisible
+    }));
   };
 
   onFormSubmit = e => {
@@ -62,7 +62,7 @@ class ProfileModal extends React.Component {
               <label>Emoji Avatar</label>
               <div style={{ fontSize: "34px" }}>{this.renderEmoji()}</div>
               <Button onClick={this.onShowEmojiPicker}>
-                {this.state.pickerVisible ? "Save" : "Pick emoji"}
+                {this.state.pickerVisible ? "Save" : "Pick Emoji"}
               </Button>
               {this.state.pickerVisible && (
                 <EmojiPicker
@@ -71,6 +71,7 @@ class ProfileModal extends React.Component {
                 />
               )}
             </Form.Field>
+            <input type="submit" style={{display: "none"}} />
           </Form>
         </Modal.Content>
         <Modal.Actions>

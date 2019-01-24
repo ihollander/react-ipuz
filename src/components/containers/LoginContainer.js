@@ -1,7 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Menu } from "semantic-ui-react";
-import { EmojiConvertor } from "emoji-js";
+
+import emojiConvertor from "../../services/emojiConverter";
 
 import {
   showLoginModal,
@@ -9,8 +10,6 @@ import {
   showProfileModal
 } from "../../actions/modal";
 import { signOut } from "../../actions/auth";
-
-const emojiConvertor = new EmojiConvertor();
 
 const LoginContainer = ({
   isSignedIn,
@@ -22,15 +21,13 @@ const LoginContainer = ({
 }) => {
   return isSignedIn ? (
     <>
-      <Menu.Item>
-        <span style={{ margin: "5px" }}>{`Logged in as ${
-          user.user.username
-        }`}</span>
-        <span style={{ fontSize: "24px" }}>
+      <Menu.Item>{`Logged in as ${user.user.username}`}</Menu.Item>
+      <Menu.Item onClick={showProfileModal}>
+        Update Profile
+        <span style={{ fontSize: "24px", margin: "5px" }}>
           {user.user.avatar && emojiConvertor.replace_colons(user.user.avatar)}
         </span>
       </Menu.Item>
-      <Menu.Item onClick={showProfileModal}>Update Profile</Menu.Item>
       <Menu.Item onClick={signOut}>Logout</Menu.Item>
     </>
   ) : (

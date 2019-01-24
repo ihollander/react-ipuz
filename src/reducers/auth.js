@@ -11,7 +11,7 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case authTypes.LOGIN_REQUEST:
-      return { ...state, loading: true };
+      return { ...state, loading: true, error: null };
     case authTypes.LOGIN_ERROR:
       return { ...state, loading: false, error: action.payload };
     case authTypes.LOGIN_SUCCESS:
@@ -25,14 +25,15 @@ export default (state = INITIAL_STATE, action) => {
     case authTypes.PROFILE_UPDATE_SUCCESS:
       return {
         ...state,
+        error: null,
         user: {
-          ...state.user, 
+          ...state.user,
           user: {
             ...state.user.user,
             avatar: action.payload.avatar
           }
         }
-      }
+      };
     case authTypes.LOGOUT_SUCCESS:
       return {
         ...state,

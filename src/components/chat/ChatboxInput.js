@@ -1,4 +1,5 @@
 import React from "react";
+import { Form } from "semantic-ui-react";
 
 class ChatboxInput extends React.Component {
   state = {
@@ -11,24 +12,26 @@ class ChatboxInput extends React.Component {
     });
   };
 
-  onFormSubmit = e => {
-    e.preventDefault()
-    this.props.sendMessage(this.state.text)
+  onFormSubmit = () => {
+    this.props.sendMessage(this.state.text);
     this.setState({
       text: ""
-    })
-  }
+    });
+  };
 
   render() {
     return (
-      <form onSubmit={this.onFormSubmit}>
+      <Form onSubmit={this.onFormSubmit}>
         <input
+          placeholder="Say something..."
+          style={{ width: "100%" }}
+          autoComplete="off"
           type="text"
           name="text"
           value={this.state.text}
           onChange={this.onInputChange}
         />
-      </form>
+      </Form>
     );
   }
 }

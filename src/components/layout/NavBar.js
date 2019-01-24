@@ -4,12 +4,12 @@ import { Menu, Container } from "semantic-ui-react";
 
 import LoginContainer from "../containers/LoginContainer";
 
-const NavBar = () => {
+const NavBar = ({className}) => {
   return (
     <Menu inverted className="fixed">
-      <Container>
+      <Container className={className}>
         <NavLink exact to="/lobby" className="item">
-          Games
+          Game Lobby
         </NavLink>
         <Menu.Menu position="right">
           <LoginContainer />
