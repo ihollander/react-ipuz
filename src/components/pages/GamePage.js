@@ -62,7 +62,7 @@ class GamePage extends React.Component {
           payload.user &&
           payload.user.username !== this.props.user.user.username
         ) {
-          this.props.setCellValue(payload.cell.index, payload.cell.value);
+          this.props.setCellValue(payload.cell.index, payload.cell.value, payload.user.username);
         }
         break;
       case "CHECK_ANSWER":

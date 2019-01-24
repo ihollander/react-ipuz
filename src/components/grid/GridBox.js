@@ -69,49 +69,49 @@ class GridBox extends React.Component {
     const {
       cells,
       onCellClick,
-      hostActive,
+      host,
       hostSelectedCell,
-      hostSelectedDirection,
-      guestActive,
-      guestSelectedCell,
-      guestSelectedDirection
+      guest,
+      guestSelectedCell
     } = this.props;
     const gridCells = cells.map(cell => {
       const display = this.getCellDisplay(cell.row, cell.column);
-      const isHostSelected = cell.index === hostSelectedCell.index;
-      const isHostSelectedClue =
-        cell.clues &&
-        ((hostSelectedDirection === "ACROSS" &&
-          cell.clues.across === hostSelectedCell.clues.across) ||
-          (hostSelectedDirection === "DOWN" &&
-            cell.clues.down === hostSelectedCell.clues.down));
-
-      const isGuestSelected =
-        !!guestSelectedCell && cell.index === guestSelectedCell.index;
-      const isGuestSelectedClue =
-        !!guestSelectedCell &&
-        cell.clues &&
-        ((guestSelectedDirection === "ACROSS" &&
-          cell.clues.across === guestSelectedCell.clues.across) ||
-          (guestSelectedDirection === "DOWN" &&
-            cell.clues.down === guestSelectedCell.clues.down));
 
       if (cell.type === "BLACK") {
         return <GridCellBlack key={cell.index} display={display} />;
       } else {
+        const guesser = cell.guesser === host.username ? "host" : cell.guesser === guest.username ? "guest" : ""
+        const isHostSelected = cell.index === hostSelectedCell.index;
+        const isHostSelectedClue =
+          cell.clues &&
+          ((host.selectedDirection === "ACROSS" &&
+            cell.clues.across === hostSelectedCell.clues.across) ||
+            (host.selectedDirection === "DOWN" &&
+              cell.clues.down === hostSelectedCell.clues.down));
+  
+        const isGuestSelected =
+          !!guestSelectedCell && cell.index === guestSelectedCell.index;
+        const isGuestSelectedClue =
+          !!guestSelectedCell &&
+          cell.clues &&
+          ((guest.selectedDirection === "ACROSS" &&
+            cell.clues.across === guestSelectedCell.clues.across) ||
+            (guest.selectedDirection === "DOWN" &&
+              cell.clues.down === guestSelectedCell.clues.down));
         return (
           <GridCellWhite
             key={cell.index}
             display={display}
             guess={cell.guess}
+            guesser={guesser}
             index={cell.index}
             isChecked={cell.checked}
             isConfirmed={cell.confirmed}
             isRevealed={cell.revealed}
-            isHostActive={hostActive}
+            isHostActive={host.active}
             isHostSelected={isHostSelected}
             isHostSelectedClue={isHostSelectedClue}
-            isGuestActive={guestActive}
+            isGuestActive={guest.active}
             isGuestSelected={isGuestSelected}
             isGuestSelectedClue={isGuestSelectedClue}
             label={cell.label}

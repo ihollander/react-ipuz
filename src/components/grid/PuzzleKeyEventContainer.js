@@ -33,8 +33,9 @@ class PuzzleKeyEventContainer extends React.Component {
   }
 
   setCellValue(index, value) {
+    const { username } = this.props.auth.user.user;
     this.props.broadcastUpdateCell(this.props.game.puzzleId, index, value);
-    this.props.setCellValue(index, value);
+    this.props.setCellValue(index, value, username);
   }
 
   getNextCellIndexFor(direction) {
