@@ -17,16 +17,12 @@ import {
   toggleRebus
 } from "../../actions/status";
 
-import {
-  updatePosition,
-  broadcastUpdatePosition
-} from "../../actions/game";
+import { updatePosition, broadcastUpdatePosition, broadcastUpdateCell } from "../../actions/game";
 
 import ActiveClue from "../clues/ActiveClue";
 import GridBox from "./GridBox";
 
 class PuzzleContainer extends React.Component {
-  
   // check for puzzle completedness
   componentDidUpdate(prevProps) {
     const solvableCells = this.props.cells.filter(c => c.solution);
@@ -60,8 +56,20 @@ class PuzzleContainer extends React.Component {
   };
 
   onRebusSubmit = rebusText => {
-    const { setCellValue, userSelectedCell, toggleRebus } = this.props;
-    setCellValue(userSelectedCell.index, rebusText);
+    const {
+      setCellValue,
+      userSelectedCell,
+      toggleRebus,
+      broadcastUpdateCell,
+      puzzleId,
+      auth: {
+        user: {
+          user: { username }
+        }
+      }
+    } = this.props;
+    setCellValue(userSelectedCell.index, rebusText, username);
+    broadcastUpdateCell(puzzleId, userSelectedCell.index, rebusText)
     toggleRebus();
   };
 
@@ -85,12 +93,10 @@ class PuzzleContainer extends React.Component {
           dimensions={dimensions}
           cells={cells}
           selectedCell={userSelectedCell}
-          hostActive={host.active}
+          host={host}
+          guest={guest}
           hostSelectedCell={hostSelectedCell}
-          hostSelectedDirection={host.selectedDirection}
-          guestActive={guest.active}
           guestSelectedCell={guestSelectedCell}
-          guestSelectedDirection={guest.selectedDirection}
           rebus={rebus}
           onCellClick={this.onCellClick}
           onRebusSubmit={this.onRebusSubmit}
@@ -134,6 +140,7 @@ export default connect(
     markSolved,
     toggleRebus,
     updatePosition,
-    broadcastUpdatePosition
+    broadcastUpdatePosition,
+    broadcastUpdateCell
   }
 )(PuzzleContainer);

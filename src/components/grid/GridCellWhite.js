@@ -3,6 +3,7 @@ import React from "react";
 const GridCellWhite = ({
   display,
   guess,
+  guesser,
   index,
   isChecked,
   isConfirmed,
@@ -101,7 +102,7 @@ const GridCellWhite = ({
         {label}
       </text>
       <text
-        fill={isChecked ? "blue" : "black"}
+        fill={guesser === "host" ? "darkred" : guesser === "guest" ? "darkblue" : "black"}
         x={solutionPosition.x}
         y={solutionPosition.y}
         fontSize={calcFontSize()}
@@ -130,7 +131,7 @@ const GridCellWhite = ({
           strokeWidth="2"
         />
       )}
-      {isRevealed && (
+      {(isRevealed || isConfirmed) && (
         <polyline
           points={drawCheckmarkPoints()}
           fill="transparent"

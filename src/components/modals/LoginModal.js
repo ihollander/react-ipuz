@@ -35,6 +35,7 @@ class LoginModal extends React.Component {
             <Form.Field>
               <label>Username</label>
               <Form.Input
+                autoComplete="off"
                 placeholder="Username"
                 name="username"
                 value={this.state.username}
@@ -44,6 +45,7 @@ class LoginModal extends React.Component {
             <Form.Field>
               <label>Password</label>
               <Form.Input
+                autoComplete="off"
                 placeholder="Password"
                 type="password"
                 name="password"

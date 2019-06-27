@@ -28,14 +28,14 @@ class PuzzleWrapper extends React.Component {
         <Grid>
           <Grid.Row>
             <Grid.Column tablet={10} computer={7}>
-              <Segment>
-                <PuzzleToolContainer />
-              </Segment>
-              <Segment>
-                <PuzzleKeyEventContainer>
+              <PuzzleKeyEventContainer>
+                <Segment>
+                  <PuzzleToolContainer />
+                </Segment>
+                <Segment>
                   <PuzzleContainer />
-                </PuzzleKeyEventContainer>
-              </Segment>
+                </Segment>
+              </PuzzleKeyEventContainer>
             </Grid.Column>
             <Grid.Column computer={6} only="computer">
               <Segment>

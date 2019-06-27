@@ -6,7 +6,7 @@ import NavBar from "../layout/NavBar";
 const PuzzlePageLayout = ({ children }) => (
   <>
     <NavBar className="puzzle-wide" />
-    <Container style={{ width: "90vw" }} className="main">
+    <Container className="main puzzle-wide">
       {children}
     </Container>
   </>
