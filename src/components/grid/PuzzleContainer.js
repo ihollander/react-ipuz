@@ -17,7 +17,7 @@ import {
   toggleRebus
 } from "../../actions/status";
 
-import { updatePosition, broadcastUpdatePosition } from "../../actions/game";
+import { updatePosition, broadcastUpdatePosition, broadcastUpdateCell } from "../../actions/game";
 
 import ActiveClue from "../clues/ActiveClue";
 import GridBox from "./GridBox";
@@ -60,6 +60,8 @@ class PuzzleContainer extends React.Component {
       setCellValue,
       userSelectedCell,
       toggleRebus,
+      broadcastUpdateCell,
+      puzzleId,
       auth: {
         user: {
           user: { username }
@@ -67,6 +69,7 @@ class PuzzleContainer extends React.Component {
       }
     } = this.props;
     setCellValue(userSelectedCell.index, rebusText, username);
+    broadcastUpdateCell(puzzleId, userSelectedCell.index, rebusText)
     toggleRebus();
   };
 
@@ -137,6 +140,7 @@ export default connect(
     markSolved,
     toggleRebus,
     updatePosition,
-    broadcastUpdatePosition
+    broadcastUpdatePosition,
+    broadcastUpdateCell
   }
 )(PuzzleContainer);

@@ -12,6 +12,10 @@ import {
 } from "../../actions/game";
 
 class PuzzleKeyEventContainer extends React.Component {
+  state = {
+    focused: false
+  };
+
   divRef = React.createRef();
 
   // Lifecycle methods
@@ -19,8 +23,13 @@ class PuzzleKeyEventContainer extends React.Component {
     this.divRef.current && this.divRef.current.focus();
   }
 
-  componentDidUpdate() {
-    // this.divRef.current && this.divRef.current.focus();
+  componentDidUpdate(prevProps) {
+    if (
+      (prevProps.game.rebus && !this.props.game.rebus) ||
+      (prevProps.game.paused && !this.props.game.paused)
+    ) {
+      this.divRef.current && this.divRef.current.focus();
+    }
   }
 
   updatePosition(index, direction) {
@@ -175,6 +184,12 @@ class PuzzleKeyEventContainer extends React.Component {
           ? emptyCellsBelow[0].index
           : sameClueEmptyCells[0].index;
       this.updatePosition(nextIndex, userSelectedDirection);
+    } else {
+      const nextIndex =
+        userSelectedDirection === "ACROSS"
+          ? this.getNextCellIndexFor("RIGHT")
+          : this.getNextCellIndexFor("DOWN");
+      this.updatePosition(nextIndex, userSelectedDirection);
     }
   }
 
@@ -199,11 +214,23 @@ class PuzzleKeyEventContainer extends React.Component {
     }
   };
 
+  onFocus = e => {
+    console.log("div in focus");
+    this.setState({ focused: true });
+  };
+
+  onBlur = e => {
+    console.log("div lost focus");
+    this.setState({ focused: false });
+  };
+
   render() {
     return (
       <div
         ref={this.divRef}
         tabIndex="-1"
+        onFocus={this.onFocus}
+        onBlur={this.onBlur}
         onKeyDown={this.onKeyDown}
         style={{ outline: "none" }}
       >
