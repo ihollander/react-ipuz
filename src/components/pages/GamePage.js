@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { ActionCable } from "react-actioncable-provider";
+import { ActionCableConsumer } from "react-actioncable-provider";
 
 import { setCellValue, checkAnswer, revealAnswer } from "../../actions/puzzle";
 import {
@@ -29,7 +29,7 @@ class GamePage extends React.Component {
 
     switch (type) {
       case "NEW_MESSAGE":
-        this.props.addMessage(payload.message)
+        this.props.addMessage(payload.message);
         break;
       case "USER_ENTERED_GAME":
         this.props.setActivePlayer(payload.user.username, true);
@@ -62,7 +62,11 @@ class GamePage extends React.Component {
           payload.user &&
           payload.user.username !== this.props.user.user.username
         ) {
-          this.props.setCellValue(payload.cell.index, payload.cell.value);
+          this.props.setCellValue(
+            payload.cell.index,
+            payload.cell.value,
+            payload.user.username
+          );
         }
         break;
       case "CHECK_ANSWER":
@@ -109,7 +113,7 @@ class GamePage extends React.Component {
     console.log("gameID", match.params.id);
     return (
       <PuzzlePageLayout>
-        <ActionCable
+        <ActionCableConsumer
           channel={{
             channel: "GamesChannel",
             game_id: match.params.id

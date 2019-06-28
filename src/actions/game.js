@@ -142,7 +142,6 @@ export const updatePosition = (user, index, direction) => ({
 });
 
 export const broadcastUpdatePosition = (gameId, index, direction) => {
-  // dispatch another action -> post setCellValue
   // response is handled by ActionCable component...
   gameAdaptor.updatePosition(gameId, {
     position: {
