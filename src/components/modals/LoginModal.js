@@ -77,7 +77,7 @@ class LoginModal extends React.Component {
   }
 }
 
-const mapStateToProps = ({ auth: { error } }) => ({ error });
+const mapStateToProps = ({ auth: { error, loading } }) => ({ error, loading });
 
 export default connect(
   mapStateToProps,
