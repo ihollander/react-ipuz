@@ -29,7 +29,7 @@ class ClueContainer extends React.Component {
   render() {
     return (
       <>
-        <Grid columns={2} style={{ maxHeight: "680px", marginBottom: "2rem" }}>
+        <Grid columns={2} style={{ maxHeight: "680px", marginBottom: "2rem", overflowY: "auto" }}>
           <Grid.Column>
             <ClueList
               userSelectedClue={this.props.userSelectedClue}
