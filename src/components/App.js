@@ -14,13 +14,16 @@ import LobbyPage from "./pages/LobbyPage";
 import GamePage from "./pages/GamePage";
 import LoadingModal from "./modals/LoadingModal";
 
+import gameAdaptor from '../apis/GameAdaptor'
+
 class App extends React.Component {
   state = {
     loading: true
   };
 
   componentDidMount() {
-    fetch(process.env.REACT_APP_API_ROOT).then(() =>
+    // hack for showing loading screen due to heroku cold starts
+    gameAdaptor.getAll().then(() =>
       this.setState({ loading: false })
     );
   }
