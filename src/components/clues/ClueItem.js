@@ -8,7 +8,6 @@ class ClueItem extends React.Component {
     const { selected } = this.props;
     const target = this.liRef.current;
     if (selected && target) {
-      console.log(this.props.clue)
       // clearInterval(this.scrollInterval) // clear existing animations...
       // this.animateScroll(target, 1000);
       // target.scrollIntoView({
@@ -24,8 +23,6 @@ class ClueItem extends React.Component {
   //   const positionEnd = target.offsetTop - target.parentNode.offsetTop;
   //   const scrollStep = ((positionStart - positionEnd) / duration) * 15;
 
-  //   console.log(positionStart, positionEnd);
-  //   console.log(scrollStep);
   //   this.scrollInterval = setInterval(() => {
   //     if (target.parentNode.scrollTop !== positionEnd) {
   //       if (scrollStep < 0) {
@@ -48,8 +45,8 @@ class ClueItem extends React.Component {
             backgroundColor: clue.hostSelected
               ? "pink"
               : clue.guestSelected
-              ? "lavender"
-              : "",
+                ? "lavender"
+                : "",
             color: clue.answered ? "grey" : "black"
           }}
         >

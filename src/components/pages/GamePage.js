@@ -25,7 +25,6 @@ class GamePage extends React.Component {
   }
 
   onActionCableDataReceived = ({ payload, type }) => {
-    console.log(type, payload);
 
     switch (type) {
       case "NEW_MESSAGE":
@@ -110,7 +109,6 @@ class GamePage extends React.Component {
   render() {
     const { match } = this.props;
 
-    console.log("gameID", match.params.id);
     return (
       <PuzzlePageLayout>
         <ActionCableConsumer

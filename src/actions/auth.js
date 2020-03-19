@@ -14,7 +14,6 @@ export const signUp = formData => {
 
     authAdaptor.signUp({ user: formData }).then(
       user => {
-        console.log('signUp user', user)
         dispatch(loginSuccess(user));
         history.push("/lobby");
       },
@@ -31,7 +30,6 @@ export const signIn = formData => {
 
     authAdaptor.login({ user: formData }).then(
       user => {
-        console.log('signIn user', user)
         dispatch(loginSuccess(user));
         history.push("/lobby");
       },

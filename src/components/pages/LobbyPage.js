@@ -36,7 +36,7 @@ class LobbyPage extends React.Component {
   };
 
   handleSocketResponse = data => {
-    console.log(data);
+
     switch (data.type) {
       case "NEW_GAME":
         this.props.addGame(data.payload);

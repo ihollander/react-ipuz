@@ -215,12 +215,10 @@ class PuzzleKeyEventContainer extends React.Component {
   };
 
   onFocus = e => {
-    console.log("div in focus");
     this.setState({ focused: true });
   };
 
   onBlur = e => {
-    console.log("div lost focus");
     this.setState({ focused: false });
   };
 

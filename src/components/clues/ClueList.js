@@ -3,7 +3,7 @@ import { List, Header } from "semantic-ui-react";
 import ClueItem from "./ClueItem";
 
 const ClueList = ({ heading, clues, userSelectedClue, onClueClick }) => {
-  console.log(userSelectedClue);
+
   return (
     <>
       <Header size="medium">{heading}</Header>
