@@ -23,7 +23,7 @@ class LobbyPage extends React.Component {
   componentDidMount() {
     this.props.getGames();
     if (process.env.NODE_ENV === 'production') {
-      ReactGA.pageview(this.props.location.url)
+      ReactGA.pageview(this.props.location.pathname)
     }
   }
 
