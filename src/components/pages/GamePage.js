@@ -24,7 +24,7 @@ class GamePage extends React.Component {
     const { getGame, match, location } = this.props;
     getGame(match.params.id);
     if (process.env.NODE_ENV === 'production') {
-      ReactGA.pageview(location)
+      ReactGA.pageview(location.url)
     }
   }
 
