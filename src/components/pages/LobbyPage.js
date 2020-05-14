@@ -1,4 +1,5 @@
 import React from "react";
+import ReactGA from 'react-ga'
 import { connect } from "react-redux";
 import { ActionCableConsumer } from "react-actioncable-provider";
 import { Button, Segment, Header } from "semantic-ui-react";
@@ -21,6 +22,9 @@ import DefaultLayout from "../layouts/DefaultLayout";
 class LobbyPage extends React.Component {
   componentDidMount() {
     this.props.getGames();
+    if (process.env.NODE_ENV === 'production') {
+      ReactGA.pageview(this.props.location)
+    }
   }
 
   onDeleteGameClick = gameId => {

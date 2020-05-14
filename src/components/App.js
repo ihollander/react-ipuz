@@ -2,6 +2,7 @@ import "./App.css";
 
 import React from "react";
 import { Router, Route, Switch } from "react-router-dom";
+import ReactGA from 'react-ga'
 
 import history from "../history";
 
@@ -23,7 +24,11 @@ class App extends React.Component {
     // hack for showing loading screen due to heroku cold starts
     fetch(process.env.REACT_APP_API_ROOT).then(() =>
       this.setState({ loading: false })
-    );
+    )
+    if (process.env.NODE_ENV === 'production') {
+      ReactGA.initialize(process.env.REACT_APP_GA_TRACKING)
+      ReactGA.pageview("/")
+    }
   }
 
   render() {

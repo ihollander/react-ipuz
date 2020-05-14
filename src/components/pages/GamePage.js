@@ -1,4 +1,5 @@
 import React from "react";
+import ReactGA from 'react-ga'
 import { connect } from "react-redux";
 import { ActionCableConsumer } from "react-actioncable-provider";
 
@@ -20,8 +21,11 @@ import PuzzleWrapper from "../grid/PuzzleWrapper";
 
 class GamePage extends React.Component {
   componentDidMount() {
-    const { getGame, match } = this.props;
+    const { getGame, match, location } = this.props;
     getGame(match.params.id);
+    if (process.env.NODE_ENV === 'production') {
+      ReactGA.pageview(location)
+    }
   }
 
   onActionCableDataReceived = ({ payload, type }) => {
