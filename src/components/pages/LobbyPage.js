@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { ActionCable } from "react-actioncable-provider";
+import { ActionCableConsumer } from "react-actioncable-provider";
 import { Button, Segment, Header } from "semantic-ui-react";
 
 import { showCreateGameModal } from "../../actions/modal";
@@ -55,7 +55,7 @@ class LobbyPage extends React.Component {
   render() {
     return (
       <DefaultLayout>
-        <ActionCable
+        <ActionCableConsumer
           channel={{ channel: "LobbyChannel" }}
           onReceived={this.handleSocketResponse}
         />
